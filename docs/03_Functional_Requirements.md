@@ -444,7 +444,7 @@ When an accepted sale return is completed, the system shall increase inventory f
 
 ## FR-043 — Sale Return Financial Update
 
-When a sale return is completed, the system shall update the customer's balance or payment records according to the applicable business rules.
+When a sale return is completed, the system shall update the related financial records according to the sale type and return amount. For cash sales, the system shall record the applicable refund or store credit. For credit sales, the system shall adjust the customer's outstanding balance and payment records as required by the business rules.
 
 ---
 
