@@ -131,7 +131,7 @@ The business requires the system to maintain a record for every product sold by 
 
 ### BR-002 — Product Categories
 
-The business requires products to be organized into categories.
+The system shall allow authorized users to create, view, update, and deactivate product categories used to classify products.
 
 Examples may include:
 
@@ -146,7 +146,7 @@ Examples may include:
 
 ### BR-003 — Units of Measurement
 
-The business requires products to support different units of measurement.
+The system shall allow authorized users to create, view, update, and deactivate units of measurement used to define how products are purchased, sold, and tracked in inventory.
 
 Examples include:
 

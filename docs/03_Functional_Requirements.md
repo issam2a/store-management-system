@@ -120,7 +120,7 @@ Historical transaction data shall not be modified as a result of changing the cu
 
 **Related:** BR-002
 
-The system shall allow authorized users to create, edit, and manage product categories.
+The system shall allow authorized users to create, view, update, and deactivate product categories. A category that is referenced by existing products or historical transactions shall not be physically deleted.
 
 ---
 
@@ -128,7 +128,7 @@ The system shall allow authorized users to create, edit, and manage product cate
 
 **Related:** BR-003
 
-The system shall support different units of measurement.
+The system shall allow authorized users to create, view, update, and deactivate units of measurement. A unit that is referenced by existing products or historical transactions shall not be physically deleted.
 
 Examples:
 
