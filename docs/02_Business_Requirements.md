@@ -313,7 +313,7 @@ The system must support calculation of inventory value based on recorded invento
 
 ## BR-035 — Customer Registration
 
-The system must allow authorized users to create customer records.
+The system shall allow authorized users to create customer records for customers whose balances, payment history, or credit transactions need to be tracked.
 
 ## BR-036 — Customer Information
 

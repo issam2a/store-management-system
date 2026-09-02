@@ -180,7 +180,7 @@ The system should also support SKU or barcode values where applicable.
 
 **Related:** BR-035
 
-The system shall allow authorized users to create customer records.
+The system shall allow authorized users to create customer records for customers participating in credit transactions or requiring account tracking.
 
 ---
 
