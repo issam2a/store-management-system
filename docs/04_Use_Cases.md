@@ -2074,8 +2074,38 @@ Owner / Authorized User
 | UC-016 | | |
 | UC-017 | | |
 | UC-018 | | |
+| UC-019 | | |
 
 ## 7. Open Decisions
+
+### OD-001 — Product Barcode Support
+
+The business has not yet decided whether products will be identified only by name and internal product code or whether barcode scanning functionality will be required.
+
+### OD-002 — Customer Credit Limit
+
+The business has not yet decided whether customers should have configurable credit limits that restrict additional credit sales when the limit is exceeded.
+
+### OD-003 — Supplier Credit Limit
+
+The business has not yet decided whether supplier balances should be monitored against configurable credit limits.
+
+### OD-004 — Transaction Cancellation Authorization
+
+The business has not yet decided which user roles may cancel completed transactions and whether additional approval is required for high-value cancellations.
+
+### OD-005 — Expense Categories
+
+The final list of expense categories has not yet been defined and may be refined during detailed design.
+
+### OD-006 — Reporting Export Formats
+
+The business has not yet decided whether reports should support export to PDF, Excel, CSV, or multiple formats.
+
+### OD-007 — Multi-Store Support
+
+The business has not yet decided whether the system will support only a single store location or multiple store locations in the future.
+
 
 - 
 - 
