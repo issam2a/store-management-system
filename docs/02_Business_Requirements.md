@@ -34,7 +34,7 @@ The system must support the following business objectives:
 
 ### BO-001 — Centralize Store Operations
 
-Provide a single system for managing products, purchases, sales, inventory, customers, suppliers, payments, returns, and expenses.
+Provide a single system for managing products, purchases, sales, inventory, customers, suppliers, payments, and expenses.
 
 ### BO-002 — Improve Inventory Accuracy
 
@@ -102,7 +102,6 @@ Potential responsibilities include:
 
 * Creating sales.
 * Recording customer payments.
-* Processing customer returns.
 * Viewing relevant customer information.
 
 ---
@@ -206,11 +205,7 @@ The business must be able to record purchases that are not fully paid at the tim
 
 The system must allow the business to determine outstanding amounts owed to suppliers.
 
-## BR-015 — Purchase Returns
 
-The business must be able to return products to suppliers.
-
-Returned products must be reflected in inventory and the corresponding financial records.
 
 ---
 
@@ -254,11 +249,6 @@ The system must allow payments toward outstanding customer balances to be record
 
 The system must allow the business to determine the amount owed by each credit customer.
 
-## BR-025 — Sales Returns
-
-The business must be able to process customer returns.
-
-Returned products must be reflected in inventory and the corresponding financial records.
 
 ---
 
@@ -276,13 +266,8 @@ Completed purchases must increase the corresponding inventory quantities.
 
 Completed sales must decrease the corresponding inventory quantities.
 
-## BR-029 — Customer Return Movement
 
-Accepted customer returns must increase inventory where the returned product is suitable for resale.
 
-## BR-030 — Supplier Return Movement
-
-Accepted supplier returns must decrease inventory.
 
 ## BR-031 — Inventory Adjustment
 
@@ -626,6 +611,23 @@ The architecture should allow future support for:
 * Remote Internet access.
 * Cloud deployment.
 * Additional branches.
+
+---
+
+## BR-089 — Transaction Immutability
+
+Completed sales and purchases shall not be edited directly.
+
+
+## BR-090 — Transaction Cancellation
+
+Authorized users may cancel completed sales and purchases. Cancelled transactions shall remain in the system for audit purposes.
+
+---
+
+## BR-091 — Inventory Correction
+
+Inventory discrepancies shall be corrected through inventory adjustments rather than by modifying completed transactions.
 
 ---
 

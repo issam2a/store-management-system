@@ -325,25 +325,7 @@ When a purchase is completed, the system shall increase the inventory quantity o
 
 ---
 
-## FR-030 — Purchase Return
 
-**Related:** BR-015
-
-The system shall allow authorized users to create a purchase return associated with a previous purchase.
-
----
-
-## FR-031 — Purchase Return Inventory Update
-
-When a purchase return is completed, the system shall decrease the applicable inventory quantity.
-
----
-
-## FR-032 — Purchase Return Financial Update
-
-When a purchase return is completed, the system shall update the applicable supplier balance or payment records according to the business rules.
-
----
 
 # 8. Sales Management
 
@@ -428,25 +410,7 @@ When a sale is completed, the system shall decrease inventory for each applicabl
 
 ---
 
-## FR-041 — Sale Return
 
-**Related:** BR-025
-
-The system shall allow authorized users to create a sales return associated with a previous sale.
-
----
-
-## FR-042 — Sale Return Inventory Update
-
-When an accepted sale return is completed, the system shall increase inventory for products that are eligible for resale.
-
----
-
-## FR-043 — Sale Return Financial Update
-
-When a sale return is completed, the system shall update the related financial records according to the sale type and return amount. For cash sales, the system shall record the applicable refund or store credit. For credit sales, the system shall adjust the customer's outstanding balance and payment records as required by the business rules.
-
----
 
 # 9. Payment Management
 
@@ -989,6 +953,35 @@ Potential future modules include:
 * Mobile access.
 * Cloud deployment.
 * External integrations.
+
+---
+
+## FR-098 — Transaction Locking
+
+The system shall prevent modification of completed sales and purchases.
+
+---
+
+## FR-097 — Transaction Cancellation
+
+The system shall allow authorized users to cancel completed sales and purchases.
+
+---
+
+## FR-098 — Cancellation Audit Trail
+
+When a transaction is cancelled, the system shall record the cancellation date and time, the user performing the cancellation, and the cancellation reason.
+
+---
+
+## FR-099 — Inventory Reversal on Cancellation
+
+When a completed sale or purchase is cancelled, the system shall automatically reverse the inventory impact of the transaction.
+---
+
+## FR-100 — Financial Reversal on Cancellation
+
+When a completed sale or purchase is cancelled, the system shall automatically reverse any related financial records according to the applicable business rules.
 
 ---
 

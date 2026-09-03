@@ -34,6 +34,7 @@ This document defines the use cases of the Store Management & Business Analytics
 | UC-016 | Generate Sales Report | Owner |
 | UC-017 | Generate Inventory Report | Owner |
 | UC-018 | Manage Users | Administrator |
+| UC-019 | Cancel Transaction | Owner / Authorized User |
 
 ## 4. Use Case Specifications
 
