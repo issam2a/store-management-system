@@ -325,11 +325,29 @@ When a purchase is completed, the system shall increase the inventory quantity o
 
 ---
 
+## FR-030 — Purchase Return
 
+**Related:** BR-015
+
+The system shall allow authorized users to create a purchase return associated with a previous purchase.
+
+---
+
+## FR-031 — Purchase Return Inventory Update
+
+When a purchase return is completed, the system shall decrease the applicable inventory quantity.
+
+---
+
+## FR-032 — Purchase Return Financial Update
+
+When a purchase return is completed, the system shall update the applicable supplier balance or payment records according to the business rules.
+
+---
 
 # 8. Sales Management
 
-## FR-030 — Create Sale
+## FR-033 — Create Sale
 
 **Related:** BR-016
 
@@ -337,7 +355,7 @@ The system shall allow an authorized user to create a sales transaction.
 
 ---
 
-## FR-031 — Sale Items
+## FR-034 — Sale Items
 
 **Related:** BR-017
 
@@ -353,7 +371,7 @@ Each sale item shall contain:
 
 ---
 
-## FR-032 — Sale Total
+## FR-035 — Sale Total
 
 **Related:** BR-016
 
@@ -366,7 +384,7 @@ Subtotal =
 
 ---
 
-## FR-033 — Apply Discount
+## FR-036 — Apply Discount
 
 **Related:** BR-020
 
@@ -376,7 +394,7 @@ The system shall record the discount separately from the original item prices.
 
 ---
 
-## FR-034 — Cash Sale
+## FR-037 — Cash Sale
 
 **Related:** BR-021
 
@@ -384,7 +402,7 @@ The system shall support sales that are fully paid at the time of the transactio
 
 ---
 
-## FR-035 — Credit Sale
+## FR-038 — Credit Sale
 
 **Related:** BR-022
 
@@ -394,7 +412,7 @@ The remaining amount shall become part of the customer's outstanding balance.
 
 ---
 
-## FR-036 — Sale Completion
+## FR-039 — Sale Completion
 
 The system shall allow an authorized user to complete a sale.
 
@@ -402,7 +420,7 @@ Only completed sales shall affect inventory and financial records.
 
 ---
 
-## FR-037 — Sale Inventory Update
+## FR-040 — Sale Inventory Update
 
 **Related:** BR-028
 
@@ -410,11 +428,29 @@ When a sale is completed, the system shall decrease inventory for each applicabl
 
 ---
 
+## FR-041 — Sale Return
 
+**Related:** BR-025
+
+The system shall allow authorized users to create a sales return associated with a previous sale.
+
+---
+
+## FR-042 — Sale Return Inventory Update
+
+When an accepted sale return is completed, the system shall increase inventory for products that are eligible for resale.
+
+---
+
+## FR-043 — Sale Return Financial Update
+
+When a sale return is completed, the system shall update the related financial records according to the sale type and return amount. For cash sales, the system shall record the applicable refund or store credit. For credit sales, the system shall adjust the customer's outstanding balance and payment records as required by the business rules.
+
+---
 
 # 9. Payment Management
 
-## FR-038 — Record Payment
+## FR-044 — Record Payment
 
 **Related:** BR-049
 
@@ -422,7 +458,7 @@ The system shall allow authorized users to record payments associated with custo
 
 ---
 
-## FR-039 — Payment Method
+## FR-045 — Payment Method
 
 **Related:** BR-050
 
@@ -432,7 +468,7 @@ The supported methods shall be configurable according to the business requiremen
 
 ---
 
-## FR-040 — Partial Payment
+## FR-046 — Partial Payment
 
 **Related:** BR-051
 
@@ -440,7 +476,7 @@ The system shall allow a payment to cover only part of an outstanding balance.
 
 ---
 
-## FR-041 — Payment History
+## FR-047 — Payment History
 
 **Related:** BR-052
 
@@ -448,7 +484,7 @@ The system shall preserve payment records and allow authorized users to view pay
 
 ---
 
-## FR-042 — Payment Validation
+## FR-048 — Payment Validation
 
 The system shall prevent a payment from being recorded with an invalid amount.
 
@@ -462,7 +498,7 @@ For example:
 
 # 10. Inventory Management
 
-## FR-043 — Current Inventory
+## FR-049 — Current Inventory
 
 **Related:** BR-026
 
@@ -470,7 +506,7 @@ The system shall provide the current available quantity for each inventory-contr
 
 ---
 
-## FR-044 — Inventory Movement
+## FR-050 — Inventory Movement
 
 **Related:** BR-032
 
@@ -488,13 +524,13 @@ Inventory movement types shall include, where applicable:
 
 ---
 
-## FR-045 — Inventory Movement Reference
+## FR-051 — Inventory Movement Reference
 
 Each inventory movement shall be traceable to its originating business transaction or adjustment.
 
 ---
 
-## FR-046 — Stock Adjustment
+## FR-052 — Stock Adjustment
 
 **Related:** BR-031
 
@@ -511,7 +547,7 @@ Examples:
 
 ---
 
-## FR-047 — Low Stock Detection
+## FR-053 — Low Stock Detection
 
 **Related:** BR-033
 
@@ -519,13 +555,13 @@ The system shall identify products whose available quantity is below their confi
 
 ---
 
-## FR-048 — Inventory History
+## FR-054 — Inventory History
 
 The system shall allow authorized users to review inventory movements over a selected period.
 
 ---
 
-## FR-049 — Inventory Valuation
+## FR-055 — Inventory Valuation
 
 **Related:** BR-034
 
@@ -535,7 +571,7 @@ The exact costing methodology shall be defined in the business rules and databas
 
 ---
 
-## FR-050 — Inventory Integrity
+## FR-056 — Inventory Integrity
 
 The system shall prevent inventory quantities from being modified directly without generating an appropriate inventory transaction or authorized adjustment.
 
@@ -543,7 +579,7 @@ The system shall prevent inventory quantities from being modified directly witho
 
 # 11. Expense Management
 
-## FR-051 — Create Expense
+## FR-057 — Create Expense
 
 **Related:** BR-045
 
@@ -551,7 +587,7 @@ The system shall allow authorized users to record a business expense.
 
 ---
 
-## FR-052 — Expense Category
+## FR-058 — Expense Category
 
 **Related:** BR-046
 
@@ -559,19 +595,19 @@ Each expense shall be associated with an expense category.
 
 ---
 
-## FR-053 — Expense Amount
+## FR-059 — Expense Amount
 
 The system shall require a valid positive amount for each expense.
 
 ---
 
-## FR-054 — Expense Date
+## FR-060 — Expense Date
 
 The system shall record the date and time associated with each expense.
 
 ---
 
-## FR-055 — Expense History
+## FR-061 — Expense History
 
 **Related:** BR-047
 
@@ -579,7 +615,7 @@ The system shall allow authorized users to view historical expenses.
 
 ---
 
-## FR-056 — Expense Reporting
+## FR-062 — Expense Reporting
 
 **Related:** BR-048
 
@@ -589,7 +625,7 @@ The system shall provide expense summaries for selected periods.
 
 # 12. User Management
 
-## FR-057 — Create User
+## FR-063 — Create User
 
 **Related:** BR-053
 
@@ -597,7 +633,7 @@ An authorized administrator shall be able to create user accounts.
 
 ---
 
-## FR-058 — Assign Role
+## FR-064 — Assign Role
 
 **Related:** BR-055
 
@@ -605,7 +641,7 @@ An authorized administrator shall be able to assign an appropriate role to a use
 
 ---
 
-## FR-059 — Role-Based Access
+## FR-065 — Role-Based Access
 
 **Related:** BR-056
 
@@ -613,7 +649,7 @@ The system shall restrict functionality according to the user's assigned role.
 
 ---
 
-## FR-060 — User Activity
+## FR-066 — User Activity
 
 **Related:** BR-057
 
@@ -631,7 +667,7 @@ Examples:
 
 # 13. Reporting
 
-## FR-061 — Daily Sales Report
+## FR-067 — Daily Sales Report
 
 **Related:** BR-058
 
@@ -647,7 +683,7 @@ The report should include:
 
 ---
 
-## FR-062 — Monthly Sales Report
+## FR-068 — Monthly Sales Report
 
 **Related:** BR-059
 
@@ -655,7 +691,7 @@ The system shall provide sales information for a selected month.
 
 ---
 
-## FR-063 — Product Sales Report
+## FR-069 — Product Sales Report
 
 **Related:** BR-060
 
@@ -663,7 +699,7 @@ The system shall provide sales quantities and revenue by product.
 
 ---
 
-## FR-064 — Category Sales Report
+## FR-070 — Category Sales Report
 
 **Related:** BR-061
 
@@ -671,7 +707,7 @@ The system shall provide sales information grouped by product category.
 
 ---
 
-## FR-065 — Gross Profit Report
+## FR-071 — Gross Profit Report
 
 **Related:** BR-062
 
@@ -683,7 +719,7 @@ Gross Profit = Revenue - COGS
 
 ---
 
-## FR-066 — Gross Margin Report
+## FR-072 — Gross Margin Report
 
 **Related:** BR-063
 
@@ -696,7 +732,7 @@ Gross Profit / Revenue × 100
 
 ---
 
-## FR-067 — Inventory Report
+## FR-073 — Inventory Report
 
 **Related:** BR-064
 
@@ -704,7 +740,7 @@ The system shall provide a report containing current inventory quantities and ap
 
 ---
 
-## FR-068 — Customer Balance Report
+## FR-074 — Customer Balance Report
 
 **Related:** BR-065
 
@@ -712,7 +748,7 @@ The system shall provide outstanding customer balances.
 
 ---
 
-## FR-069 — Supplier Balance Report
+## FR-075 — Supplier Balance Report
 
 **Related:** BR-066
 
@@ -720,7 +756,7 @@ The system shall provide outstanding supplier balances.
 
 ---
 
-## FR-070 — Expense Report
+## FR-076 — Expense Report
 
 **Related:** BR-067
 
@@ -730,7 +766,7 @@ The system shall provide expense summaries for selected periods.
 
 # 14. Analytics
 
-## FR-071 — Revenue Trend Analysis
+## FR-077 — Revenue Trend Analysis
 
 **Related:** BR-068
 
@@ -738,7 +774,7 @@ The system shall provide data required to analyze revenue over time.
 
 ---
 
-## FR-072 — Product Performance Analysis
+## FR-078 — Product Performance Analysis
 
 **Related:** BR-069
 
@@ -746,7 +782,7 @@ The system shall provide data required to compare product sales performance.
 
 ---
 
-## FR-073 — Product Profitability Analysis
+## FR-079 — Product Profitability Analysis
 
 **Related:** BR-070
 
@@ -754,7 +790,7 @@ The system shall provide data required to calculate and compare product profitab
 
 ---
 
-## FR-074 — Category Profitability Analysis
+## FR-080 — Category Profitability Analysis
 
 **Related:** BR-071
 
@@ -762,7 +798,7 @@ The system shall provide data required to analyze profitability by category.
 
 ---
 
-## FR-075 — Sales Trend Analysis
+## FR-081 — Sales Trend Analysis
 
 **Related:** BR-072
 
@@ -770,7 +806,7 @@ The system shall provide historical sales data suitable for time-based analysis.
 
 ---
 
-## FR-076 — Inventory Performance Analysis
+## FR-082 — Inventory Performance Analysis
 
 **Related:** BR-073
 
@@ -778,7 +814,7 @@ The system shall provide data required to analyze inventory movement and turnove
 
 ---
 
-## FR-077 — Slow-Moving Products
+## FR-083 — Slow-Moving Products
 
 **Related:** BR-074
 
@@ -786,7 +822,7 @@ The system shall provide data required to identify products with low sales activ
 
 ---
 
-## FR-078 — Customer Analysis
+## FR-084 — Customer Analysis
 
 **Related:** BR-075
 
@@ -794,7 +830,7 @@ The system shall provide data required to analyze customer purchasing behavior.
 
 ---
 
-## FR-079 — Supplier Analysis
+## FR-085 — Supplier Analysis
 
 **Related:** BR-076
 
@@ -802,7 +838,7 @@ The system shall provide data required to analyze supplier purchasing patterns.
 
 ---
 
-## FR-080 — Historical Price Analysis
+## FR-086 — Historical Price Analysis
 
 **Related:** BR-077
 
@@ -812,7 +848,7 @@ The system shall preserve transaction-level purchase and selling prices so that 
 
 # 15. Data Management
 
-## FR-081 — Transaction Identifiers
+## FR-087 — Transaction Identifiers
 
 **Related:** BR-080
 
@@ -828,7 +864,7 @@ Examples:
 
 ---
 
-## FR-082 — Transaction Timestamp
+## FR-088 — Transaction Timestamp
 
 **Related:** BR-079
 
@@ -836,7 +872,7 @@ Business transactions shall record their relevant date and time.
 
 ---
 
-## FR-083 — Historical Transaction Preservation
+## FR-089 — Historical Transaction Preservation
 
 **Related:** BR-078
 
@@ -846,7 +882,7 @@ For example, changing a product's current selling price shall not change the pri
 
 ---
 
-## FR-084 — Referential Integrity
+## FR-090 — Referential Integrity
 
 **Related:** BR-081
 
@@ -876,7 +912,7 @@ Product
 
 # 16. Audit Trail
 
-## FR-085 — Audit Logging
+## FR-091 — Audit Logging
 
 **Related:** BR-082
 
@@ -896,7 +932,7 @@ The audit record should include, where applicable:
 
 # 17. Backup and Recovery
 
-## FR-086 — Database Backup
+## FR-092 — Database Backup
 
 **Related:** BR-083
 
@@ -904,7 +940,7 @@ The system shall support database backup procedures.
 
 ---
 
-## FR-087 — Database Restoration
+## FR-093 — Database Restoration
 
 **Related:** BR-084
 
@@ -914,7 +950,7 @@ The system shall support restoring business data from a valid backup.
 
 # 18. Offline Operation
 
-## FR-088 — Local Operation
+## FR-094 — Local Operation
 
 **Related:** BR-085
 
@@ -922,7 +958,7 @@ Version 1 shall operate without an Internet connection.
 
 ---
 
-## FR-089 — Local Database
+## FR-095 — Local Database
 
 **Related:** BR-086
 
@@ -930,7 +966,7 @@ The application shall use a locally hosted PostgreSQL database during Version 1.
 
 ---
 
-## FR-090 — Browser Interface
+## FR-096 — Browser Interface
 
 **Related:** BR-087
 
@@ -940,7 +976,7 @@ Users shall interact with the system through a web browser.
 
 # 19. Future Extensibility
 
-## FR-091 — Modular Architecture
+## FR-097 — Modular Architecture
 
 **Related:** BR-088
 
@@ -956,33 +992,6 @@ Potential future modules include:
 
 ---
 
-## FR-092 — Transaction Locking
-
-The system shall prevent modification of completed sales and purchases.
-
----
-
-## FR-093 — Transaction Cancellation
-
-The system shall allow authorized users to cancel completed sales and purchases.
-
----
-
-## FR-094 — Cancellation Audit Trail
-
-When a transaction is cancelled, the system shall record the cancellation date and time, the user performing the cancellation, and the cancellation reason.
-
----
-## FR-095 — Inventory Reversal on Cancellation
-
-When a completed sale or purchase is cancelled, the system shall automatically reverse the inventory impact of the transaction.
-
----
-## FR-094 — Financial Reversal on Cancellation
-
-When a completed sale or purchase is cancelled, the system shall automatically reverse any related financial records according to the applicable business rules.
-
----
 # 20. Non-Functional Requirements
 
 Functional requirements describe **what the system does**.
