@@ -231,20 +231,21 @@ erDiagram
     }
 
     SALE {
-        bigint id PK
-        varchar reference UK
-        bigint customer_id FK
-        varchar payment_type
-        varchar status
-        numeric total_amount
-        timestamp created_at
-        bigint created_by_id FK
-        timestamp completed_at
-        bigint completed_by_id FK
-        timestamp cancelled_at
-        bigint cancelled_by_id FK
-    }
-
+    bigint id PK
+    varchar reference UK
+    bigint customer_id FK
+    varchar payment_type
+    varchar status
+    numeric subtotal_amount
+    numeric discount_amount
+    numeric total_amount
+    timestamp created_at
+    bigint created_by_id FK
+    timestamp completed_at
+    bigint completed_by_id FK
+    timestamp cancelled_at
+    bigint cancelled_by_id FK
+    }  
     SALE_ITEM {
         bigint id PK
         bigint sale_id FK
@@ -741,6 +742,8 @@ Represents a customer sale.
 | customer_id     | BIGINT        | FK → Customer, nullable                 |
 | payment_type    | VARCHAR       | Required: CASH / CREDIT                 |
 | status          | VARCHAR       | Required: DRAFT / COMPLETED / CANCELLED |
+| subtotal_amount | NUMERIC(14,3) | Required, >= 0 |
+| discount_amount | NUMERIC(14,3) | Required, default 0, >= 0 |
 | total_amount    | NUMERIC(14,3) | Required, >= 0                          |
 | created_at      | TIMESTAMP     | Required                                |
 | created_by_id   | BIGINT        | FK → Django User                        |
@@ -786,6 +789,25 @@ Completed sales:
 
 Completed sales cannot be edited or deleted.
 
+
+### Sale Discount
+
+Discounts are applied at the sale level in V1.
+
+The `Sale` entity stores:
+
+- `subtotal_amount`
+- `discount_amount`
+- `total_amount`
+
+The subtotal is calculated from the sale items:
+
+```text
+subtotal_amount =
+Σ(SaleItem.quantity × SaleItem.unit_price)
+```
+total_amount =
+subtotal_amount - discount_amount
 ---
 
 # 14. SaleItem
@@ -832,6 +854,19 @@ SaleItem.unit_price for new sales = $27
 
 Monday sale remains $25.
 ```
+
+---
+## Discount Rule
+
+V1 discounts are stored at the `Sale` level rather than at the `SaleItem` level.
+
+`SaleItem.unit_price` represents the actual selling price before the sale-level discount.
+
+The discount shall not modify `SaleItem.unit_price` or `SaleItem.line_total`.
+
+This preserves the original pricing of each product within the transaction.
+
+No `discount_amount` field is required on `SaleItem` in V1.
 
 ---
 
@@ -1231,9 +1266,21 @@ unit_price >= 0
 
 ```text
 amount > 0
-total_amount >= 0
-```
 
+
+subtotal_amount >= 0
+
+discount_amount >= 0
+
+discount_amount <= subtotal_amount
+
+total_amount >= 0
+
+total_amount = subtotal_amount - discount_amount
+```
+The database/application layer shall ensure that a sale discount cannot exceed the sale subtotal.
+
+A sale shall not have a negative final total.
 ## Stock
 
 ```text
@@ -1682,7 +1729,7 @@ However, multi-tenancy or multi-store infrastructure shall **not** be implemente
 | Customer                | Account-tracked customer information                |
 | Purchase                | Purchase transaction                                |
 | PurchaseItem            | Products within purchases                           |
-| Sale                    | Sale transaction                                    |
+| Sale                    | Sale transaction, totals, and sale-level discount   |
 | SaleItem                | Products within sales                               |
 | CustomerPayment         | Payments against customer debt                      |
 | SupplierPayment         | Payments against supplier debt                      |
@@ -1754,10 +1801,18 @@ Before implementation, the database design shall satisfy the following:
 * [x] Arabic UI is separated from database identifiers.
 * [x] V1 remains single-store and intentionally simple.
 * [x] Future expansion remains possible.
+* [x] Sale-level discounts are supported.
+* [x] Sale discounts are stored as monetary amounts.
+* [x] Sale subtotal, discount, and final total are preserved.
+* [x] SaleItem prices remain independent of sale-level discounts.
+* [x] Discounts cannot exceed the sale subtotal.
+* [x] No separate Discount entity is required for V1.
 
 ---
 
 # 40. Final V1 Database Decision
+
+V1 shall use a sale-level discount model. Discounts are stored as monetary amounts on `Sale` using `discount_amount`, while the original item prices remain stored on `SaleItem`.
 
 The logical database model is considered **complete for V1**.
 

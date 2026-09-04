@@ -480,8 +480,6 @@ Inventory movement types shall include, where applicable:
 
 * Purchase
 * Sale
-* Customer Return
-* Supplier Return
 * Damage
 * Loss
 * Stock Adjustment
@@ -623,7 +621,6 @@ Examples:
 
 * Creating a sale.
 * Completing a purchase.
-* Processing a return.
 * Adjusting inventory.
 * Changing important business information.
 
@@ -823,7 +820,6 @@ Examples:
 * Sale ID
 * Purchase ID
 * Payment ID
-* Return ID
 * Expense ID
 
 ---
@@ -962,24 +958,24 @@ The system shall prevent modification of completed sales and purchases.
 
 ---
 
-## FR-097 — Transaction Cancellation
+## FR-099 — Transaction Cancellation
 
 The system shall allow authorized users to cancel completed sales and purchases.
 
 ---
 
-## FR-098 — Cancellation Audit Trail
+## FR-100 — Cancellation Audit Trail
 
 When a transaction is cancelled, the system shall record the cancellation date and time, the user performing the cancellation, and the cancellation reason.
 
 ---
 
-## FR-099 — Inventory Reversal on Cancellation
+## FR-101 — Inventory Reversal on Cancellation
 
 When a completed sale or purchase is cancelled, the system shall automatically reverse the inventory impact of the transaction.
 ---
 
-## FR-100 — Financial Reversal on Cancellation
+## FR-102 — Financial Reversal on Cancellation
 
 When a completed sale or purchase is cancelled, the system shall automatically reverse any related financial records according to the applicable business rules.
 
@@ -1068,7 +1064,7 @@ Draft
   ↓
 Completed
   ↓
-Returned / Partially Returned
+Cancelled
 ```
 
 A transaction may also be cancelled before completion according to the applicable business rules.
@@ -1183,7 +1179,11 @@ A completed sale generates an inventory decrease.
 Database
 Sale
 SaleItem
-InventoryTransaction
+Product.current_stock
+Purchase / PurchaseItem
+Sale / SaleItem
+InventoryAdjustment
+TransactionCancellation
 
         ↓
 
@@ -1273,8 +1273,6 @@ UC-005 Create Purchase
 UC-006 Complete Purchase
 UC-007 Record Customer Payment
 UC-008 Record Supplier Payment
-UC-009 Process Sales Return
-UC-010 Process Purchase Return
 UC-011 Adjust Inventory
 UC-012 Generate Sales Report
 ```
