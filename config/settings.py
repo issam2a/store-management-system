@@ -33,12 +33,27 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    # Django
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+
+    # Project apps
+    "apps.accounts",
+    "apps.products",
+    "apps.customers",
+    "apps.suppliers",
+    "apps.purchases",
+    "apps.sales",
+    "apps.inventory",
+    "apps.payments",
+    "apps.expenses",
+    "apps.reports",
+    "apps.analytics",
+    "apps.transactions"
 ]
 
 MIDDLEWARE = [
