@@ -815,11 +815,22 @@ The following remain genuinely open and must not be invented during implementati
 The model layer only stores the fields specified in the approved database design; it does not encode any costing algorithm. Implementation must wait for the Business Rules or Functional Requirements documents to specify these where still open.
 
 ---
+## 29. Currency
 
-## 29. Final Design Decision
+- All monetary fields use Syrian Pound (SYP).
+- Currency is fixed at the system level in V1.
+- No currency field is required on individual transactions or monetary records.
+- Django monetary fields store the numeric amount only; currency is understood to be SYP.
+
+---
+
+## 30. Final Design Decision
 
 The Django model architecture defined in this revised document is considered the direct implementation blueprint for the approved V1 database design, superseding the original `07_Django_Model_Design.md`.
 
 No additional business behavior shall be introduced during implementation unless the Business Requirements, Functional Requirements, Business Rules, or Database Design documents are updated accordingly.
+---
+
+
 
 **Next step**: proceed to Django model code generation from this document, followed by migrations, then the service layer (§17, §25, §27), then tests.
