@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -13,10 +14,11 @@ from apps.sales.models import Sale, SaleItem
 from .models import CustomerPayment
 from .services import record_customer_payment
 
+
 User = get_user_model()
 
-class CustomerPaymentServiceTests(TestCase):
 
+class CustomerPaymentServiceTests(TestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
@@ -94,9 +96,9 @@ class CustomerPaymentServiceTests(TestCase):
 
     def record_payment(
         self,
-        amount=Decimal("100.00"),
+        amount,
         reference="PAY-001",
-        payment_method="CASH",
+        payment_method="Cash",
         payment_date=date(2026, 9, 5),
         note="",
     ):
@@ -105,8 +107,8 @@ class CustomerPaymentServiceTests(TestCase):
             amount=amount,
             payment_method=payment_method,
             payment_date=payment_date,
-            recorded_by=self.user,
             reference=reference,
+            recorded_by=self.user,
             note=note,
         )
 
@@ -266,10 +268,12 @@ class CustomerPaymentServiceTests(TestCase):
 
         self.create_customer_payment(
             amount=Decimal("600.00"),
+            reference="PAY-001",
         )
 
         payment = self.record_payment(
             amount=Decimal("400.00"),
+            reference="PAY-002",
         )
 
         self.assertEqual(
@@ -282,11 +286,13 @@ class CustomerPaymentServiceTests(TestCase):
 
         self.create_customer_payment(
             amount=Decimal("600.00"),
+            reference="PAY-001",
         )
 
         with self.assertRaises(ValidationError):
             self.record_payment(
                 amount=Decimal("400.01"),
+                reference="PAY-002",
             )
 
         self.assertEqual(
@@ -343,7 +349,7 @@ class CustomerPaymentServiceTests(TestCase):
             reference="PAY-001",
         )
 
-        with self.assertRaises(Exception):
+        with self.assertRaises(IntegrityError):
             self.record_payment(
                 amount=Decimal("100.00"),
                 reference="PAY-001",
