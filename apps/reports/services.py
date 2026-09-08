@@ -10,39 +10,47 @@ from apps.products.models import Product
 from apps.purchases.models import Purchase
 from apps.sales.models import Sale
 from apps.suppliers.models import Supplier
+from apps.sales.models import Sale, SaleItem
 
 def get_sales_summary():
     """
     Return a summary of completed sales.
 
     Draft and cancelled sales are excluded.
+
+    Profitability is calculated from the historical cost snapshots
+    stored on completed sale items.
     """
 
     completed_sales = Sale.objects.filter(
         status=Sale.Status.COMPLETED,
     )
 
-    summary = completed_sales.aggregate(
+    sales_summary = completed_sales.aggregate(
         sales_count=models.Count("id"),
         total_revenue=models.Sum("total_amount"),
+
         cash_sales_amount=models.Sum(
             "total_amount",
             filter=models.Q(
                 payment_type=Sale.PaymentType.CASH,
             ),
         ),
+
         credit_sales_amount=models.Sum(
             "total_amount",
             filter=models.Q(
                 payment_type=Sale.PaymentType.CREDIT,
             ),
         ),
+
         cash_sales_count=models.Count(
             "id",
             filter=models.Q(
                 payment_type=Sale.PaymentType.CASH,
             ),
         ),
+
         credit_sales_count=models.Count(
             "id",
             filter=models.Q(
@@ -51,15 +59,64 @@ def get_sales_summary():
         ),
     )
 
-    return {
-        "sales_count": summary["sales_count"] or 0,
-        "total_revenue": summary["total_revenue"] or Decimal("0.00"),
-        "cash_sales_amount": summary["cash_sales_amount"] or Decimal("0.00"),
-        "credit_sales_amount": summary["credit_sales_amount"] or Decimal("0.00"),
-        "cash_sales_count": summary["cash_sales_count"] or 0,
-        "credit_sales_count": summary["credit_sales_count"] or 0,
-    }
+    total_cogs = (
+        SaleItem.objects
+        .filter(
+            sale__status=Sale.Status.COMPLETED,
+        )
+        .aggregate(
+            total=models.Sum("cost_total"),
+        )["total"]
+        or Decimal("0.00")
+    )
 
+    total_revenue = (
+        sales_summary["total_revenue"]
+        or Decimal("0.00")
+    )
+
+    gross_profit = (
+        total_revenue - total_cogs
+    ).quantize(Decimal("0.01"))
+
+    if total_revenue > Decimal("0.00"):
+        gross_margin = (
+            gross_profit / total_revenue * Decimal("100")
+        ).quantize(Decimal("0.01"))
+    else:
+        gross_margin = Decimal("0.00")
+
+    return {
+        "sales_count": (
+            sales_summary["sales_count"]
+            or 0
+        ),
+
+        "total_revenue": total_revenue,
+        "total_cogs": total_cogs,
+        "gross_profit": gross_profit,
+        "gross_margin": gross_margin,
+
+        "cash_sales_amount": (
+            sales_summary["cash_sales_amount"]
+            or Decimal("0.00")
+        ),
+
+        "credit_sales_amount": (
+            sales_summary["credit_sales_amount"]
+            or Decimal("0.00")
+        ),
+
+        "cash_sales_count": (
+            sales_summary["cash_sales_count"]
+            or 0
+        ),
+
+        "credit_sales_count": (
+            sales_summary["credit_sales_count"]
+            or 0
+        ),
+    }
 
 def get_expense_summary():
     """

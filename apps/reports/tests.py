@@ -8,23 +8,22 @@ from apps.customers.models import Customer
 from apps.expenses.models import Expense
 from apps.payments.models import CustomerPayment, SupplierPayment
 from apps.products.models import Category, Product, Unit
-from apps.purchases.models import Purchase, PurchaseItem
+from apps.purchases.models import Purchase
 from apps.reports.services import (
-    get_customer_debt_report,
-    get_expense_summary,
-    get_inventory_report,
-    get_low_stock_report,
-    get_sales_summary,
-    get_supplier_balance_report,
+get_customer_debt_report,
+get_expense_summary,
+get_inventory_report,
+get_low_stock_report,
+get_sales_summary,
+get_supplier_balance_report,
 )
 from apps.sales.models import Sale, SaleItem
 from apps.suppliers.models import Supplier
 
-
 User = get_user_model()
 
-
 class ReportsTestCase(TestCase):
+
 
     def setUp(self):
         self.user = User.objects.create_user(
@@ -83,6 +82,8 @@ class ReportsTestCase(TestCase):
             quantity=Decimal("1.00"),
             unit_price=Decimal("100.00"),
             line_total=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+            cost_total=Decimal("50.00"),
         )
 
         Sale.objects.create(
@@ -112,9 +113,21 @@ class ReportsTestCase(TestCase):
             summary["total_revenue"],
             Decimal("100.00"),
         )
+        self.assertEqual(
+            summary["total_cogs"],
+            Decimal("50.00"),
+        )
+        self.assertEqual(
+            summary["gross_profit"],
+            Decimal("50.00"),
+        )
+        self.assertEqual(
+            summary["gross_margin"],
+            Decimal("50.00"),
+        )
 
     def test_sales_summary_separates_cash_and_credit_sales(self):
-        cash_sale = Sale.objects.create(
+        Sale.objects.create(
             reference="SALE-004",
             payment_type=Sale.PaymentType.CASH,
             status=Sale.Status.COMPLETED,
@@ -124,7 +137,7 @@ class ReportsTestCase(TestCase):
             created_by=self.user,
         )
 
-        credit_sale = Sale.objects.create(
+        Sale.objects.create(
             reference="SALE-005",
             customer=self.customer,
             payment_type=Sale.PaymentType.CREDIT,
@@ -156,17 +169,96 @@ class ReportsTestCase(TestCase):
         summary = get_sales_summary()
 
         self.assertEqual(summary["sales_count"], 0)
+
         self.assertEqual(
             summary["total_revenue"],
             Decimal("0.00"),
         )
+
+        self.assertEqual(
+            summary["total_cogs"],
+            Decimal("0.00"),
+        )
+
+        self.assertEqual(
+            summary["gross_profit"],
+            Decimal("0.00"),
+        )
+
+        self.assertEqual(
+            summary["gross_margin"],
+            Decimal("0.00"),
+        )
+
         self.assertEqual(
             summary["cash_sales_amount"],
             Decimal("0.00"),
         )
+
         self.assertEqual(
             summary["credit_sales_amount"],
             Decimal("0.00"),
+        )
+
+        self.assertEqual(summary["cash_sales_count"], 0)
+        self.assertEqual(summary["credit_sales_count"], 0)
+
+    def test_sales_summary_calculates_profitability_from_sale_item_costs(self):
+        sale = Sale.objects.create(
+            reference="SALE-PROFIT-001",
+            payment_type=Sale.PaymentType.CASH,
+            status=Sale.Status.COMPLETED,
+            subtotal_amount=Decimal("1200.00"),
+            discount_amount=Decimal("200.00"),
+            total_amount=Decimal("1000.00"),
+            created_by=self.user,
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=self.product,
+            quantity=Decimal("4.00"),
+            unit_price=Decimal("150.00"),
+            line_total=Decimal("600.00"),
+            unit_cost=Decimal("50.00"),
+            cost_total=Decimal("200.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=self.product,
+            quantity=Decimal("2.00"),
+            unit_price=Decimal("300.00"),
+            line_total=Decimal("600.00"),
+            unit_cost=Decimal("200.00"),
+            cost_total=Decimal("400.00"),
+        )
+
+        summary = get_sales_summary()
+
+        self.assertEqual(
+            summary["sales_count"],
+            1,
+        )
+
+        self.assertEqual(
+            summary["total_revenue"],
+            Decimal("1000.00"),
+        )
+
+        self.assertEqual(
+            summary["total_cogs"],
+            Decimal("600.00"),
+        )
+
+        self.assertEqual(
+            summary["gross_profit"],
+            Decimal("400.00"),
+        )
+
+        self.assertEqual(
+            summary["gross_margin"],
+            Decimal("40.00"),
         )
 
     # ---------------------------------------------------------
@@ -204,6 +296,7 @@ class ReportsTestCase(TestCase):
         summary = get_expense_summary()
 
         self.assertEqual(summary["expense_count"], 3)
+
         self.assertEqual(
             summary["total_expenses"],
             Decimal("1000.00"),
@@ -228,11 +321,16 @@ class ReportsTestCase(TestCase):
         summary = get_expense_summary()
 
         self.assertEqual(summary["expense_count"], 0)
+
         self.assertEqual(
             summary["total_expenses"],
             Decimal("0.00"),
         )
-        self.assertEqual(summary["by_category"], [])
+
+        self.assertEqual(
+            summary["by_category"],
+            [],
+        )
 
     # ---------------------------------------------------------
     # Inventory Report
@@ -245,19 +343,26 @@ class ReportsTestCase(TestCase):
 
         product = report[0]
 
-        self.assertEqual(product["name"], "Test Product")
+        self.assertEqual(
+            product["name"],
+            "Test Product",
+        )
+
         self.assertEqual(
             product["current_stock"],
             Decimal("20.00"),
         )
+
         self.assertEqual(
             product["minimum_stock"],
             Decimal("10.00"),
         )
+
         self.assertEqual(
             product["current_purchase_cost"],
             Decimal("50.00"),
         )
+
         self.assertEqual(
             product["current_sell_price"],
             Decimal("100.00"),
@@ -274,6 +379,7 @@ class ReportsTestCase(TestCase):
         report = list(get_low_stock_report())
 
         self.assertEqual(len(report), 1)
+
         self.assertEqual(
             report[0]["name"],
             "Test Product",
@@ -298,7 +404,7 @@ class ReportsTestCase(TestCase):
     # ---------------------------------------------------------
 
     def test_customer_debt_report_calculates_outstanding_balance(self):
-        sale = Sale.objects.create(
+        Sale.objects.create(
             reference="SALE-DEBT-001",
             customer=self.customer,
             payment_type=Sale.PaymentType.CREDIT,
@@ -328,10 +434,12 @@ class ReportsTestCase(TestCase):
             customer["credit_sales_total"],
             Decimal("1000.00"),
         )
+
         self.assertEqual(
             customer["payments_total"],
             Decimal("300.00"),
         )
+
         self.assertEqual(
             customer["outstanding_balance"],
             Decimal("700.00"),
@@ -410,7 +518,7 @@ class ReportsTestCase(TestCase):
     # ---------------------------------------------------------
 
     def test_supplier_balance_report_calculates_outstanding_balance(self):
-        purchase = Purchase.objects.create(
+        Purchase.objects.create(
             reference="PUR-001",
             supplier=self.supplier,
             payment_type=Purchase.PaymentType.CREDIT,
@@ -438,10 +546,12 @@ class ReportsTestCase(TestCase):
             supplier["credit_purchases_total"],
             Decimal("2000.00"),
         )
+
         self.assertEqual(
             supplier["payments_total"],
             Decimal("750.00"),
         )
+
         self.assertEqual(
             supplier["outstanding_balance"],
             Decimal("1250.00"),
