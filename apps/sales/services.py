@@ -19,7 +19,6 @@ def complete_sale(sale_id, user):
     - Validate the sale state and payment rules.
     - Calculate line totals and subtotal.
     - Capture the product's current purchase cost as a cost snapshot.
-    - Calculate the sale item's total cost.
     - Validate the discount.
     - Validate sufficient stock.
     - Reduce product stock.
@@ -97,17 +96,15 @@ def complete_sale(sale_id, user):
 
             unit_cost = product.current_purchase_cost
 
-            cost_total = (
-                item.quantity * unit_cost
-            ).quantize(Decimal("0.01"))
-
             item.line_total = line_total
             item.unit_cost = unit_cost
-            item.cost_total = cost_total
 
             subtotal_amount += line_total
 
-        discount_amount = sale.discount_amount or Decimal("0.00")
+        discount_amount = (
+            sale.discount_amount
+            or Decimal("0.00")
+        )
 
         if discount_amount < Decimal("0.00"):
             raise ValidationError(
@@ -129,7 +126,6 @@ def complete_sale(sale_id, user):
                 update_fields=[
                     "line_total",
                     "unit_cost",
-                    "cost_total",
                 ]
             )
 

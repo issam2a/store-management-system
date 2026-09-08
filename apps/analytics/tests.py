@@ -80,9 +80,7 @@ class ProfitabilityAnalyticsTestCase(TestCase):
             quantity * unit_price
         ).quantize(Decimal("0.01"))
 
-        cost_total = (
-            quantity * unit_cost
-        ).quantize(Decimal("0.01"))
+        
 
         return SaleItem.objects.create(
             sale=sale,
@@ -91,7 +89,7 @@ class ProfitabilityAnalyticsTestCase(TestCase):
             unit_price=unit_price,
             line_total=line_total,
             unit_cost=unit_cost,
-            cost_total=cost_total,
+            
         )
 
     # ---------------------------------------------------------

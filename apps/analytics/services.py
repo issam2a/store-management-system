@@ -55,7 +55,7 @@ def get_profitability_summary(start_date=None, end_date=None):
     sale_items = SaleItem.objects.filter(sale__in=completed_sales).annotate(
         line_cost=ExpressionWrapper(
             F("quantity") * F("unit_cost"),
-            output_field=DecimalField(max_digits=14, decimal_places=3),
+            output_field=DecimalField(max_digits=20, decimal_places=5),
         )
     )
 

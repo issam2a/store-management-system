@@ -174,13 +174,7 @@ class SaleItem(models.Model):
         default=0,
     )
 
-    cost_total = models.DecimalField(
-        max_digits=14,
-        decimal_places=2,
-        validators=[MinValueValidator(0)],
-        default=0,
-    )
-
+    
     class Meta:
         constraints = [
             models.CheckConstraint(
@@ -200,10 +194,7 @@ class SaleItem(models.Model):
                 name="sale_item_unit_cost_gte_0",
             ),
 
-            models.CheckConstraint(
-                condition=models.Q(cost_total__gte=0),
-                name="sale_item_cost_total_gte_0",
-            ),
+            
         ]
 
     def __str__(self):

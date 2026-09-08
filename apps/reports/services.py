@@ -65,10 +65,18 @@ def get_sales_summary():
             sale__status=Sale.Status.COMPLETED,
         )
         .aggregate(
-            total=models.Sum("cost_total"),
+            total=models.Sum(
+                models.ExpressionWrapper(
+                    models.F("quantity") * models.F("unit_cost"),
+                    output_field=models.DecimalField(
+                        max_digits=20,
+                        decimal_places=2,
+                    ),
+                )
+            )
         )["total"]
         or Decimal("0.00")
-    )
+)
 
     total_revenue = (
         sales_summary["total_revenue"]

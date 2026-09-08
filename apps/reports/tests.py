@@ -83,7 +83,7 @@ class ReportsTestCase(TestCase):
             unit_price=Decimal("100.00"),
             line_total=Decimal("100.00"),
             unit_cost=Decimal("50.00"),
-            cost_total=Decimal("50.00"),
+            
         )
 
         Sale.objects.create(
@@ -221,7 +221,7 @@ class ReportsTestCase(TestCase):
             unit_price=Decimal("150.00"),
             line_total=Decimal("600.00"),
             unit_cost=Decimal("50.00"),
-            cost_total=Decimal("200.00"),
+            
         )
 
         SaleItem.objects.create(
@@ -231,7 +231,7 @@ class ReportsTestCase(TestCase):
             unit_price=Decimal("300.00"),
             line_total=Decimal("600.00"),
             unit_cost=Decimal("200.00"),
-            cost_total=Decimal("400.00"),
+            
         )
 
         summary = get_sales_summary()

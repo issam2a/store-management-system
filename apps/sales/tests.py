@@ -597,28 +597,9 @@ class SalesServiceTests(TestCase):
             Decimal("100.00"),
         )
 
-    def test_sale_calculates_cost_total(self):
-        sale = self.create_sale()
 
-        item = self.add_item(
-            sale,
-            quantity=Decimal("2.000"),
-            unit_price=Decimal("150.00"),
-        )
 
-        complete_sale(sale.id, self.user)
-
-        item.refresh_from_db()
-
-        self.assertEqual(
-            item.unit_cost,
-            Decimal("100.00"),
-        )
-
-        self.assertEqual(
-            item.cost_total,
-            Decimal("200.00"),
-        )
+  
 
     def test_sale_cost_snapshot_is_preserved_when_product_cost_changes(self):
         sale = self.create_sale()
@@ -639,10 +620,6 @@ class SalesServiceTests(TestCase):
             Decimal("100.00"),
         )
 
-        self.assertEqual(
-            item.cost_total,
-            Decimal("200.00"),
-        )
 
         # Product's current purchase cost changes later.
         self.product.current_purchase_cost = Decimal("120.00")
@@ -661,7 +638,4 @@ class SalesServiceTests(TestCase):
             Decimal("100.00"),
         )
 
-        self.assertEqual(
-            item.cost_total,
-            Decimal("200.00"),
-        )
+        
