@@ -10,6 +10,7 @@ from apps.transactions.models import TransactionCancellation
 from .models import Sale
 
 
+
 def complete_sale(sale_id, user):
     """
     Complete a draft sale.
@@ -17,6 +18,8 @@ def complete_sale(sale_id, user):
     Business effects:
     - Validate the sale state and payment rules.
     - Calculate line totals and subtotal.
+    - Capture the product's current purchase cost as a cost snapshot.
+    - Calculate the sale item's total cost.
     - Validate the discount.
     - Validate sufficient stock.
     - Reduce product stock.
@@ -71,7 +74,8 @@ def complete_sale(sale_id, user):
 
         subtotal_amount = Decimal("0.00")
 
-        # Calculate totals and validate stock before modifying anything.
+        # Calculate totals, capture cost snapshots,
+        # and validate stock before modifying anything.
         for item in items:
             product = products.get(item.product_id)
 
@@ -91,7 +95,16 @@ def complete_sale(sale_id, user):
                 item.quantity * item.unit_price
             ).quantize(Decimal("0.01"))
 
+            unit_cost = product.current_purchase_cost
+
+            cost_total = (
+                item.quantity * unit_cost
+            ).quantize(Decimal("0.01"))
+
             item.line_total = line_total
+            item.unit_cost = unit_cost
+            item.cost_total = cost_total
+
             subtotal_amount += line_total
 
         discount_amount = sale.discount_amount or Decimal("0.00")
@@ -112,11 +125,18 @@ def complete_sale(sale_id, user):
 
         # Apply item updates and reduce stock.
         for item in items:
-            item.save(update_fields=["line_total"])
+            item.save(
+                update_fields=[
+                    "line_total",
+                    "unit_cost",
+                    "cost_total",
+                ]
+            )
 
             product = products[item.product_id]
 
             product.current_stock -= item.quantity
+
             product.save(
                 update_fields=[
                     "current_stock",
@@ -141,6 +161,7 @@ def complete_sale(sale_id, user):
         )
 
         return sale
+
 
 
 def cancel_sale(sale_id, user, reason):
