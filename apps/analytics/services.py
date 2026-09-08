@@ -221,3 +221,131 @@ def get_slow_moving_products(
     )
 
     return list(products[:limit])
+
+def get_product_profitability(
+    start_date=None,
+    end_date=None,
+    limit=10,
+):
+    """
+    Return product-level gross profitability for completed sales.
+
+    Metrics:
+        quantity_sold:
+            Total quantity sold.
+
+        gross_sales_value:
+            Sum of SaleItem.line_total, representing gross
+            sales value before sale-level discounts.
+
+        cogs:
+            Total cost of goods sold based on historical
+            SaleItem.unit_cost snapshots.
+
+        gross_profit:
+            Gross sales value minus COGS.
+
+        gross_margin:
+            Gross profit divided by gross sales value,
+            expressed as a percentage.
+
+    Optional date filters are applied to the sale completion date.
+
+    Products are ranked by gross profit descending.
+    """
+
+    completed_items = (
+        SaleItem.objects
+        .filter(
+            sale__status=Sale.Status.COMPLETED,
+        )
+    )
+
+    if start_date is not None:
+        completed_items = completed_items.filter(
+            sale__completed_at__date__gte=start_date
+        )
+
+    if end_date is not None:
+        completed_items = completed_items.filter(
+            sale__completed_at__date__lte=end_date
+        )
+
+    items_with_cost = completed_items.annotate(
+        line_cost=ExpressionWrapper(
+            F("quantity") * F("unit_cost"),
+            output_field=DecimalField(
+                max_digits=20,
+                decimal_places=5,
+            ),
+        )
+    )
+
+    products = (
+        items_with_cost
+        .values(
+            "product_id",
+            "product__name",
+        )
+        .annotate(
+            quantity_sold=Sum("quantity"),
+            gross_sales_value=Sum("line_total"),
+            cogs=Sum("line_cost"),
+        )
+        .order_by(
+            "-gross_sales_value",
+            "product__name",
+        )
+    )
+
+    results = []
+
+    for product in products[:limit]:
+        gross_sales_value = (
+            product["gross_sales_value"]
+            or Decimal("0.00")
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP,
+        )
+
+        cogs = (
+            product["cogs"]
+            or Decimal("0.00")
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP,
+        )
+
+        gross_profit = (
+            gross_sales_value - cogs
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP,
+        )
+
+        if gross_sales_value > Decimal("0.00"):
+            gross_margin = (
+                gross_profit
+                / gross_sales_value
+                * Decimal("100")
+            ).quantize(
+                Decimal("0.01"),
+                rounding=ROUND_HALF_UP,
+            )
+        else:
+            gross_margin = None
+
+        results.append(
+            {
+                "product_id": product["product_id"],
+                "product__name": product["product__name"],
+                "quantity_sold": product["quantity_sold"],
+                "gross_sales_value": gross_sales_value,
+                "cogs": cogs,
+                "gross_profit": gross_profit,
+                "gross_margin": gross_margin,
+            }
+        )
+
+    return results

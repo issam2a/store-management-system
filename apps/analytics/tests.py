@@ -11,6 +11,7 @@ from .services import (
     get_profitability_summary,
     get_top_selling_products,
     get_slow_moving_products,
+    get_product_profitability,
 )
 User = get_user_model()
 
@@ -1756,3 +1757,482 @@ class ProfitabilityAnalyticsTestCase(TestCase):
             result[0]["gross_sales_value"],
             Decimal("200.00"),
         )
+
+
+    # ---------------------------------------------------------
+# Product Profitability
+# ---------------------------------------------------------
+
+def test_product_profitability_returns_empty_list_when_no_sales_exist(
+    self,
+):
+    result = get_product_profitability()
+
+    self.assertEqual(result, [])
+
+
+def test_product_profitability_calculates_gross_sales_cogs_and_profit(
+    self,
+):
+    sale = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-001",
+        total_amount=Decimal("1000.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=sale,
+        product=self.product,
+        quantity=Decimal("10.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("1000.00"),
+        unit_cost=Decimal("60.00"),
+    )
+
+    result = get_product_profitability()
+
+    self.assertEqual(len(result), 1)
+
+    product = result[0]
+
+    self.assertEqual(
+        product["product_id"],
+        self.product.id,
+    )
+
+    self.assertEqual(
+        product["product__name"],
+        self.product.name,
+    )
+
+    self.assertEqual(
+        product["quantity_sold"],
+        Decimal("10.00"),
+    )
+
+    self.assertEqual(
+        product["gross_sales_value"],
+        Decimal("1000.00"),
+    )
+
+    self.assertEqual(
+        product["cogs"],
+        Decimal("600.00"),
+    )
+
+    self.assertEqual(
+        product["gross_profit"],
+        Decimal("400.00"),
+    )
+
+    self.assertEqual(
+        product["gross_margin"],
+        Decimal("40.00"),
+    )
+
+
+def test_product_profitability_aggregates_multiple_sales(
+    self,
+):
+    sale_1 = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-002",
+        total_amount=Decimal("500.00"),
+    )
+
+    sale_2 = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-003",
+        total_amount=Decimal("300.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=sale_1,
+        product=self.product,
+        quantity=Decimal("5.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("500.00"),
+        unit_cost=Decimal("50.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=sale_2,
+        product=self.product,
+        quantity=Decimal("3.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("300.00"),
+        unit_cost=Decimal("50.00"),
+    )
+
+    result = get_product_profitability()
+
+    self.assertEqual(len(result), 1)
+
+    self.assertEqual(
+        result[0]["quantity_sold"],
+        Decimal("8.00"),
+    )
+
+    self.assertEqual(
+        result[0]["gross_sales_value"],
+        Decimal("800.00"),
+    )
+
+    self.assertEqual(
+        result[0]["cogs"],
+        Decimal("400.00"),
+    )
+
+    self.assertEqual(
+        result[0]["gross_profit"],
+        Decimal("400.00"),
+    )
+
+    self.assertEqual(
+        result[0]["gross_margin"],
+        Decimal("50.00"),
+    )
+
+
+def test_product_profitability_uses_sale_item_cost_snapshots(
+    self,
+):
+    sale = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-004",
+        total_amount=Decimal("1000.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=sale,
+        product=self.product,
+        quantity=Decimal("10.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("1000.00"),
+        unit_cost=Decimal("70.00"),
+    )
+
+    # Change the current product cost after the sale.
+    self.product.current_purchase_cost = Decimal("120.00")
+    self.product.save(
+        update_fields=[
+            "current_purchase_cost",
+        ]
+    )
+
+    result = get_product_profitability()
+
+    self.assertEqual(
+        result[0]["cogs"],
+        Decimal("700.00"),
+    )
+
+    self.assertEqual(
+        result[0]["gross_profit"],
+        Decimal("300.00"),
+    )
+
+    self.assertEqual(
+        result[0]["gross_margin"],
+        Decimal("30.00"),
+    )
+
+
+def test_product_profitability_excludes_draft_sales(
+    self,
+):
+    completed_sale = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-005",
+        total_amount=Decimal("300.00"),
+    )
+
+    draft_sale = Sale.objects.create(
+        reference="SALE-PRODUCT-PROFIT-006",
+        payment_type=Sale.PaymentType.CASH,
+        status=Sale.Status.DRAFT,
+        subtotal_amount=Decimal("1000.00"),
+        discount_amount=Decimal("0.00"),
+        total_amount=Decimal("1000.00"),
+        created_by=self.user,
+    )
+
+    SaleItem.objects.create(
+        sale=completed_sale,
+        product=self.product,
+        quantity=Decimal("3.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("300.00"),
+        unit_cost=Decimal("50.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=draft_sale,
+        product=self.product,
+        quantity=Decimal("20.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("2000.00"),
+        unit_cost=Decimal("50.00"),
+    )
+
+    result = get_product_profitability()
+
+    self.assertEqual(len(result), 1)
+
+    self.assertEqual(
+        result[0]["quantity_sold"],
+        Decimal("3.00"),
+    )
+
+
+def test_product_profitability_excludes_cancelled_sales(
+    self,
+):
+    completed_sale = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-007",
+        total_amount=Decimal("300.00"),
+    )
+
+    cancelled_sale = Sale.objects.create(
+        reference="SALE-PRODUCT-PROFIT-008",
+        payment_type=Sale.PaymentType.CASH,
+        status=Sale.Status.CANCELLED,
+        subtotal_amount=Decimal("1000.00"),
+        discount_amount=Decimal("0.00"),
+        total_amount=Decimal("1000.00"),
+        created_by=self.user,
+    )
+
+    SaleItem.objects.create(
+        sale=completed_sale,
+        product=self.product,
+        quantity=Decimal("3.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("300.00"),
+        unit_cost=Decimal("50.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=cancelled_sale,
+        product=self.product,
+        quantity=Decimal("20.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("2000.00"),
+        unit_cost=Decimal("50.00"),
+    )
+
+    result = get_product_profitability()
+
+    self.assertEqual(len(result), 1)
+
+    self.assertEqual(
+        result[0]["quantity_sold"],
+        Decimal("3.00"),
+    )
+
+
+def test_product_profitability_handles_loss_making_product(
+    self,
+):
+    sale = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-009",
+        total_amount=Decimal("500.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=sale,
+        product=self.product,
+        quantity=Decimal("5.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("500.00"),
+        unit_cost=Decimal("120.00"),
+    )
+
+    result = get_product_profitability()
+
+    self.assertEqual(
+        result[0]["gross_sales_value"],
+        Decimal("500.00"),
+    )
+
+    self.assertEqual(
+        result[0]["cogs"],
+        Decimal("600.00"),
+    )
+
+    self.assertEqual(
+        result[0]["gross_profit"],
+        Decimal("-100.00"),
+    )
+
+    self.assertEqual(
+        result[0]["gross_margin"],
+        Decimal("-20.00"),
+    )
+
+
+def test_product_profitability_respects_limit(
+    self,
+):
+    product_2 = Product.objects.create(
+        name="Product 2",
+        category=self.category,
+        unit=self.unit,
+        current_purchase_cost=Decimal("30.00"),
+        current_sell_price=Decimal("60.00"),
+        minimum_stock=Decimal("10.00"),
+        current_stock=Decimal("20.00"),
+    )
+
+    product_3 = Product.objects.create(
+        name="Product 3",
+        category=self.category,
+        unit=self.unit,
+        current_purchase_cost=Decimal("20.00"),
+        current_sell_price=Decimal("40.00"),
+        minimum_stock=Decimal("10.00"),
+        current_stock=Decimal("20.00"),
+    )
+
+    sale = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-010",
+        total_amount=Decimal("600.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=sale,
+        product=self.product,
+        quantity=Decimal("10.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("1000.00"),
+        unit_cost=Decimal("50.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=sale,
+        product=product_2,
+        quantity=Decimal("5.00"),
+        unit_price=Decimal("60.00"),
+        line_total=Decimal("300.00"),
+        unit_cost=Decimal("30.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=sale,
+        product=product_3,
+        quantity=Decimal("2.00"),
+        unit_price=Decimal("40.00"),
+        line_total=Decimal("80.00"),
+        unit_cost=Decimal("20.00"),
+    )
+
+    result = get_product_profitability(limit=2)
+
+    self.assertEqual(len(result), 2)
+
+    self.assertEqual(
+        result[0]["product_id"],
+        self.product.id,
+    )
+
+    self.assertEqual(
+        result[1]["product_id"],
+        product_2.id,
+    )
+
+
+def test_product_profitability_filters_by_date_range(
+    self,
+):
+    sale_before = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-011",
+        total_amount=Decimal("300.00"),
+        completed_at=datetime(
+            2026,
+            8,
+            31,
+            12,
+            0,
+            tzinfo=timezone.utc,
+        ),
+    )
+
+    sale_inside = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-012",
+        total_amount=Decimal("500.00"),
+        completed_at=datetime(
+            2026,
+            9,
+            5,
+            12,
+            0,
+            tzinfo=timezone.utc,
+        ),
+    )
+
+    sale_after = self.create_completed_sale(
+        reference="SALE-PRODUCT-PROFIT-013",
+        total_amount=Decimal("700.00"),
+        completed_at=datetime(
+            2026,
+            9,
+            15,
+            12,
+            0,
+            tzinfo=timezone.utc,
+        ),
+    )
+
+    SaleItem.objects.create(
+        sale=sale_before,
+        product=self.product,
+        quantity=Decimal("3.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("300.00"),
+        unit_cost=Decimal("50.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=sale_inside,
+        product=self.product,
+        quantity=Decimal("5.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("500.00"),
+        unit_cost=Decimal("50.00"),
+    )
+
+    SaleItem.objects.create(
+        sale=sale_after,
+        product=self.product,
+        quantity=Decimal("7.00"),
+        unit_price=Decimal("100.00"),
+        line_total=Decimal("700.00"),
+        unit_cost=Decimal("50.00"),
+    )
+
+    result = get_product_profitability(
+        start_date=date(2026, 9, 1),
+        end_date=date(2026, 9, 10),
+    )
+
+    self.assertEqual(len(result), 1)
+
+    self.assertEqual(
+        result[0]["quantity_sold"],
+        Decimal("5.00"),
+    )
+
+    self.assertEqual(
+        result[0]["gross_sales_value"],
+        Decimal("500.00"),
+    )
+
+    self.assertEqual(
+        result[0]["cogs"],
+        Decimal("250.00"),
+    )
+
+    self.assertEqual(
+        result[0]["gross_profit"],
+        Decimal("250.00"),
+    )
+
+    self.assertEqual(
+        result[0]["gross_margin"],
+        Decimal("50.00"),
+    )
