@@ -10,6 +10,7 @@ from apps.sales.models import Sale, SaleItem
 from .services import (
     get_profitability_summary,
     get_top_selling_products,
+    get_slow_moving_products,
 )
 User = get_user_model()
 
@@ -1206,4 +1207,552 @@ class ProfitabilityAnalyticsTestCase(TestCase):
         self.assertEqual(
             result[0]["gross_sales_value"],
             Decimal("500.00"),
+        )
+
+    # ---------------------------------------------------------
+    # Slow-Moving Products
+    # ---------------------------------------------------------
+
+    def test_slow_moving_products_returns_empty_list_when_no_sales_exist(
+        self,
+    ):
+        result = get_slow_moving_products()
+
+        self.assertEqual(result, [])
+
+
+    def test_slow_moving_products_ranks_products_by_lowest_quantity_sold(
+        self,
+    ):
+        product_2 = Product.objects.create(
+            name="Product 2",
+            category=self.category,
+            unit=self.unit,
+            current_purchase_cost=Decimal("30.00"),
+            current_sell_price=Decimal("60.00"),
+            minimum_stock=Decimal("10.00"),
+            current_stock=Decimal("20.00"),
+        )
+
+        product_3 = Product.objects.create(
+            name="Product 3",
+            category=self.category,
+            unit=self.unit,
+            current_purchase_cost=Decimal("20.00"),
+            current_sell_price=Decimal("40.00"),
+            minimum_stock=Decimal("10.00"),
+            current_stock=Decimal("20.00"),
+        )
+
+        sale = self.create_completed_sale(
+            reference="SALE-SLOW-001",
+            total_amount=Decimal("1000.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=self.product,
+            quantity=Decimal("10.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("1000.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=product_2,
+            quantity=Decimal("2.00"),
+            unit_price=Decimal("60.00"),
+            line_total=Decimal("120.00"),
+            unit_cost=Decimal("30.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=product_3,
+            quantity=Decimal("5.00"),
+            unit_price=Decimal("40.00"),
+            line_total=Decimal("200.00"),
+            unit_cost=Decimal("20.00"),
+        )
+
+        result = get_slow_moving_products()
+
+        self.assertEqual(len(result), 3)
+
+        self.assertEqual(
+            result[0]["product_id"],
+            product_2.id,
+        )
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("2.00"),
+        )
+
+        self.assertEqual(
+            result[1]["product_id"],
+            product_3.id,
+        )
+
+        self.assertEqual(
+            result[1]["quantity_sold"],
+            Decimal("5.00"),
+        )
+
+        self.assertEqual(
+            result[2]["product_id"],
+            self.product.id,
+        )
+
+        self.assertEqual(
+            result[2]["quantity_sold"],
+            Decimal("10.00"),
+        )
+
+
+    def test_slow_moving_products_sums_quantity_across_multiple_sales(
+        self,
+    ):
+        sale_1 = self.create_completed_sale(
+            reference="SALE-SLOW-002",
+            total_amount=Decimal("100.00"),
+        )
+
+        sale_2 = self.create_completed_sale(
+            reference="SALE-SLOW-003",
+            total_amount=Decimal("200.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_1,
+            product=self.product,
+            quantity=Decimal("1.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_2,
+            product=self.product,
+            quantity=Decimal("2.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("200.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_slow_moving_products()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("3.00"),
+        )
+
+
+    def test_slow_moving_products_counts_distinct_sales(
+        self,
+    ):
+        sale_1 = self.create_completed_sale(
+            reference="SALE-SLOW-004",
+            total_amount=Decimal("300.00"),
+        )
+
+        sale_2 = self.create_completed_sale(
+            reference="SALE-SLOW-005",
+            total_amount=Decimal("400.00"),
+        )
+
+        # Same product appears twice in the same sale.
+        SaleItem.objects.create(
+            sale=sale_1,
+            product=self.product,
+            quantity=Decimal("1.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_1,
+            product=self.product,
+            quantity=Decimal("1.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_2,
+            product=self.product,
+            quantity=Decimal("2.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("200.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_slow_moving_products()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("4.00"),
+        )
+
+        self.assertEqual(
+            result[0]["sales_count"],
+            2,
+        )
+
+
+    def test_slow_moving_products_excludes_draft_sales(self):
+        completed_sale = self.create_completed_sale(
+            reference="SALE-SLOW-006",
+            total_amount=Decimal("100.00"),
+        )
+
+        draft_sale = Sale.objects.create(
+            reference="SALE-SLOW-007",
+            payment_type=Sale.PaymentType.CASH,
+            status=Sale.Status.DRAFT,
+            subtotal_amount=Decimal("1000.00"),
+            discount_amount=Decimal("0.00"),
+            total_amount=Decimal("1000.00"),
+            created_by=self.user,
+        )
+
+        SaleItem.objects.create(
+            sale=completed_sale,
+            product=self.product,
+            quantity=Decimal("1.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=draft_sale,
+            product=self.product,
+            quantity=Decimal("20.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("2000.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_slow_moving_products()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("1.00"),
+        )
+
+
+    def test_slow_moving_products_excludes_cancelled_sales(self):
+        completed_sale = self.create_completed_sale(
+            reference="SALE-SLOW-008",
+            total_amount=Decimal("100.00"),
+        )
+
+        cancelled_sale = Sale.objects.create(
+            reference="SALE-SLOW-009",
+            payment_type=Sale.PaymentType.CASH,
+            status=Sale.Status.CANCELLED,
+            subtotal_amount=Decimal("1000.00"),
+            discount_amount=Decimal("0.00"),
+            total_amount=Decimal("1000.00"),
+            created_by=self.user,
+        )
+
+        SaleItem.objects.create(
+            sale=completed_sale,
+            product=self.product,
+            quantity=Decimal("1.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=cancelled_sale,
+            product=self.product,
+            quantity=Decimal("20.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("2000.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_slow_moving_products()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("1.00"),
+        )
+
+
+    def test_slow_moving_products_respects_limit(self):
+        products = []
+
+        for index in range(3):
+            product = Product.objects.create(
+                name=f"Slow Product {index}",
+                category=self.category,
+                unit=self.unit,
+                current_purchase_cost=Decimal("20.00"),
+                current_sell_price=Decimal("40.00"),
+                minimum_stock=Decimal("10.00"),
+                current_stock=Decimal("20.00"),
+            )
+
+            products.append(product)
+
+        sale = self.create_completed_sale(
+            reference="SALE-SLOW-010",
+            total_amount=Decimal("1000.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=products[0],
+            quantity=Decimal("10.00"),
+            unit_price=Decimal("40.00"),
+            line_total=Decimal("400.00"),
+            unit_cost=Decimal("20.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=products[1],
+            quantity=Decimal("2.00"),
+            unit_price=Decimal("40.00"),
+            line_total=Decimal("80.00"),
+            unit_cost=Decimal("20.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=products[2],
+            quantity=Decimal("5.00"),
+            unit_price=Decimal("40.00"),
+            line_total=Decimal("200.00"),
+            unit_cost=Decimal("20.00"),
+        )
+
+        result = get_slow_moving_products(limit=2)
+
+        self.assertEqual(len(result), 2)
+
+        self.assertEqual(
+            result[0]["product_id"],
+            products[1].id,
+        )
+
+        self.assertEqual(
+            result[1]["product_id"],
+            products[2].id,
+        )
+
+
+    def test_slow_moving_products_filters_by_start_date(self):
+        sale_before = self.create_completed_sale(
+            reference="SALE-SLOW-011",
+            total_amount=Decimal("300.00"),
+            completed_at=datetime(
+                2026,
+                8,
+                31,
+                12,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        sale_on_date = self.create_completed_sale(
+            reference="SALE-SLOW-012",
+            total_amount=Decimal("500.00"),
+            completed_at=datetime(
+                2026,
+                9,
+                1,
+                12,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_before,
+            product=self.product,
+            quantity=Decimal("10.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("1000.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_on_date,
+            product=self.product,
+            quantity=Decimal("2.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("200.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_slow_moving_products(
+            start_date=date(2026, 9, 1),
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("2.00"),
+        )
+
+
+    def test_slow_moving_products_filters_by_end_date(self):
+        sale_on_date = self.create_completed_sale(
+            reference="SALE-SLOW-013",
+            total_amount=Decimal("500.00"),
+            completed_at=datetime(
+                2026,
+                9,
+                1,
+                12,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        sale_after = self.create_completed_sale(
+            reference="SALE-SLOW-014",
+            total_amount=Decimal("700.00"),
+            completed_at=datetime(
+                2026,
+                9,
+                2,
+                12,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_on_date,
+            product=self.product,
+            quantity=Decimal("2.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("200.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_after,
+            product=self.product,
+            quantity=Decimal("7.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("700.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_slow_moving_products(
+            end_date=date(2026, 9, 1),
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("2.00"),
+        )
+
+
+    def test_slow_moving_products_filters_by_date_range(self):
+        sale_before = self.create_completed_sale(
+            reference="SALE-SLOW-015",
+            total_amount=Decimal("300.00"),
+            completed_at=datetime(
+                2026,
+                8,
+                31,
+                12,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        sale_inside = self.create_completed_sale(
+            reference="SALE-SLOW-016",
+            total_amount=Decimal("500.00"),
+            completed_at=datetime(
+                2026,
+                9,
+                5,
+                12,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        sale_after = self.create_completed_sale(
+            reference="SALE-SLOW-017",
+            total_amount=Decimal("700.00"),
+            completed_at=datetime(
+                2026,
+                9,
+                15,
+                12,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_before,
+            product=self.product,
+            quantity=Decimal("10.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("1000.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_inside,
+            product=self.product,
+            quantity=Decimal("2.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("200.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_after,
+            product=self.product,
+            quantity=Decimal("7.00"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("700.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_slow_moving_products(
+            start_date=date(2026, 9, 1),
+            end_date=date(2026, 9, 10),
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("2.00"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("200.00"),
         )

@@ -148,3 +148,76 @@ def get_top_selling_products(
     )
 
     return list(products[:limit])
+
+def get_slow_moving_products(
+    start_date=None,
+    end_date=None,
+    limit=10,
+):
+    """
+    Return the slowest-selling products from completed sales.
+
+    Products are ranked by total quantity sold ascending.
+
+    Metrics:
+        quantity_sold:
+            Total quantity sold during the selected period.
+
+        sales_count:
+            Number of completed sales containing the product.
+
+        gross_sales_value:
+            Sum of SaleItem.line_total, representing gross
+            sales value before any sale-level discount.
+
+    Optional date filters are applied to the sale completion date.
+
+    Products with no sales are excluded.
+
+    Args:
+        start_date: Optional inclusive start date.
+        end_date: Optional inclusive end date.
+        limit: Maximum number of products to return.
+
+    Returns:
+        A list of dictionaries ordered by quantity sold ascending.
+    """
+
+    completed_items = (
+        SaleItem.objects
+        .filter(
+            sale__status=Sale.Status.COMPLETED,
+        )
+    )
+
+    if start_date is not None:
+        completed_items = completed_items.filter(
+            sale__completed_at__date__gte=start_date
+        )
+
+    if end_date is not None:
+        completed_items = completed_items.filter(
+            sale__completed_at__date__lte=end_date
+        )
+
+    products = (
+        completed_items
+        .values(
+            "product_id",
+            "product__name",
+        )
+        .annotate(
+            quantity_sold=Sum("quantity"),
+            sales_count=Count(
+                "sale_id",
+                distinct=True,
+            ),
+            gross_sales_value=Sum("line_total"),
+        )
+        .order_by(
+            "quantity_sold",
+            "product__name",
+        )
+    )
+
+    return list(products[:limit])
