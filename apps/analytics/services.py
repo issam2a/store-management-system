@@ -18,6 +18,9 @@ from django.utils import timezone as django_timezone
 
 from apps.sales.models import Sale, SaleItem
 from apps.products.models import Product
+
+from apps.payments.models import SupplierPayment
+from apps.purchases.models import Purchase
 TWO_PLACES = Decimal("0.01")
 
 
@@ -716,6 +719,148 @@ def get_inventory_performance(
         item["product__name"],
         )
     )
+
+    return results[:limit]
+
+def get_supplier_analysis(
+    start_date=None,
+    end_date=None,
+    limit=10,
+):
+    """
+    Return supplier-level purchasing performance.
+
+    Metrics:
+
+        purchase_count:
+            Number of completed purchases from the supplier.
+
+        total_purchase_value:
+            Total value of completed purchases.
+
+        paid_amount:
+            Total supplier payments recorded for the supplier.
+
+        outstanding_balance:
+            Current outstanding supplier balance calculated as:
+
+                completed purchases - supplier payments
+
+    Date filters are applied to completed purchase activity using
+    the purchase completion date and the store's fixed timezone.
+
+    Supplier payments are not date-filtered because paid_amount and
+    outstanding_balance represent the supplier's current financial
+    position.
+
+    Draft and cancelled purchases are excluded.
+
+    Suppliers are ranked by total purchase value descending,
+    then by supplier name.
+
+    Suppliers with no completed purchases are excluded.
+    """
+
+  
+
+    store_timezone = django_timezone.get_default_timezone()
+
+    start_dt, end_dt = _date_range_bounds(
+        start_date,
+        end_date,
+        store_timezone,
+    )
+
+    completed_purchases = Purchase.objects.filter(
+        status=Purchase.Status.COMPLETED,
+    )
+
+    if start_dt is not None:
+        completed_purchases = completed_purchases.filter(
+            completed_at__gte=start_dt,
+        )
+
+    if end_dt is not None:
+        completed_purchases = completed_purchases.filter(
+            completed_at__lt=end_dt,
+        )
+
+    purchase_data = (
+        completed_purchases
+        .values(
+            "supplier_id",
+            "supplier__name",
+        )
+        .annotate(
+            purchase_count=Count("id"),
+            total_purchase_value=Coalesce(
+                Sum("total_amount"),
+                Decimal("0.00"),
+            ),
+        )
+        .order_by(
+            "-total_purchase_value",
+            "supplier__name",
+        )
+    )
+
+    payment_data = (
+        SupplierPayment.objects
+        .values("supplier_id")
+        .annotate(
+            paid_amount=Coalesce(
+                Sum("amount"),
+                Decimal("0.00"),
+            ),
+        )
+    )
+
+    payments_by_supplier = {
+        row["supplier_id"]: row["paid_amount"]
+        for row in payment_data
+    }
+
+    results = []
+
+    for supplier in purchase_data:
+        supplier_id = supplier["supplier_id"]
+
+        total_purchase_value = (
+            supplier["total_purchase_value"]
+            or Decimal("0.00")
+        ).quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        paid_amount = (
+            payments_by_supplier.get(
+                supplier_id,
+                Decimal("0.00"),
+            )
+            or Decimal("0.00")
+        ).quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        outstanding_balance = (
+            total_purchase_value - paid_amount
+        ).quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        results.append(
+            {
+                "supplier_id": supplier_id,
+                "supplier__name": supplier["supplier__name"],
+                "purchase_count": supplier["purchase_count"],
+                "total_purchase_value": total_purchase_value,
+                "paid_amount": paid_amount,
+                "outstanding_balance": outstanding_balance,
+            }
+        )
 
     return results[:limit]
 

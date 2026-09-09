@@ -15,7 +15,12 @@ from .services import (
     get_sales_trend,
     get_category_profitability,
     get_inventory_performance,
+    get_supplier_analysis,
 )
+
+from apps.payments.models import SupplierPayment
+from apps.purchases.models import Purchase, PurchaseItem
+from apps.suppliers.models import Supplier
 User = get_user_model()
 
 class ProfitabilityAnalyticsTestCase(TestCase):
@@ -3742,4 +3747,324 @@ class ProfitabilityAnalyticsTestCase(TestCase):
         self.assertEqual(
             result[0]["gross_sales_value"],
             Decimal("100.00"),
+        )
+
+
+    def test_supplier_analysis_aggregates_completed_purchases_and_payments(self):
+        """
+        Supplier analysis should aggregate completed purchases and
+        supplier payments and calculate the current outstanding balance.
+        """
+
+        supplier = Supplier.objects.create(
+            name="Test Supplier",
+        )
+
+        purchase = Purchase.objects.create(
+            reference="SUPPLIER-001",
+            supplier=supplier,
+            payment_type=Purchase.PaymentType.CREDIT,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("1000.00"),
+            created_by=self.user,
+            completed_at=django_timezone.now(),
+            completed_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=purchase,
+            product=self.product,
+            quantity=Decimal("10.000"),
+            unit_cost=Decimal("100.00"),
+            line_total=Decimal("1000.00"),
+        )
+
+        SupplierPayment.objects.create(
+            reference="SUPPLIER-PAYMENT-001",
+            supplier=supplier,
+            amount=Decimal("400.00"),
+            payment_method="Cash",
+            payment_date=date(2026, 1, 15),
+            recorded_by=self.user,
+        )
+
+        result = get_supplier_analysis()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["supplier_id"],
+            supplier.id,
+        )
+
+        self.assertEqual(
+            result[0]["supplier__name"],
+            "Test Supplier",
+        )
+
+        self.assertEqual(
+            result[0]["purchase_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["total_purchase_value"],
+            Decimal("1000.00"),
+        )
+
+        self.assertEqual(
+            result[0]["paid_amount"],
+            Decimal("400.00"),
+        )
+
+        self.assertEqual(
+            result[0]["outstanding_balance"],
+            Decimal("600.00"),
+    )
+
+    def test_supplier_analysis_excludes_draft_and_cancelled_purchases(self):
+        """
+        Draft and cancelled purchases must not contribute to supplier
+        purchasing activity or outstanding balances.
+        """
+
+        supplier = Supplier.objects.create(
+            name="Test Supplier",
+        )
+
+        draft_purchase = Purchase.objects.create(
+            reference="SUPPLIER-DRAFT",
+            supplier=supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.DRAFT,
+            total_amount=Decimal("500.00"),
+            created_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=draft_purchase,
+            product=self.product,
+            quantity=Decimal("5.000"),
+            unit_cost=Decimal("100.00"),
+            line_total=Decimal("500.00"),
+        )
+
+        cancelled_purchase = Purchase.objects.create(
+            reference="SUPPLIER-CANCELLED",
+            supplier=supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.CANCELLED,
+            total_amount=Decimal("700.00"),
+            created_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=cancelled_purchase,
+            product=self.product,
+            quantity=Decimal("7.000"),
+            unit_cost=Decimal("100.00"),
+            line_total=Decimal("700.00"),
+        )
+
+        result = get_supplier_analysis()
+
+        self.assertEqual(result, [])
+
+
+    def test_supplier_analysis_aggregates_multiple_purchases(self):
+        """
+        Multiple completed purchases from the same supplier should be
+        aggregated into one supplier result.
+        """
+
+        supplier = Supplier.objects.create(
+            name="Test Supplier",
+        )
+
+        first_purchase = Purchase.objects.create(
+            reference="SUPPLIER-MULTI-001",
+            supplier=supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("300.00"),
+            created_by=self.user,
+            completed_at=django_timezone.now(),
+            completed_by=self.user,
+        )
+
+        second_purchase = Purchase.objects.create(
+            reference="SUPPLIER-MULTI-002",
+            supplier=supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("700.00"),
+            created_by=self.user,
+            completed_at=django_timezone.now(),
+            completed_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=first_purchase,
+            product=self.product,
+            quantity=Decimal("3.000"),
+            unit_cost=Decimal("100.00"),
+            line_total=Decimal("300.00"),
+        )
+
+        PurchaseItem.objects.create(
+            purchase=second_purchase,
+            product=self.product,
+            quantity=Decimal("7.000"),
+            unit_cost=Decimal("100.00"),
+            line_total=Decimal("700.00"),
+        )
+
+        result = get_supplier_analysis()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["purchase_count"],
+            2,
+        )
+
+        self.assertEqual(
+            result[0]["total_purchase_value"],
+            Decimal("1000.00"),
+        )
+
+
+    def test_supplier_analysis_limit_applies_after_purchase_value_ranking(self):
+        """
+        The limit must be applied after suppliers are ranked by total
+        purchase value.
+        """
+
+        supplier_a = Supplier.objects.create(
+            name="High Purchase Supplier",
+        )
+
+        supplier_b = Supplier.objects.create(
+            name="Low Purchase Supplier",
+        )
+
+        purchase_a = Purchase.objects.create(
+            reference="SUPPLIER-RANK-001",
+            supplier=supplier_a,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("2000.00"),
+            created_by=self.user,
+            completed_at=django_timezone.now(),
+            completed_by=self.user,
+        )
+
+        purchase_b = Purchase.objects.create(
+            reference="SUPPLIER-RANK-002",
+            supplier=supplier_b,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("500.00"),
+            created_by=self.user,
+            completed_at=django_timezone.now(),
+            completed_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=purchase_a,
+            product=self.product,
+            quantity=Decimal("20.000"),
+            unit_cost=Decimal("100.00"),
+            line_total=Decimal("2000.00"),
+        )
+
+        PurchaseItem.objects.create(
+            purchase=purchase_b,
+            product=self.product,
+            quantity=Decimal("5.000"),
+            unit_cost=Decimal("100.00"),
+            line_total=Decimal("500.00"),
+        )
+
+        result = get_supplier_analysis(limit=1)
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["supplier__name"],
+            "High Purchase Supplier",
+        )
+
+        self.assertEqual(
+            result[0]["total_purchase_value"],
+            Decimal("2000.00"),
+        )
+
+
+    def test_supplier_analysis_date_range_filters_completed_purchases(self):
+        """
+        Date filtering should affect completed purchase activity.
+        """
+
+        supplier = Supplier.objects.create(
+            name="Test Supplier",
+        )
+
+        first_purchase = Purchase.objects.create(
+            reference="SUPPLIER-DATE-001",
+            supplier=supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("300.00"),
+            created_by=self.user,
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 1, 10, 12, 0),
+            ),
+            completed_by=self.user,
+        )
+
+        second_purchase = Purchase.objects.create(
+            reference="SUPPLIER-DATE-002",
+            supplier=supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("700.00"),
+            created_by=self.user,
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 2, 10, 12, 0),
+            ),
+            completed_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=first_purchase,
+            product=self.product,
+            quantity=Decimal("3.000"),
+            unit_cost=Decimal("100.00"),
+            line_total=Decimal("300.00"),
+        )
+
+        PurchaseItem.objects.create(
+            purchase=second_purchase,
+            product=self.product,
+            quantity=Decimal("7.000"),
+            unit_cost=Decimal("100.00"),
+            line_total=Decimal("700.00"),
+        )
+
+        result = get_supplier_analysis(
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 1, 31),
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["purchase_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["total_purchase_value"],
+            Decimal("300.00"),
         )
