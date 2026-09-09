@@ -17,7 +17,7 @@ from django.db.models.functions import (
 from django.utils import timezone as django_timezone
 
 from apps.sales.models import Sale, SaleItem
-
+from apps.products.models import Product
 TWO_PLACES = Decimal("0.01")
 
 
@@ -569,7 +569,155 @@ def get_category_profitability(
 
     return results
 
+def get_inventory_performance(
+    start_date=None,
+    end_date=None,
+    limit=10,
+):
+    """
+    Return product-level inventory performance.
 
+    Metrics:
+        current_stock:
+            Current operational inventory quantity.
+
+        minimum_stock:
+            Configured minimum stock level.
+
+        quantity_sold:
+            Total quantity sold during the selected period.
+
+        sales_count:
+            Number of distinct completed sales containing the product.
+
+        gross_sales_value:
+            Gross sales value from completed sale items.
+
+        stock_status:
+            OUT_OF_STOCK when current stock is zero.
+            LOW_STOCK when current stock is below minimum stock.
+            NORMAL otherwise.
+
+    Optional date filters are applied to the sale completion date,
+    using the store's fixed timezone and a half-open date interval.
+
+    All active and inactive products are included, including products
+    with no completed sales.
+
+    Products are ranked by quantity sold descending, then by
+    product name.
+
+    Args:
+        start_date: Optional inclusive start date.
+        end_date: Optional inclusive end date.
+        limit: Maximum number of products to return.
+
+    Returns:
+        A list of dictionaries ordered by inventory activity.
+    """
+
+    store_timezone = django_timezone.get_default_timezone()
+
+    start_dt, end_dt = _date_range_bounds(
+        start_date,
+        end_date,
+        store_timezone,
+    )
+
+    completed_items = SaleItem.objects.filter(
+        sale__status=Sale.Status.COMPLETED,
+    )
+
+    if start_dt is not None:
+        completed_items = completed_items.filter(
+            sale__completed_at__gte=start_dt,
+        )
+
+    if end_dt is not None:
+        completed_items = completed_items.filter(
+            sale__completed_at__lt=end_dt,
+        )
+
+    sales_by_product = (
+        completed_items
+        .values("product_id")
+        .annotate(
+            quantity_sold=Coalesce(
+                Sum("quantity"),
+                Decimal("0.000"),
+            ),
+            sales_count=Count(
+                "sale_id",
+                distinct=True,
+            ),
+            gross_sales_value=Coalesce(
+                Sum("line_total"),
+                Decimal("0.00"),
+            ),
+        )
+    )
+
+    sales_by_product = {
+        row["product_id"]: row
+        for row in sales_by_product
+    }
+
+    products = Product.objects.all()
+
+    results = []
+
+    for product in products:
+        sales = sales_by_product.get(product.id)
+
+        quantity_sold = (
+            sales["quantity_sold"]
+            if sales is not None
+            else Decimal("0.000")
+        )
+
+        sales_count = (
+            sales["sales_count"]
+            if sales is not None
+            else 0
+        )
+
+        gross_sales_value = (
+            sales["gross_sales_value"]
+            if sales is not None
+            else Decimal("0.00")
+        ).quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        if product.current_stock <= Decimal("0.000"):
+            stock_status = "OUT_OF_STOCK"
+        elif product.current_stock < product.minimum_stock:
+            stock_status = "LOW_STOCK"
+        else:
+            stock_status = "NORMAL"
+
+        results.append(
+            {
+                "product_id": product.id,
+                "product__name": product.name,
+                "current_stock": product.current_stock,
+                "minimum_stock": product.minimum_stock,
+                "quantity_sold": quantity_sold,
+                "sales_count": sales_count,
+                "gross_sales_value": gross_sales_value,
+                "stock_status": stock_status,
+            }
+        )
+
+    results.sort(
+    key=lambda item: (
+        -item["quantity_sold"],
+        item["product__name"],
+        )
+    )
+
+    return results[:limit]
 
 def get_sales_trend(
     start_date=None,

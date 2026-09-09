@@ -14,6 +14,7 @@ from .services import (
     get_product_profitability,
     get_sales_trend,
     get_category_profitability,
+    get_inventory_performance,
 )
 User = get_user_model()
 
@@ -3488,4 +3489,257 @@ class ProfitabilityAnalyticsTestCase(TestCase):
             Decimal("50.00"),
         )
 
-    
+    def test_inventory_performance_returns_current_stock_and_sales_activity(self):
+        """
+        Inventory performance should combine current inventory state
+        with completed-sale activity.
+        """
+
+        sale = self.create_completed_sale(
+            reference="INVENTORY-001",
+            total_amount=Decimal("300.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=self.product,
+            quantity=Decimal("3.000"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("300.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_inventory_performance()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["product_id"],
+            self.product.id,
+        )
+
+        self.assertEqual(
+            result[0]["current_stock"],
+            Decimal("20.000"),
+        )
+
+        self.assertEqual(
+            result[0]["minimum_stock"],
+            Decimal("10.000"),
+        )
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("3.000"),
+        )
+
+        self.assertEqual(
+            result[0]["sales_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("300.00"),
+        )
+
+        self.assertEqual(
+            result[0]["stock_status"],
+            "NORMAL",
+        )
+
+
+    def test_inventory_performance_includes_products_with_no_sales(self):
+        """
+        Products with no completed sales must still appear because
+        inventory performance evaluates current inventory state.
+        """
+
+        result = get_inventory_performance()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("0.000"),
+        )
+
+        self.assertEqual(
+            result[0]["sales_count"],
+            0,
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("0.00"),
+        )
+
+
+    def test_inventory_performance_identifies_low_stock(self):
+        """
+        A product whose current stock is below its minimum stock level
+        must be classified as LOW_STOCK.
+        """
+
+        self.product.current_stock = Decimal("5.000")
+        self.product.minimum_stock = Decimal("10.000")
+        self.product.save(
+            update_fields=[
+                "current_stock",
+                "minimum_stock",
+            ]
+        )
+
+        result = get_inventory_performance()
+
+        self.assertEqual(
+            result[0]["stock_status"],
+            "LOW_STOCK",
+        )
+
+
+    def test_inventory_performance_identifies_out_of_stock(self):
+        """
+        A product with zero current stock must be classified as
+        OUT_OF_STOCK.
+        """
+
+        self.product.current_stock = Decimal("0.000")
+        self.product.save(
+            update_fields=["current_stock"]
+        )
+
+        result = get_inventory_performance()
+
+        self.assertEqual(
+            result[0]["stock_status"],
+            "OUT_OF_STOCK",
+        )
+
+
+    def test_inventory_performance_excludes_draft_and_cancelled_sales(self):
+        """
+        Draft and cancelled sales must not contribute to inventory
+        performance metrics.
+        """
+
+        draft_sale = Sale.objects.create(
+            reference="INVENTORY-DRAFT",
+            payment_type=Sale.PaymentType.CASH,
+            status=Sale.Status.DRAFT,
+            subtotal_amount=Decimal("100.00"),
+            discount_amount=Decimal("0.00"),
+            total_amount=Decimal("100.00"),
+            created_by=self.user,
+        )
+
+        SaleItem.objects.create(
+            sale=draft_sale,
+            product=self.product,
+            quantity=Decimal("5.000"),
+            unit_price=Decimal("20.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("10.00"),
+        )
+
+        cancelled_sale = Sale.objects.create(
+            reference="INVENTORY-CANCELLED",
+            payment_type=Sale.PaymentType.CASH,
+            status=Sale.Status.CANCELLED,
+            subtotal_amount=Decimal("100.00"),
+            discount_amount=Decimal("0.00"),
+            total_amount=Decimal("100.00"),
+            created_by=self.user,
+        )
+
+        SaleItem.objects.create(
+            sale=cancelled_sale,
+            product=self.product,
+            quantity=Decimal("5.000"),
+            unit_price=Decimal("20.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("10.00"),
+        )
+
+        result = get_inventory_performance()
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("0.000"),
+        )
+
+        self.assertEqual(
+            result[0]["sales_count"],
+            0,
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("0.00"),
+        )
+
+
+    def test_inventory_performance_date_range_filters_sales(self):
+        """
+        Date filtering must affect sales activity while current stock
+        remains the current operational stock value.
+        """
+
+        first_sale = self.create_completed_sale(
+            reference="INVENTORY-DATE-001",
+            total_amount=Decimal("100.00"),
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 1, 10, 12, 0),
+            ),
+        )
+
+        SaleItem.objects.create(
+            sale=first_sale,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("50.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        second_sale = self.create_completed_sale(
+            reference="INVENTORY-DATE-002",
+            total_amount=Decimal("200.00"),
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 2, 10, 12, 0),
+            ),
+        )
+
+        SaleItem.objects.create(
+            sale=second_sale,
+            product=self.product,
+            quantity=Decimal("4.000"),
+            unit_price=Decimal("50.00"),
+            line_total=Decimal("200.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        result = get_inventory_performance(
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 1, 31),
+        )
+
+        self.assertEqual(
+            result[0]["current_stock"],
+            Decimal("20.000"),
+        )
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("2.000"),
+        )
+
+        self.assertEqual(
+            result[0]["sales_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("100.00"),
+        )
