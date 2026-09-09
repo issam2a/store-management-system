@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     "apps.expenses",
     "apps.reports",
     "apps.analytics",
-    "apps.transactions"
+    "apps.transactions",
+    "dashboard"
 ]
 
 MIDDLEWARE = [
@@ -146,7 +147,7 @@ LOCALE_PATHS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
 
 
 # Email

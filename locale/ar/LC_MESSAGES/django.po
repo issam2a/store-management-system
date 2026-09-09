@@ -1,17 +1,8 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Arabic translations for StoreFlow.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-09 21:14+0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Project-Id-Version: StoreFlow\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,18 +10,113 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: .\dashboard\templates\base.html:9 .\dashboard\templates\base.html:20
-msgid "Store Management System"
-msgstr "نظام إدارة المتجر"
+#: .\dashboard\templates\base.html:15
+msgid "Store management and retail operations platform"
+msgstr "منصة لإدارة المتجر وعمليات البيع بالتجزئة"
 
-#~ msgid "Language Test"
-#~ msgstr "اختبار اللغة"
+#: .\dashboard\templates\components\sidebar.html:18
+msgid "Toggle navigation"
+msgstr "تبديل القائمة"
 
-#~ msgid "This is a bilingual application."
-#~ msgstr "هذا التطبيق يدعم اللغتين العربية والإنجليزية."
+#: .\dashboard\templates\components\sidebar.html:29
+msgid "Main navigation"
+msgstr "القائمة الرئيسية"
 
-#~ msgid "Current language:"
-#~ msgstr "اللغة الحالية:"
+#: .\dashboard\templates\components\sidebar.html:36
+msgid "Overview"
+msgstr "نظرة عامة"
 
-#~ msgid "StoreFlow"
-#~ msgstr "ستورفلو"
+#: .\dashboard\templates\components\sidebar.html:44
+#: .\dashboard\templates\components\topbar.html:21
+#: .\dashboard\templates\dashboard\home.html:5
+#: .\dashboard\templates\dashboard\home.html:15
+msgid "Dashboard"
+msgstr "لوحة التحكم"
+
+#: .\dashboard\templates\components\sidebar.html:57
+msgid "Management"
+msgstr "الإدارة"
+
+#: .\dashboard\templates\components\sidebar.html:62
+msgid "Products"
+msgstr "المنتجات"
+
+#: .\dashboard\templates\components\sidebar.html:67
+msgid "Inventory"
+msgstr "المخزون"
+
+#: .\dashboard\templates\components\sidebar.html:72
+msgid "Sales"
+msgstr "المبيعات"
+
+#: .\dashboard\templates\components\sidebar.html:77
+msgid "Purchases"
+msgstr "المشتريات"
+
+#: .\dashboard\templates\components\sidebar.html:88
+msgid "Relationships"
+msgstr "العلاقات"
+
+#: .\dashboard\templates\components\sidebar.html:93
+msgid "Customers"
+msgstr "العملاء"
+
+#: .\dashboard\templates\components\sidebar.html:98
+msgid "Suppliers"
+msgstr "الموردون"
+
+#: .\dashboard\templates\components\sidebar.html:109
+msgid "Insights"
+msgstr "التحليلات"
+
+#: .\dashboard\templates\components\sidebar.html:114
+msgid "Reports"
+msgstr "التقارير"
+
+#: .\dashboard\templates\components\sidebar.html:119
+msgid "Analytics"
+msgstr "التحليلات"
+
+#: .\dashboard\templates\components\sidebar.html:130
+msgid "System"
+msgstr "النظام"
+
+#: .\dashboard\templates\components\sidebar.html:135
+msgid "Settings"
+msgstr "الإعدادات"
+
+#: .\dashboard\templates\components\sidebar.html:154
+msgid "Store Online"
+msgstr "المتجر متصل"
+
+#: .\dashboard\templates\components\sidebar.html:158
+msgid "System operational"
+msgstr "النظام يعمل بشكل طبيعي"
+
+#: .\dashboard\templates\components\topbar.html:12
+msgid "Open navigation"
+msgstr "فتح القائمة"
+
+#: .\dashboard\templates\components\topbar.html:41
+msgid "Search..."
+msgstr "بحث..."
+
+#: .\dashboard\templates\components\topbar.html:42
+msgid "Search"
+msgstr "بحث"
+
+#: .\dashboard\templates\components\topbar.html:55
+msgid "Notifications"
+msgstr "الإشعارات"
+
+#: .\dashboard\templates\components\topbar.html:72
+msgid "User menu"
+msgstr "قائمة المستخدم"
+
+#: .\dashboard\templates\components\topbar.html:86
+msgid "Administrator"
+msgstr "مدير النظام"
+
+#: .\dashboard\templates\dashboard\home.html:19
+msgid "Welcome back. Here's what's happening in your store."
+msgstr "مرحبًا بعودتك. إليك ما يحدث في متجرك."

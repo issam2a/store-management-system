@@ -1,68 +1,61 @@
+{% load static %}
 {% load i18n %}
 
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
+<html
+    lang="{{ LANGUAGE_CODE }}"
+    dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}"
+>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %}{% trans "Store Management System" %}{% endblock %}</title>
+    <meta
+        name="description"
+        content="{% trans 'Store management and retail operations platform' %}"
+    >
 
-    {% block styles %}
-    {% endblock %}
+    <title>
+        {% block title %}StoreFlow{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'dashboard/css/app.css' %}"
+    >
+
+    {% block extra_css %}{% endblock %}
 </head>
 
 <body>
 
-    <header>
-        <nav>
-            <a href="/">
-                {% trans "Store Management System" %}
-            </a>
+    <!-- Animated atmospheric background -->
+    <div class="app-background" aria-hidden="true">
+        <div class="ambient ambient-one"></div>
+        <div class="ambient ambient-two"></div>
+        <div class="ambient ambient-three"></div>
+    </div>
 
-            <div>
-                {% get_current_language as CURRENT_LANGUAGE %}
+    <!-- Application shell -->
+    <div class="app-shell">
 
-                {% get_available_languages as AVAILABLE_LANGUAGES %}
+        {% include "components/sidebar.html" %}
 
-                {% for language_code, language_name in AVAILABLE_LANGUAGES %}
-                    <form
-                        action="{% url 'set_language' %}"
-                        method="post"
-                        style="display: inline;"
-                    >
-                        {% csrf_token %}
+        <div class="app-main">
 
-                        <input
-                            type="hidden"
-                            name="language"
-                            value="{{ language_code }}"
-                        >
+            {% include "components/topbar.html" %}
 
-                        <input
-                            type="hidden"
-                            name="next"
-                            value="{{ request.get_full_path }}"
-                        >
+            <main class="page-content">
+                {% block content %}{% endblock %}
+            </main>
 
-                        <button
-                            type="submit"
-                            {% if language_code == CURRENT_LANGUAGE %}
-                                disabled
-                            {% endif %}
-                        >
-                            {{ language_name }}
-                        </button>
-                    </form>
-                {% endfor %}
-            </div>
-        </nav>
-    </header>
+        </div>
 
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+    </div>
+
+    <script src="{% static 'dashboard/js/app.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
 
 </body>
 </html>

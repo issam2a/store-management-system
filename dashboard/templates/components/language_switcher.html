@@ -1,0 +1,45 @@
+{% load i18n %}
+
+<div class="language-switcher">
+
+    {% get_current_language as CURRENT_LANGUAGE %}
+    {% get_available_languages as AVAILABLE_LANGUAGES %}
+
+    {% for language_code, language_name in AVAILABLE_LANGUAGES %}
+
+        <form
+            action="{% url 'set_language' %}"
+            method="post"
+            class="language-form"
+        >
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="language"
+                value="{{ language_code }}"
+            >
+
+            <input
+                type="hidden"
+                name="next"
+                value="{{ request.get_full_path }}"
+            >
+
+            <button
+                type="submit"
+                class="language-button {% if language_code == CURRENT_LANGUAGE %}active{% endif %}"
+            >
+                {% if language_code == "ar" %}
+                    العربية
+                {% else %}
+                    EN
+                {% endif %}
+            </button>
+
+        </form>
+
+    {% endfor %}
+
+</div>

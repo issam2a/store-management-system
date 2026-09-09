@@ -1,0 +1,167 @@
+{% load i18n %}
+
+<aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+        <a href="{% url 'home' %}" class="brand">
+            <span class="brand-mark">S</span>
+
+            <span class="brand-name">
+                StoreFlow
+            </span>
+        </a>
+
+        <button
+            type="button"
+            class="sidebar-toggle"
+            aria-label="{% trans 'Toggle navigation' %}"
+            aria-expanded="true"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+    </div>
+
+
+    <nav class="sidebar-nav" aria-label="{% trans 'Main navigation' %}">
+
+        <!-- Overview -->
+
+        <div class="nav-section">
+
+            <span class="nav-section-title">
+                {% trans "Overview" %}
+            </span>
+
+            <a href="{% url 'home' %}" class="nav-item active">
+
+                <span class="nav-icon" aria-hidden="true">⌂</span>
+
+                <span class="nav-label">
+                    {% trans "Dashboard" %}
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <!-- Management -->
+
+        <div class="nav-section">
+
+            <span class="nav-section-title">
+                {% trans "Management" %}
+            </span>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon" aria-hidden="true">▣</span>
+                <span class="nav-label">{% trans "Products" %}</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon" aria-hidden="true">◫</span>
+                <span class="nav-label">{% trans "Inventory" %}</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon" aria-hidden="true">↗</span>
+                <span class="nav-label">{% trans "Sales" %}</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon" aria-hidden="true">↙</span>
+                <span class="nav-label">{% trans "Purchases" %}</span>
+            </a>
+
+        </div>
+
+
+        <!-- Relationships -->
+
+        <div class="nav-section">
+
+            <span class="nav-section-title">
+                {% trans "Relationships" %}
+            </span>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon" aria-hidden="true">♙</span>
+                <span class="nav-label">{% trans "Customers" %}</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon" aria-hidden="true">♧</span>
+                <span class="nav-label">{% trans "Suppliers" %}</span>
+            </a>
+
+        </div>
+
+
+        <!-- Insights -->
+
+        <div class="nav-section">
+
+            <span class="nav-section-title">
+                {% trans "Insights" %}
+            </span>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon" aria-hidden="true">▤</span>
+                <span class="nav-label">{% trans "Reports" %}</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon" aria-hidden="true">◒</span>
+                <span class="nav-label">{% trans "Analytics" %}</span>
+            </a>
+
+        </div>
+
+
+        <!-- System -->
+
+        <div class="nav-section">
+
+            <span class="nav-section-title">
+                {% trans "System" %}
+            </span>
+
+            <a href="#" class="nav-item">
+                <span class="nav-icon" aria-hidden="true">⚙</span>
+                <span class="nav-label">{% trans "Settings" %}</span>
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- System status -->
+
+    <div class="sidebar-footer">
+
+        <div class="store-status">
+
+            <span class="status-dot" aria-hidden="true"></span>
+
+            <div class="status-content">
+
+                <span class="status-title">
+                    {% trans "Store Online" %}
+                </span>
+
+                <span class="status-subtitle">
+                    {% trans "System operational" %}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</aside>

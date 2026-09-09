@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Dashboard" %} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <div>
+
+        <h1>
+            {% trans "Dashboard" %}
+        </h1>
+
+        <p>
+            {% trans "Welcome back. Here's what's happening in your store." %}
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

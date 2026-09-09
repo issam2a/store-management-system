@@ -1,0 +1,102 @@
+{% load i18n %}
+
+<header class="topbar">
+
+    <!-- Left / Start side -->
+
+    <div class="topbar-start">
+
+        <button
+            type="button"
+            class="mobile-menu-button"
+            aria-label="{% trans 'Open navigation' %}"
+            aria-expanded="false"
+        >
+            ☰
+        </button>
+
+        <div class="breadcrumb">
+
+            <span class="breadcrumb-current">
+                {% trans "Dashboard" %}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- Right / End side -->
+
+    <div class="topbar-end">
+
+        <!-- Global Search -->
+
+        <div class="global-search">
+
+            <span class="search-icon" aria-hidden="true">⌕</span>
+
+            <input
+                type="search"
+                placeholder="{% trans 'Search...' %}"
+                aria-label="{% trans 'Search' %}"
+            >
+
+            <kbd>Ctrl K</kbd>
+
+        </div>
+
+
+        <!-- Notifications -->
+
+        <button
+            type="button"
+            class="topbar-icon-button"
+            aria-label="{% trans 'Notifications' %}"
+        >
+            <span aria-hidden="true">♢</span>
+            <span class="notification-dot"></span>
+        </button>
+
+
+        <!-- Language -->
+
+        {% include "components/language_switcher.html" %}
+
+
+        <!-- User -->
+
+        <button
+            type="button"
+            class="user-menu"
+            aria-label="{% trans 'User menu' %}"
+        >
+
+            <span class="user-avatar">
+                U
+            </span>
+
+            <span class="user-info">
+
+                <strong>
+                    User
+                </strong>
+
+                <small>
+                    {% trans "Administrator" %}
+                </small>
+
+            </span>
+
+            <span
+                class="user-chevron"
+                aria-hidden="true"
+            >
+                ▾
+            </span>
+
+        </button>
+
+    </div>
+
+</header>
