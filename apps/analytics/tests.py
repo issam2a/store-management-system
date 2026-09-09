@@ -6,12 +6,13 @@ from django.test import TestCase
 
 from apps.products.models import Category, Product, Unit
 from apps.sales.models import Sale, SaleItem
-
+from django.utils import timezone as django_timezone
 from .services import (
     get_profitability_summary,
     get_top_selling_products,
     get_slow_moving_products,
     get_product_profitability,
+    get_sales_trend,
 )
 User = get_user_model()
 
@@ -2236,3 +2237,983 @@ class ProfitabilityAnalyticsTestCase(TestCase):
             result[0]["gross_margin"],
             Decimal("50.00"),
         )
+
+    # ---------------------------------------------------------
+    # Sales Trend
+    # ---------------------------------------------------------
+
+    def test_sales_trend_returns_empty_list_when_no_sales_exist(self):
+        result = get_sales_trend()
+
+        self.assertEqual(result, [])
+
+
+    def test_sales_trend_daily_aggregation(self):
+        completed_at = datetime(
+            2026,
+            1,
+            15,
+            10,
+            0,
+            tzinfo=timezone.utc,
+        )
+
+        sale = self.create_completed_sale(
+            reference="SALE-001",
+            total_amount=Decimal("300.00"),
+            completed_at=completed_at,
+        )
+
+        self.add_sale_item(
+            sale=sale,
+            quantity=Decimal("3.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_sales_trend(
+            interval="day",
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["date"],
+            date(2026, 1, 15),
+        )
+
+        self.assertEqual(
+            result[0]["transaction_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["units_sold"],
+            Decimal("3.000"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("300.00"),
+        )
+
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("300.00"),
+        )
+
+
+    def test_sales_trend_weekly_aggregates_sales_in_same_week(self):
+        monday = datetime(
+            2026,
+            1,
+            12,
+            10,
+            0,
+            tzinfo=timezone.utc,
+        )
+
+        friday = datetime(
+            2026,
+            1,
+            16,
+            15,
+            0,
+            tzinfo=timezone.utc,
+        )
+
+        sale_1 = self.create_completed_sale(
+            reference="SALE-001",
+            total_amount=Decimal("100.00"),
+            completed_at=monday,
+        )
+
+        sale_2 = self.create_completed_sale(
+            reference="SALE-002",
+            total_amount=Decimal("200.00"),
+            completed_at=friday,
+        )
+
+        self.add_sale_item(
+            sale=sale_1,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("50.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        self.add_sale_item(
+            sale=sale_2,
+            quantity=Decimal("4.000"),
+            unit_price=Decimal("50.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        result = get_sales_trend(
+            interval="week",
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["date"],
+            date(2026, 1, 12),
+        )
+
+        self.assertEqual(
+            result[0]["transaction_count"],
+            2,
+        )
+
+        self.assertEqual(
+            result[0]["units_sold"],
+            Decimal("6.000"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("300.00"),
+        )
+
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("300.00"),
+        )
+
+
+    def test_sales_trend_monthly_aggregates_sales_in_same_month(self):
+        sale_1 = self.create_completed_sale(
+            reference="SALE-001",
+            total_amount=Decimal("100.00"),
+            completed_at=datetime(
+                2026,
+                2,
+                5,
+                10,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        sale_2 = self.create_completed_sale(
+            reference="SALE-002",
+            total_amount=Decimal("200.00"),
+            completed_at=datetime(
+                2026,
+                2,
+                20,
+                15,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        self.add_sale_item(
+            sale=sale_1,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("50.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        self.add_sale_item(
+            sale=sale_2,
+            quantity=Decimal("4.000"),
+            unit_price=Decimal("50.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        result = get_sales_trend(
+            interval="month",
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["date"],
+            date(2026, 2, 1),
+        )
+
+        self.assertEqual(
+            result[0]["transaction_count"],
+            2,
+        )
+
+        self.assertEqual(
+            result[0]["units_sold"],
+            Decimal("6.000"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("300.00"),
+        )
+
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("300.00"),
+        )
+
+
+    def test_sales_trend_monthly_separates_different_months(self):
+        sale_1 = self.create_completed_sale(
+            reference="SALE-001",
+            total_amount=Decimal("100.00"),
+            completed_at=datetime(
+                2026,
+                2,
+                15,
+                10,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        sale_2 = self.create_completed_sale(
+            reference="SALE-002",
+            total_amount=Decimal("200.00"),
+            completed_at=datetime(
+                2026,
+                3,
+                15,
+                10,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        self.add_sale_item(
+            sale=sale_1,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("50.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        self.add_sale_item(
+            sale=sale_2,
+            quantity=Decimal("4.000"),
+            unit_price=Decimal("50.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        result = get_sales_trend(
+            interval="month",
+        )
+
+        self.assertEqual(len(result), 2)
+
+        self.assertEqual(
+            result[0]["date"],
+            date(2026, 2, 1),
+        )
+
+        self.assertEqual(
+            result[0]["transaction_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("100.00"),
+        )
+
+        self.assertEqual(
+            result[1]["date"],
+            date(2026, 3, 1),
+        )
+
+        self.assertEqual(
+            result[1]["transaction_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[1]["revenue"],
+            Decimal("200.00"),
+        )
+
+
+    def test_sales_trend_discount_affects_revenue_but_not_gross_sales_value(self):
+        sale = self.create_completed_sale(
+            reference="SALE-001",
+            subtotal_amount=Decimal("100.00"),
+            discount_amount=Decimal("20.00"),
+            total_amount=Decimal("80.00"),
+            completed_at=datetime(
+                2026,
+                4,
+                10,
+                10,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        self.add_sale_item(
+            sale=sale,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("50.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        result = get_sales_trend()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("100.00"),
+        )
+
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("80.00"),
+        )
+
+
+    def test_sales_trend_multiple_items_do_not_duplicate_revenue(self):
+        sale = self.create_completed_sale(
+            reference="SALE-001",
+            total_amount=Decimal("150.00"),
+            completed_at=datetime(
+                2026,
+                5,
+                10,
+                10,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        self.add_sale_item(
+            sale=sale,
+            quantity=Decimal("1.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        self.add_sale_item(
+            sale=sale,
+            quantity=Decimal("1.000"),
+            unit_price=Decimal("50.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        result = get_sales_trend()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["transaction_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["units_sold"],
+            Decimal("2.000"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("150.00"),
+        )
+
+        # Must remain 150, not 300.
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("150.00"),
+        )
+
+
+    def test_sales_trend_excludes_draft_sales(self):
+        completed_sale = self.create_completed_sale(
+            reference="SALE-001",
+            total_amount=Decimal("100.00"),
+            completed_at=datetime(
+                2026,
+                6,
+                10,
+                10,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        draft_sale = Sale.objects.create(
+            reference="SALE-002",
+            payment_type=Sale.PaymentType.CASH,
+            status=Sale.Status.DRAFT,
+            subtotal_amount=Decimal("200.00"),
+            discount_amount=Decimal("0.00"),
+            total_amount=Decimal("200.00"),
+            created_by=self.user,
+            completed_at=datetime(
+                2026,
+                6,
+                10,
+                11,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        self.add_sale_item(
+            sale=completed_sale,
+            quantity=Decimal("1.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        self.add_sale_item(
+            sale=draft_sale,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_sales_trend()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["transaction_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["units_sold"],
+            Decimal("1.000"),
+        )
+
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("100.00"),
+        )
+
+
+    def test_sales_trend_excludes_cancelled_sales(self):
+        completed_sale = self.create_completed_sale(
+            reference="SALE-001",
+            total_amount=Decimal("100.00"),
+            completed_at=datetime(
+                2026,
+                7,
+                10,
+                10,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        cancelled_sale = Sale.objects.create(
+            reference="SALE-002",
+            payment_type=Sale.PaymentType.CASH,
+            status=Sale.Status.CANCELLED,
+            subtotal_amount=Decimal("200.00"),
+            discount_amount=Decimal("0.00"),
+            total_amount=Decimal("200.00"),
+            created_by=self.user,
+            completed_at=datetime(
+                2026,
+                7,
+                10,
+                11,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        self.add_sale_item(
+            sale=completed_sale,
+            quantity=Decimal("1.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        self.add_sale_item(
+            sale=cancelled_sale,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_sales_trend()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["transaction_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["units_sold"],
+            Decimal("1.000"),
+        )
+
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("100.00"),
+        )
+
+
+    def test_sales_trend_date_range_filters_sales(self):
+        sale_before = self.create_completed_sale(
+            reference="SALE-001",
+            total_amount=Decimal("100.00"),
+            completed_at=datetime(
+                2026,
+                8,
+                1,
+                10,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        sale_inside = self.create_completed_sale(
+            reference="SALE-002",
+            total_amount=Decimal("200.00"),
+            completed_at=datetime(
+                2026,
+                8,
+                10,
+                10,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        sale_after = self.create_completed_sale(
+            reference="SALE-003",
+            total_amount=Decimal("300.00"),
+            completed_at=datetime(
+                2026,
+                8,
+                20,
+                10,
+                0,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        self.add_sale_item(
+            sale=sale_before,
+            quantity=Decimal("1.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        self.add_sale_item(
+            sale=sale_inside,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        self.add_sale_item(
+            sale=sale_after,
+            quantity=Decimal("3.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_sales_trend(
+            start_date=date(2026, 8, 5),
+            end_date=date(2026, 8, 15),
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["date"],
+            date(2026, 8, 10),
+        )
+
+        self.assertEqual(
+            result[0]["transaction_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["units_sold"],
+            Decimal("2.000"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("200.00"),
+        )
+
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("200.00"),
+        )
+
+    def test_sales_trend_date_range_uses_store_timezone(self):
+        """
+        Date filtering must use the configured store timezone.
+
+        With Asia/Damascus:
+            2026-01-02 20:30 UTC = 2026-01-02 23:30 local
+            2026-01-02 21:30 UTC = 2026-01-03 00:30 local
+
+        A report for January 2 must include the first sale only.
+        """
+        sale_before_midnight_utc = self.create_completed_sale(
+            reference="TZ-001",
+            total_amount=Decimal("100.00"),
+            completed_at=datetime(
+                2026,
+                1,
+                2,
+                20,
+                30,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        sale_after_midnight_utc = self.create_completed_sale(
+            reference="TZ-002",
+            total_amount=Decimal("200.00"),
+            completed_at=datetime(
+                2026,
+                1,
+                2,
+                21,
+                30,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        self.add_sale_item(
+            sale=sale_before_midnight_utc,
+            quantity=Decimal("1.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        self.add_sale_item(
+            sale=sale_after_midnight_utc,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        result = get_sales_trend(
+            start_date=date(2026, 1, 2),
+            end_date=date(2026, 1, 2),
+            interval="day",
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["date"],
+            date(2026, 1, 2),
+        )
+
+        self.assertEqual(
+            result[0]["transaction_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["units_sold"],
+            Decimal("1.000"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("100.00"),
+        )
+
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("100.00"),
+        )
+
+
+    def test_sales_trend_uses_store_timezone_not_activated_timezone(self):
+        """
+        Analytics must use the configured store timezone even when
+        Django has another timezone currently activated.
+
+        The sale occurs at:
+            2026-01-02 20:30 UTC
+            2026-01-02 23:30 Asia/Damascus
+
+        Therefore it belongs to January 2 in the store timezone.
+        """
+        sale = self.create_completed_sale(
+            reference="TZ-003",
+            total_amount=Decimal("100.00"),
+            completed_at=datetime(
+                2026,
+                1,
+                2,
+                20,
+                30,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        self.add_sale_item(
+            sale=sale,
+            quantity=Decimal("1.000"),
+            unit_price=Decimal("100.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        with django_timezone.override("UTC"):
+            result = get_sales_trend(
+                start_date=date(2026, 1, 2),
+                end_date=date(2026, 1, 2),
+                interval="day",
+            )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["date"],
+            date(2026, 1, 2),
+        )
+
+        self.assertEqual(
+            result[0]["transaction_count"],
+            1,
+        )
+
+        self.assertEqual(
+            result[0]["units_sold"],
+            Decimal("1.000"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("100.00"),
+        )
+
+        self.assertEqual(
+            result[0]["revenue"],
+            Decimal("100.00"),
+        )
+
+
+    def test_sales_trend_invalid_interval_raises_error(self):
+        with self.assertRaises(ValueError):
+            get_sales_trend(
+                interval="year",
+            )
+
+    def test_product_profitability_ranks_by_gross_profit(self):
+        """
+        Products must be ranked by gross profit descending,
+        not by gross sales value.
+
+        Product A:
+            Gross sales = 1,000
+            COGS        =   900
+            Gross profit=   100
+
+        Product B:
+            Gross sales =   500
+            COGS        =   100
+            Gross profit=   400
+
+        Therefore Product B must rank first even though
+        Product A has higher gross sales.
+        """
+
+        product_a = Product.objects.create(
+            name="High Revenue Low Profit",
+            category=self.category,
+            unit=self.unit,
+            current_purchase_cost=Decimal("90.00"),
+            current_sell_price=Decimal("100.00"),
+            minimum_stock=Decimal("10.00"),
+            current_stock=Decimal("20.00"),
+        )
+
+        product_b = Product.objects.create(
+            name="Lower Revenue High Profit",
+            category=self.category,
+            unit=self.unit,
+            current_purchase_cost=Decimal("20.00"),
+            current_sell_price=Decimal("100.00"),
+            minimum_stock=Decimal("10.00"),
+            current_stock=Decimal("20.00"),
+        )
+
+        sale_a = self.create_completed_sale(
+            reference="PROFIT-001",
+            total_amount=Decimal("1000.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_a,
+            product=product_a,
+            quantity=Decimal("10.000"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("1000.00"),
+            unit_cost=Decimal("90.00"),
+        )
+
+        sale_b = self.create_completed_sale(
+            reference="PROFIT-002",
+            total_amount=Decimal("500.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_b,
+            product=product_b,
+            quantity=Decimal("5.000"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("500.00"),
+            unit_cost=Decimal("20.00"),
+        )
+
+        result = get_product_profitability(limit=2)
+
+        self.assertEqual(len(result), 2)
+
+        # Product B has lower revenue but higher gross profit,
+        # so it must rank first.
+        self.assertEqual(
+            result[0]["product__name"],
+            "Lower Revenue High Profit",
+        )
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("500.00"),
+        )
+        self.assertEqual(
+            result[0]["cogs"],
+            Decimal("100.00"),
+        )
+        self.assertEqual(
+            result[0]["gross_profit"],
+            Decimal("400.00"),
+        )
+        self.assertEqual(
+            result[0]["gross_margin"],
+            Decimal("80.00"),
+        )
+
+        # Product A has higher revenue but lower gross profit,
+        # so it must rank second.
+        self.assertEqual(
+            result[1]["product__name"],
+            "High Revenue Low Profit",
+        )
+        self.assertEqual(
+            result[1]["gross_sales_value"],
+            Decimal("1000.00"),
+        )
+        self.assertEqual(
+            result[1]["cogs"],
+            Decimal("900.00"),
+        )
+        self.assertEqual(
+            result[1]["gross_profit"],
+            Decimal("100.00"),
+        )
+        self.assertEqual(
+            result[1]["gross_margin"],
+            Decimal("10.00"),
+        )
+
+    def test_product_profitability_limit_applies_after_gross_profit_ranking(self):
+        """
+        The limit must be applied after products are ranked by gross profit.
+
+        Product A:
+            Gross sales = 1,000
+            COGS        =   900
+            Gross profit=   100
+
+        Product B:
+            Gross sales =   500
+            COGS        =   100
+            Gross profit=   400
+
+        With limit=1, Product B must be returned because it has
+        the highest gross profit, even though Product A has
+        higher gross sales.
+        """
+
+        product_a = Product.objects.create(
+            name="High Revenue Low Profit",
+            category=self.category,
+            unit=self.unit,
+            current_purchase_cost=Decimal("90.00"),
+            current_sell_price=Decimal("100.00"),
+            minimum_stock=Decimal("10.00"),
+            current_stock=Decimal("20.00"),
+        )
+
+        product_b = Product.objects.create(
+            name="Lower Revenue High Profit",
+            category=self.category,
+            unit=self.unit,
+            current_purchase_cost=Decimal("20.00"),
+            current_sell_price=Decimal("100.00"),
+            minimum_stock=Decimal("10.00"),
+            current_stock=Decimal("20.00"),
+        )
+
+        sale_a = self.create_completed_sale(
+            reference="PROFIT-001",
+            total_amount=Decimal("1000.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_a,
+            product=product_a,
+            quantity=Decimal("10.000"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("1000.00"),
+            unit_cost=Decimal("90.00"),
+        )
+
+        sale_b = self.create_completed_sale(
+            reference="PROFIT-002",
+            total_amount=Decimal("500.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_b,
+            product=product_b,
+            quantity=Decimal("5.000"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("500.00"),
+            unit_cost=Decimal("20.00"),
+        )
+
+        result = get_product_profitability(limit=1)
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["product__name"],
+            "Lower Revenue High Profit",
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("500.00"),
+        )
+
+        self.assertEqual(
+            result[0]["cogs"],
+            Decimal("100.00"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_profit"],
+            Decimal("400.00"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_margin"],
+            Decimal("80.00"),
+        )
+
