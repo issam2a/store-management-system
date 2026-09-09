@@ -7,20 +7,561 @@
 
 {% block content %}
 
-<section class="page-header">
+<div class="dashboard-page">
 
-    <div>
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
 
-        <h1>
-            {% trans "Dashboard" %}
-        </h1>
+    <section class="dashboard-header">
 
-        <p>
-            {% trans "Welcome back. Here's what's happening in your store." %}
-        </p>
+        <div>
+            <span class="eyebrow">
+                {% trans "Store overview" %}
+            </span>
 
-    </div>
+            <h1>
+                {% trans "Dashboard" %}
+            </h1>
 
-</section>
+            <p>
+                {% trans "Monitor your store performance at a glance." %}
+            </p>
+        </div>
+
+        <div class="dashboard-header-actions">
+
+            <button
+                type="button"
+                class="dashboard-date-button"
+            >
+                <span aria-hidden="true">◷</span>
+
+                {% trans "Today" %}
+
+                <span aria-hidden="true">⌄</span>
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         KPI CARDS
+    ====================================================== -->
+
+    <section
+        class="kpi-grid"
+        aria-label="{% trans 'Key performance indicators' %}"
+    >
+
+        <!-- Revenue -->
+
+        <article class="kpi-card kpi-card-primary">
+
+            <div class="kpi-card-top">
+
+                <span class="kpi-label">
+                    {% trans "Revenue" %}
+                </span>
+
+                <span class="kpi-icon" aria-hidden="true">
+                    ↗
+                </span>
+
+            </div>
+
+            <div class="kpi-value">
+                {{ revenue|floatformat:2 }}
+            </div>
+
+            <div class="kpi-footer">
+
+                <span class="kpi-status">
+                    {% trans "Today" %}
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <!-- Sales -->
+
+        <article class="kpi-card">
+
+            <div class="kpi-card-top">
+
+                <span class="kpi-label">
+                    {% trans "Sales" %}
+                </span>
+
+                <span class="kpi-icon" aria-hidden="true">
+                    ◫
+                </span>
+
+            </div>
+
+            <div class="kpi-value">
+                {{ sales_count }}
+            </div>
+
+            <div class="kpi-footer">
+
+                <span class="kpi-status">
+                    {% trans "Completed sales" %}
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <!-- Gross Profit -->
+
+        <article class="kpi-card">
+
+            <div class="kpi-card-top">
+
+                <span class="kpi-label">
+                    {% trans "Gross Profit" %}
+                </span>
+
+                <span class="kpi-icon" aria-hidden="true">
+                    ◒
+                </span>
+
+            </div>
+
+            <div class="kpi-value">
+                {{ gross_profit|floatformat:2 }}
+            </div>
+
+            <div class="kpi-footer">
+
+                <span class="kpi-status">
+                    {% trans "Revenue minus COGS" %}
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <!-- Low Stock -->
+
+        <article class="kpi-card kpi-card-warning">
+
+            <div class="kpi-card-top">
+
+                <span class="kpi-label">
+                    {% trans "Low Stock" %}
+                </span>
+
+                <span class="kpi-icon" aria-hidden="true">
+                    !
+                </span>
+
+            </div>
+
+            <div class="kpi-value">
+                {{ low_stock_count }}
+            </div>
+
+            <div class="kpi-footer">
+
+                {% if low_stock_count > 0 %}
+
+                    <span class="kpi-status">
+                        {% trans "Needs attention" %}
+                    </span>
+
+                {% else %}
+
+                    <span class="kpi-status">
+                        {% trans "Inventory looks healthy" %}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         MAIN DASHBOARD
+    ====================================================== -->
+
+    <section class="dashboard-grid dashboard-grid-main">
+
+
+        <!-- =================================================
+             REVENUE CHART
+        ================================================== -->
+
+        <article class="dashboard-card revenue-card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        {% trans "Performance" %}
+                    </span>
+
+                    <h2>
+                        {% trans "Revenue Overview" %}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="chart-container">
+
+                {% if chart_data %}
+
+                    {{ chart_data|json_script:"revenue-chart-data" }}
+
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <span
+                            class="empty-state-icon"
+                            aria-hidden="true"
+                        >
+                            ◷
+                        </span>
+
+                        <strong>
+                            {% trans "No revenue data yet." %}
+                        </strong>
+
+                        <p>
+                            {% trans "Completed sales will appear here." %}
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+
+        <!-- =================================================
+             LOW STOCK
+        ================================================== -->
+
+        <article class="dashboard-card low-stock-card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        {% trans "Inventory" %}
+                    </span>
+
+                    <h2>
+                        {% trans "Low Stock" %}
+                    </h2>
+
+                </div>
+
+                <span class="card-count">
+                    {{ low_stock_count }}
+                </span>
+
+            </div>
+
+
+            {% if low_stock_products %}
+
+                <div class="stock-list">
+
+                    {% for product in low_stock_products %}
+
+                        <div class="stock-item">
+
+                            <div class="stock-item-info">
+
+                                <strong>
+                                    {{ product.name }}
+                                </strong>
+
+                                <span>
+                                    {{ product.category.name }}
+                                </span>
+
+                            </div>
+
+                            <div class="stock-item-quantity">
+
+                                <strong>
+                                    {{ product.current_stock|floatformat:3 }}
+                                </strong>
+
+                                <span>
+                                    /
+                                    {{ product.minimum_stock|floatformat:3 }}
+                                    {{ product.unit.symbol }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <span
+                        class="empty-state-icon"
+                        aria-hidden="true"
+                    >
+                        ✓
+                    </span>
+
+                    <strong>
+                        {% trans "Inventory looks healthy" %}
+                    </strong>
+
+                    <p>
+                        {% trans "No products require immediate attention." %}
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         SECONDARY DASHBOARD
+    ====================================================== -->
+
+    <section class="dashboard-grid dashboard-grid-secondary">
+
+
+        <!-- =================================================
+             RECENT SALES
+        ================================================== -->
+
+        <article class="dashboard-card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        {% trans "Activity" %}
+                    </span>
+
+                    <h2>
+                        {% trans "Recent Sales" %}
+                    </h2>
+
+                </div>
+
+                <a
+                    href="#"
+                    class="card-link"
+                >
+                    {% trans "View all" %}
+                    <span aria-hidden="true">→</span>
+                </a>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table class="dashboard-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                {% trans "Reference" %}
+                            </th>
+
+                            <th>
+                                {% trans "Customer" %}
+                            </th>
+
+                            <th>
+                                {% trans "Amount" %}
+                            </th>
+
+                            <th>
+                                {% trans "Status" %}
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for sale in recent_sales %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        {{ sale.reference }}
+                                    </strong>
+                                </td>
+
+                                <td>
+
+                                    {% if sale.customer %}
+                                        {{ sale.customer.name }}
+                                    {% else %}
+                                        {% trans "Walk-in customer" %}
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {{ sale.total_amount|floatformat:2 }}
+                                </td>
+
+                                <td>
+
+                                    <span class="status-badge status-completed">
+                                        {% trans "Completed" %}
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+
+                                <td colspan="4">
+
+                                    <div class="table-empty-state">
+                                        {% trans "No completed sales yet." %}
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </article>
+
+
+        <!-- =================================================
+             TOP PRODUCTS
+        ================================================== -->
+
+        <article class="dashboard-card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <span class="card-eyebrow">
+                        {% trans "Products" %}
+                    </span>
+
+                    <h2>
+                        {% trans "Top Products" %}
+                    </h2>
+
+                </div>
+
+                <a
+                    href="#"
+                    class="card-link"
+                >
+                    {% trans "View all" %}
+                    <span aria-hidden="true">→</span>
+                </a>
+
+            </div>
+
+
+            <div class="product-ranking">
+
+                {% for product in top_products %}
+
+                    <div class="product-ranking-item">
+
+                        <div class="product-ranking-number">
+                            {{ forloop.counter }}
+                        </div>
+
+                        <div class="product-ranking-info">
+
+                            <strong>
+                                {{ product.product__name }}
+                            </strong>
+
+                            <span>
+                                {{ product.quantity_sold|floatformat:3 }}
+                                {{ product.product__unit__symbol }}
+                                {% trans "sold" %}
+                            </span>
+
+                        </div>
+
+                        <div class="product-ranking-revenue">
+
+                            {{ product.revenue|floatformat:2 }}
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="ranking-empty-state">
+
+                        {% trans "Sales data will appear here." %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </article>
+
+    </section>
+
+</div>
 
 {% endblock %}

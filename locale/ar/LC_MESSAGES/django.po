@@ -53,6 +53,11 @@ msgstr "المبيعات"
 msgid "Purchases"
 msgstr "المشتريات"
 
+#: .\dashboard\templates\components\sidebar.html:82
+msgid "Expenses"
+msgstr "المصروفات"
+
+
 #: .\dashboard\templates\components\sidebar.html:88
 msgid "Relationships"
 msgstr "العلاقات"
@@ -120,3 +125,99 @@ msgstr "مدير النظام"
 #: .\dashboard\templates\dashboard\home.html:19
 msgid "Welcome back. Here's what's happening in your store."
 msgstr "مرحبًا بعودتك. إليك ما يحدث في متجرك."
+
+msgid "Store overview"
+msgstr "نظرة عامة على المتجر"
+
+msgid "Monitor your store performance at a glance."
+msgstr "راقب أداء متجرك في لمحة واحدة."
+
+msgid "Today"
+msgstr "اليوم"
+
+msgid "Key performance indicators"
+msgstr "مؤشرات الأداء الرئيسية"
+
+msgid "Revenue"
+msgstr "الإيرادات"
+
+msgid "Gross Profit"
+msgstr "إجمالي الربح"
+
+msgid "Low Stock"
+msgstr "مخزون منخفض"
+
+msgid "Needs attention"
+msgstr "يحتاج إلى انتباه"
+
+msgid "Performance"
+msgstr "الأداء"
+
+msgid "Revenue Overview"
+msgstr "نظرة عامة على الإيرادات"
+
+msgid "Inventory looks healthy"
+msgstr "المخزون بحالة جيدة"
+
+msgid "No products require immediate attention."
+msgstr "لا توجد منتجات تتطلب اهتمامًا فوريًا."
+
+msgid "Activity"
+msgstr "النشاط"
+
+msgid "Recent Sales"
+msgstr "آخر المبيعات"
+
+msgid "View all"
+msgstr "عرض الكل"
+
+msgid "Reference"
+msgstr "المرجع"
+
+msgid "Customer"
+msgstr "العميل"
+
+msgid "Amount"
+msgstr "المبلغ"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid "No completed sales yet."
+msgstr "لا توجد مبيعات مكتملة بعد."
+
+msgid "Top Products"
+msgstr "المنتجات الأكثر مبيعًا"
+
+msgid "Sales data will appear here."
+msgstr "ستظهر بيانات المبيعات هنا."
+
+msgid "vs. previous period"
+msgstr "مقارنة بالفترة السابقة"
+
+msgid "Mon"
+msgstr "الإثنين"
+
+msgid "Tue"
+msgstr "الثلاثاء"
+
+msgid "Wed"
+msgstr "الأربعاء"
+
+msgid "Thu"
+msgstr "الخميس"
+
+msgid "Fri"
+msgstr "الجمعة"
+
+msgid "Sat"
+msgstr "السبت"
+
+msgid "Sun"
+msgstr "الأحد"
+
+msgid "Revenue minus COGS"
+msgstr "الإيرادات ناقص تكلفة البضاعة المباعة"
+
+msgid "Completed sales"
+msgstr "المبيعات المكتملة"
