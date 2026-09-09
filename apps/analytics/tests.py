@@ -13,6 +13,7 @@ from .services import (
     get_slow_moving_products,
     get_product_profitability,
     get_sales_trend,
+    get_category_profitability,
 )
 User = get_user_model()
 
@@ -3217,3 +3218,274 @@ class ProfitabilityAnalyticsTestCase(TestCase):
             Decimal("80.00"),
         )
 
+    def test_category_profitability_aggregates_products_in_same_category(self):
+        """
+        Products belonging to the same category must be aggregated
+        into one category profitability result.
+        """
+
+        second_product = Product.objects.create(
+            name="Second Product",
+            category=self.category,
+            unit=self.unit,
+            current_purchase_cost=Decimal("30.00"),
+            current_sell_price=Decimal("100.00"),
+            minimum_stock=Decimal("10.00"),
+            current_stock=Decimal("20.00"),
+        )
+
+        sale = self.create_completed_sale(
+            reference="CATEGORY-001",
+            total_amount=Decimal("300.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("200.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale,
+            product=second_product,
+            quantity=Decimal("1.000"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("30.00"),
+        )
+
+        result = get_category_profitability()
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["product__category_id"],
+            self.category.id,
+        )
+
+        self.assertEqual(
+            result[0]["product__category__name"],
+            self.category.name,
+        )
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("3.000"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("300.00"),
+        )
+
+        self.assertEqual(
+            result[0]["cogs"],
+            Decimal("130.00"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_profit"],
+            Decimal("170.00"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_margin"],
+            Decimal("56.67"),
+        )
+
+    def test_category_profitability_limit_applies_after_gross_profit_ranking(self):
+        """
+        Categories must be ranked by gross profit before the limit
+        is applied.
+        """
+
+        second_category = Category.objects.create(
+            name="Second Category",
+        )
+
+        second_product = Product.objects.create(
+            name="Second Category Product",
+            category=second_category,
+            unit=self.unit,
+            current_purchase_cost=Decimal("20.00"),
+            current_sell_price=Decimal("100.00"),
+            minimum_stock=Decimal("10.00"),
+            current_stock=Decimal("20.00"),
+        )
+
+        sale_a = self.create_completed_sale(
+            reference="CATEGORY-PROFIT-001",
+            total_amount=Decimal("1000.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_a,
+            product=self.product,
+            quantity=Decimal("10.000"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("1000.00"),
+            unit_cost=Decimal("90.00"),
+        )
+
+        sale_b = self.create_completed_sale(
+            reference="CATEGORY-PROFIT-002",
+            total_amount=Decimal("500.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_b,
+            product=second_product,
+            quantity=Decimal("5.000"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("500.00"),
+            unit_cost=Decimal("20.00"),
+        )
+
+        result = get_category_profitability(limit=1)
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["product__category__name"],
+            "Second Category",
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("500.00"),
+        )
+
+        self.assertEqual(
+            result[0]["cogs"],
+            Decimal("100.00"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_profit"],
+            Decimal("400.00"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_margin"],
+            Decimal("80.00"),
+        )
+
+    def test_category_profitability_excludes_non_completed_sales(self):
+        """
+        Draft and cancelled sales must not contribute to
+        category profitability.
+        """
+
+        draft_sale = Sale.objects.create(
+            reference="CATEGORY-DRAFT",
+            payment_type=Sale.PaymentType.CASH,
+            status=Sale.Status.DRAFT,
+            subtotal_amount=Decimal("100.00"),
+            discount_amount=Decimal("0.00"),
+            total_amount=Decimal("100.00"),
+            created_by=self.user,
+        )
+
+        SaleItem.objects.create(
+            sale=draft_sale,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("50.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        cancelled_sale = Sale.objects.create(
+            reference="CATEGORY-CANCELLED",
+            payment_type=Sale.PaymentType.CASH,
+            status=Sale.Status.CANCELLED,
+            subtotal_amount=Decimal("100.00"),
+            discount_amount=Decimal("0.00"),
+            total_amount=Decimal("100.00"),
+            created_by=self.user,
+        )
+
+        SaleItem.objects.create(
+            sale=cancelled_sale,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("50.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        result = get_category_profitability()
+
+        self.assertEqual(result, [])
+
+    def test_category_profitability_date_range_filters_by_sale_completion_date(self):
+        """
+        Only completed sales whose completion date falls within the
+        requested date range are included.
+        """
+
+        first_sale = self.create_completed_sale(
+            reference="CATEGORY-DATE-001",
+            total_amount=Decimal("100.00"),
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 1, 10, 12, 0),
+            ),
+        )
+
+        SaleItem.objects.create(
+            sale=first_sale,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("50.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        second_sale = self.create_completed_sale(
+            reference="CATEGORY-DATE-002",
+            total_amount=Decimal("200.00"),
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 2, 10, 12, 0),
+            ),
+        )
+
+        SaleItem.objects.create(
+            sale=second_sale,
+            product=self.product,
+            quantity=Decimal("4.000"),
+            unit_price=Decimal("50.00"),
+            line_total=Decimal("200.00"),
+            unit_cost=Decimal("25.00"),
+        )
+
+        result = get_category_profitability(
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 1, 31),
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["quantity_sold"],
+            Decimal("2.000"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_sales_value"],
+            Decimal("100.00"),
+        )
+
+        self.assertEqual(
+            result[0]["cogs"],
+            Decimal("50.00"),
+        )
+
+        self.assertEqual(
+            result[0]["gross_profit"],
+            Decimal("50.00"),
+        )
+
+    
