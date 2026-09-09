@@ -735,35 +735,40 @@ def get_supplier_analysis(
     Metrics:
 
         purchase_count:
-            Number of completed purchases from the supplier.
+            Number of completed purchases from the supplier
+            during the selected period.
 
         total_purchase_value:
-            Total value of completed purchases.
+            Total value of completed purchases during the
+            selected period.
 
         paid_amount:
             Total supplier payments recorded for the supplier.
+            This represents the supplier's current financial
+            position and is not date-filtered.
 
         outstanding_balance:
             Current outstanding supplier balance calculated as:
 
-                completed purchases - supplier payments
+                all completed purchases - all supplier payments
+
+            This value is not affected by the selected date range.
 
     Date filters are applied to completed purchase activity using
     the purchase completion date and the store's fixed timezone.
 
-    Supplier payments are not date-filtered because paid_amount and
-    outstanding_balance represent the supplier's current financial
-    position.
+    Supplier payments are not date-filtered because paid_amount
+    and outstanding_balance represent the supplier's current
+    financial position.
 
     Draft and cancelled purchases are excluded.
 
     Suppliers are ranked by total purchase value descending,
     then by supplier name.
 
-    Suppliers with no completed purchases are excluded.
+    Suppliers with no completed purchases in the selected period
+    are excluded.
     """
-
-  
 
     store_timezone = django_timezone.get_default_timezone()
 
@@ -772,6 +777,10 @@ def get_supplier_analysis(
         end_date,
         store_timezone,
     )
+
+    # ---------------------------------------------------------
+    # Period purchase activity
+    # ---------------------------------------------------------
 
     completed_purchases = Purchase.objects.filter(
         status=Purchase.Status.COMPLETED,
@@ -806,6 +815,10 @@ def get_supplier_analysis(
         )
     )
 
+    # ---------------------------------------------------------
+    # All-time supplier payments
+    # ---------------------------------------------------------
+
     payment_data = (
         SupplierPayment.objects
         .values("supplier_id")
@@ -822,11 +835,42 @@ def get_supplier_analysis(
         for row in payment_data
     }
 
+    # ---------------------------------------------------------
+    # All-time completed purchases
+    #
+    # Used only for calculating the current outstanding
+    # supplier balance.
+    # ---------------------------------------------------------
+
+    current_purchase_data = (
+        Purchase.objects
+        .filter(
+            status=Purchase.Status.COMPLETED,
+        )
+        .values("supplier_id")
+        .annotate(
+            total_purchase_value=Coalesce(
+                Sum("total_amount"),
+                Decimal("0.00"),
+            ),
+        )
+    )
+
+    current_purchases_by_supplier = {
+        row["supplier_id"]: row["total_purchase_value"]
+        for row in current_purchase_data
+    }
+
+    # ---------------------------------------------------------
+    # Build results
+    # ---------------------------------------------------------
+
     results = []
 
     for supplier in purchase_data:
         supplier_id = supplier["supplier_id"]
 
+        # Period-based purchasing metrics.
         total_purchase_value = (
             supplier["total_purchase_value"]
             or Decimal("0.00")
@@ -835,6 +879,7 @@ def get_supplier_analysis(
             rounding=ROUND_HALF_UP,
         )
 
+        # Current/all-time payment position.
         paid_amount = (
             payments_by_supplier.get(
                 supplier_id,
@@ -846,8 +891,22 @@ def get_supplier_analysis(
             rounding=ROUND_HALF_UP,
         )
 
+        # Current/all-time completed purchase value.
+        current_purchase_value = (
+            current_purchases_by_supplier.get(
+                supplier_id,
+                Decimal("0.00"),
+            )
+            or Decimal("0.00")
+        ).quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        # Current supplier balance must NOT mix
+        # period purchases with all-time payments.
         outstanding_balance = (
-            total_purchase_value - paid_amount
+            current_purchase_value - paid_amount
         ).quantize(
             TWO_PLACES,
             rounding=ROUND_HALF_UP,
@@ -1169,11 +1228,22 @@ def get_historical_price_analysis(
             product_id__in=product_ids,
         )
         .select_related("purchase")
-        .order_by(
-            "product_id",
-            "-purchase__completed_at",
-            "-id",
+    )
+
+    if start_dt is not None:
+        latest_purchases = latest_purchases.filter(
+            purchase__completed_at__gte=start_dt,
         )
+
+    if end_dt is not None:
+        latest_purchases = latest_purchases.filter(
+            purchase__completed_at__lt=end_dt,
+        )
+
+    latest_purchases = latest_purchases.order_by(
+        "product_id",
+        "-purchase__completed_at",
+        "-id",
     )
 
     for item in latest_purchases:
@@ -1189,13 +1259,23 @@ def get_historical_price_analysis(
             product_id__in=product_ids,
         )
         .select_related("sale")
-        .order_by(
-            "product_id",
-            "-sale__completed_at",
-            "-id",
-        )
     )
 
+    if start_dt is not None:
+        latest_sales = latest_sales.filter(
+            sale__completed_at__gte=start_dt,
+        )
+
+    if end_dt is not None:
+        latest_sales = latest_sales.filter(
+            sale__completed_at__lt=end_dt,
+        )
+
+    latest_sales = latest_sales.order_by(
+        "product_id",
+        "-sale__completed_at",
+        "-id",
+    )
     for item in latest_sales:
         if item.product_id not in latest_sale_by_product:
             latest_sale_by_product[item.product_id] = item

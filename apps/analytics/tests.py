@@ -4543,3 +4543,62 @@ class ProfitabilityAnalyticsTestCase(TestCase):
             result[0]["average_sell_price"],
             Decimal("80.00"),
         )
+
+    def test_outstanding_balance_uses_all_time_purchases(self):
+        old_purchase = Purchase.objects.create(
+            reference="PUR-OLD",
+            supplier=self.supplier,
+            payment_type=Purchase.PaymentType.CREDIT,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("500.00"),
+            created_by=self.user,
+            completed_at=datetime(
+                2025, 12, 15,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        current_purchase = Purchase.objects.create(
+            reference="PUR-CURRENT",
+            supplier=self.supplier,
+            payment_type=Purchase.PaymentType.CREDIT,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("300.00"),
+            created_by=self.user,
+            completed_at=datetime(
+                2026, 1, 15,
+                tzinfo=timezone.utc,
+            ),
+        )
+
+        SupplierPayment.objects.create(
+            reference="PAY-001",
+            supplier=self.supplier,
+            amount=Decimal("400.00"),
+            payment_method="Cash",
+            payment_date=date(2026, 1, 20),
+            recorded_by=self.user,
+        )
+
+        results = get_supplier_analysis(
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 1, 31),
+        )
+
+        self.assertEqual(
+            results[0]["total_purchase_value"],
+            Decimal("300.00"),
+        )
+
+        self.assertEqual(
+            results[0]["paid_amount"],
+            Decimal("400.00"),
+        )
+
+        # All completed purchases = 500 + 300 = 800
+        # Payments = 400
+        # Current outstanding = 400
+        self.assertEqual(
+            results[0]["outstanding_balance"],
+            Decimal("400.00"),
+        )
