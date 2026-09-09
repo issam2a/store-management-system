@@ -1,11 +1,14 @@
 from datetime import datetime, time, timedelta
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 from django.db.models import (
+    Avg,
     Count,
     DecimalField,
     ExpressionWrapper,
     F,
+    Max,
+    Min,
     Sum,
 )
 from django.db.models.functions import (
@@ -16,11 +19,10 @@ from django.db.models.functions import (
 )
 from django.utils import timezone as django_timezone
 
-from apps.sales.models import Sale, SaleItem
 from apps.products.models import Product
-
+from apps.sales.models import Sale, SaleItem
 from apps.payments.models import SupplierPayment
-from apps.purchases.models import Purchase
+from apps.purchases.models import Purchase, PurchaseItem
 TWO_PLACES = Decimal("0.01")
 
 
@@ -1042,3 +1044,247 @@ def get_sales_trend(
         )
 
     return results
+
+
+
+def get_historical_price_analysis(
+    product_id=None,
+    start_date=None,
+    end_date=None,
+    limit=10,
+):
+    """
+    Return product-level historical price analysis.
+
+    Purchase prices are taken from PurchaseItem.unit_cost on
+    completed purchases.
+
+    Selling prices are taken from SaleItem.unit_price on
+    completed sales.
+
+    Current Product price fields are not used because they represent
+    current master-data values rather than historical transaction
+    snapshots.
+
+    Optional date filters are applied to the completion date of the
+    corresponding transaction.
+
+    If product_id is provided, only that product is analyzed.
+
+    Products are ranked by product name.
+
+    Products with no completed purchase or sale history are excluded.
+    """
+
+    store_timezone = django_timezone.get_default_timezone()
+
+    start_dt, end_dt = _date_range_bounds(
+        start_date,
+        end_date,
+        store_timezone,
+    )
+
+    purchase_items = PurchaseItem.objects.filter(
+        purchase__status=Purchase.Status.COMPLETED,
+    )
+
+    sale_items = SaleItem.objects.filter(
+        sale__status=Sale.Status.COMPLETED,
+    )
+
+    if product_id is not None:
+        purchase_items = purchase_items.filter(
+            product_id=product_id,
+        )
+
+        sale_items = sale_items.filter(
+            product_id=product_id,
+        )
+
+    if start_dt is not None:
+        purchase_items = purchase_items.filter(
+            purchase__completed_at__gte=start_dt,
+        )
+
+        sale_items = sale_items.filter(
+            sale__completed_at__gte=start_dt,
+        )
+
+    if end_dt is not None:
+        purchase_items = purchase_items.filter(
+            purchase__completed_at__lt=end_dt,
+        )
+
+        sale_items = sale_items.filter(
+            sale__completed_at__lt=end_dt,
+        )
+
+    purchase_stats = (
+        purchase_items
+        .values("product_id")
+        .annotate(
+            minimum_purchase_cost=Min("unit_cost"),
+            maximum_purchase_cost=Max("unit_cost"),
+            average_purchase_cost=Avg("unit_cost"),
+        )
+    )
+
+    sale_stats = (
+        sale_items
+        .values("product_id")
+        .annotate(
+            minimum_sell_price=Min("unit_price"),
+            maximum_sell_price=Max("unit_price"),
+            average_sell_price=Avg("unit_price"),
+        )
+    )
+
+    purchase_by_product = {
+        row["product_id"]: row
+        for row in purchase_stats
+    }
+
+    sale_by_product = {
+        row["product_id"]: row
+        for row in sale_stats
+    }
+
+    product_ids = sorted(
+        set(purchase_by_product)
+        | set(sale_by_product)
+    )
+
+    products = (
+        Product.objects
+        .filter(id__in=product_ids)
+        .order_by("name")
+    )
+
+    latest_purchase_by_product = {}
+
+    latest_purchases = (
+        PurchaseItem.objects
+        .filter(
+            purchase__status=Purchase.Status.COMPLETED,
+            product_id__in=product_ids,
+        )
+        .select_related("purchase")
+        .order_by(
+            "product_id",
+            "-purchase__completed_at",
+            "-id",
+        )
+    )
+
+    for item in latest_purchases:
+        if item.product_id not in latest_purchase_by_product:
+            latest_purchase_by_product[item.product_id] = item
+
+    latest_sale_by_product = {}
+
+    latest_sales = (
+        SaleItem.objects
+        .filter(
+            sale__status=Sale.Status.COMPLETED,
+            product_id__in=product_ids,
+        )
+        .select_related("sale")
+        .order_by(
+            "product_id",
+            "-sale__completed_at",
+            "-id",
+        )
+    )
+
+    for item in latest_sales:
+        if item.product_id not in latest_sale_by_product:
+            latest_sale_by_product[item.product_id] = item
+
+    results = []
+
+    for product in products:
+        purchase = purchase_by_product.get(product.id)
+        sale = sale_by_product.get(product.id)
+
+        latest_purchase = latest_purchase_by_product.get(
+            product.id,
+        )
+
+        latest_sale = latest_sale_by_product.get(
+            product.id,
+        )
+
+        results.append(
+            {
+                "product_id": product.id,
+                "product__name": product.name,
+
+                "minimum_purchase_cost": (
+                    purchase["minimum_purchase_cost"]
+                    if purchase is not None
+                    else Decimal("0.00")
+                ).quantize(
+                    TWO_PLACES,
+                    rounding=ROUND_HALF_UP,
+                ),
+
+                "maximum_purchase_cost": (
+                    purchase["maximum_purchase_cost"]
+                    if purchase is not None
+                    else Decimal("0.00")
+                ).quantize(
+                    TWO_PLACES,
+                    rounding=ROUND_HALF_UP,
+                ),
+
+                "average_purchase_cost": (
+                    purchase["average_purchase_cost"]
+                    if purchase is not None
+                    else Decimal("0.00")
+                ).quantize(
+                    TWO_PLACES,
+                    rounding=ROUND_HALF_UP,
+                ),
+
+                "minimum_sell_price": (
+                    sale["minimum_sell_price"]
+                    if sale is not None
+                    else Decimal("0.00")
+                ).quantize(
+                    TWO_PLACES,
+                    rounding=ROUND_HALF_UP,
+                ),
+
+                "maximum_sell_price": (
+                    sale["maximum_sell_price"]
+                    if sale is not None
+                    else Decimal("0.00")
+                ).quantize(
+                    TWO_PLACES,
+                    rounding=ROUND_HALF_UP,
+                ),
+
+                "average_sell_price": (
+                    sale["average_sell_price"]
+                    if sale is not None
+                    else Decimal("0.00")
+                ).quantize(
+                    TWO_PLACES,
+                    rounding=ROUND_HALF_UP,
+                ),
+
+                "latest_purchase_cost": (
+                    latest_purchase.unit_cost
+                    if latest_purchase is not None
+                    else Decimal("0.00")
+                ),
+
+                "latest_sell_price": (
+                    latest_sale.unit_price
+                    if latest_sale is not None
+                    else Decimal("0.00")
+                ),
+            }
+        )
+
+    return results[:limit]

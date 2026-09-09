@@ -16,6 +16,7 @@ from .services import (
     get_category_profitability,
     get_inventory_performance,
     get_supplier_analysis,
+    get_historical_price_analysis,
 )
 
 from apps.payments.models import SupplierPayment
@@ -49,6 +50,9 @@ class ProfitabilityAnalyticsTestCase(TestCase):
             current_sell_price=Decimal("100.00"),
             minimum_stock=Decimal("10.00"),
             current_stock=Decimal("20.00"),
+        )
+        self.supplier = Supplier.objects.create(
+            name="Test Supplier",
         )
 
     # ---------------------------------------------------------
@@ -4067,4 +4071,475 @@ class ProfitabilityAnalyticsTestCase(TestCase):
         self.assertEqual(
             result[0]["total_purchase_value"],
             Decimal("300.00"),
+        )
+
+    def test_historical_price_analysis_returns_multiple_products(self):
+        """
+        Historical price analysis should return independent price
+        statistics for multiple products.
+        """
+
+        product_b = Product.objects.create(
+            name="Second Product",
+            category=self.category,
+            unit=self.unit,
+            current_purchase_cost=Decimal("30.00"),
+            current_sell_price=Decimal("60.00"),
+            minimum_stock=Decimal("10.000"),
+            current_stock=Decimal("20.000"),
+        )
+
+        purchase_a = Purchase.objects.create(
+            reference="PRICE-A-001",
+            supplier=self.supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("100.00"),
+            created_by=self.user,
+            completed_at=django_timezone.now(),
+            completed_by=self.user,
+        )
+
+        purchase_b = Purchase.objects.create(
+            reference="PRICE-B-001",
+            supplier=self.supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("60.00"),
+            created_by=self.user,
+            completed_at=django_timezone.now(),
+            completed_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=purchase_a,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_cost=Decimal("50.00"),
+            line_total=Decimal("100.00"),
+        )
+
+        PurchaseItem.objects.create(
+            purchase=purchase_b,
+            product=product_b,
+            quantity=Decimal("2.000"),
+            unit_cost=Decimal("30.00"),
+            line_total=Decimal("60.00"),
+        )
+
+        sale_a = self.create_completed_sale(
+            reference="PRICE-SALE-A",
+            total_amount=Decimal("140.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_a,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("70.00"),
+            line_total=Decimal("140.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        sale_b = self.create_completed_sale(
+            reference="PRICE-SALE-B",
+            total_amount=Decimal("120.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_b,
+            product=product_b,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("60.00"),
+            line_total=Decimal("120.00"),
+            unit_cost=Decimal("30.00"),
+        )
+
+        result = get_historical_price_analysis()
+
+        self.assertEqual(len(result), 2)
+
+        self.assertEqual(
+            result[0]["product__name"],
+            "Second Product",
+        )
+
+        self.assertEqual(
+            result[1]["product__name"],
+            "Test Product",
+        )
+
+
+    def test_historical_price_analysis_calculates_price_statistics(self):
+        """
+        Historical price analysis should calculate minimum, maximum,
+        and average purchase and selling prices.
+        """
+
+        supplier = self.supplier
+
+        purchase_1 = Purchase.objects.create(
+            reference="PRICE-STATS-001",
+            supplier=supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("100.00"),
+            created_by=self.user,
+            completed_at=django_timezone.now(),
+            completed_by=self.user,
+        )
+
+        purchase_2 = Purchase.objects.create(
+            reference="PRICE-STATS-002",
+            supplier=supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("120.00"),
+            created_by=self.user,
+            completed_at=django_timezone.now(),
+            completed_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=purchase_1,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_cost=Decimal("50.00"),
+            line_total=Decimal("100.00"),
+        )
+
+        PurchaseItem.objects.create(
+            purchase=purchase_2,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_cost=Decimal("60.00"),
+            line_total=Decimal("120.00"),
+        )
+
+        sale_1 = self.create_completed_sale(
+            reference="PRICE-STATS-SALE-001",
+            total_amount=Decimal("140.00"),
+        )
+
+        sale_2 = self.create_completed_sale(
+            reference="PRICE-STATS-SALE-002",
+            total_amount=Decimal("160.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_1,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("70.00"),
+            line_total=Decimal("140.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=sale_2,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("80.00"),
+            line_total=Decimal("160.00"),
+            unit_cost=Decimal("60.00"),
+        )
+
+        result = get_historical_price_analysis(
+            product_id=self.product.id,
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["minimum_purchase_cost"],
+            Decimal("50.00"),
+        )
+
+        self.assertEqual(
+            result[0]["maximum_purchase_cost"],
+            Decimal("60.00"),
+        )
+
+        self.assertEqual(
+            result[0]["average_purchase_cost"],
+            Decimal("55.00"),
+        )
+
+        self.assertEqual(
+            result[0]["minimum_sell_price"],
+            Decimal("70.00"),
+        )
+
+        self.assertEqual(
+            result[0]["maximum_sell_price"],
+            Decimal("80.00"),
+        )
+
+        self.assertEqual(
+            result[0]["average_sell_price"],
+            Decimal("75.00"),
+        )
+
+
+    def test_historical_price_analysis_returns_latest_prices(self):
+        """
+        Latest purchase cost and selling price should come from the
+        most recently completed transaction for each product.
+        """
+
+        older_purchase = Purchase.objects.create(
+            reference="PRICE-LATEST-001",
+            supplier=self.supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("100.00"),
+            created_by=self.user,
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 1, 10, 10, 0),
+            ),
+            completed_by=self.user,
+        )
+
+        newer_purchase = Purchase.objects.create(
+            reference="PRICE-LATEST-002",
+            supplier=self.supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("120.00"),
+            created_by=self.user,
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 2, 10, 10, 0),
+            ),
+            completed_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=older_purchase,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_cost=Decimal("50.00"),
+            line_total=Decimal("100.00"),
+        )
+
+        PurchaseItem.objects.create(
+            purchase=newer_purchase,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_cost=Decimal("60.00"),
+            line_total=Decimal("120.00"),
+        )
+
+        older_sale = self.create_completed_sale(
+            reference="PRICE-LATEST-SALE-001",
+            total_amount=Decimal("140.00"),
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 1, 15, 10, 0),
+            ),
+        )
+
+        newer_sale = self.create_completed_sale(
+            reference="PRICE-LATEST-SALE-002",
+            total_amount=Decimal("160.00"),
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 2, 15, 10, 0),
+            ),
+        )
+
+        SaleItem.objects.create(
+            sale=older_sale,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("70.00"),
+            line_total=Decimal("140.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=newer_sale,
+            product=self.product,
+            quantity=Decimal("2.000"),
+            unit_price=Decimal("80.00"),
+            line_total=Decimal("160.00"),
+            unit_cost=Decimal("60.00"),
+        )
+
+        result = get_historical_price_analysis(
+            product_id=self.product.id,
+        )
+
+        self.assertEqual(
+            result[0]["latest_purchase_cost"],
+            Decimal("60.00"),
+        )
+
+        self.assertEqual(
+            result[0]["latest_sell_price"],
+            Decimal("80.00"),
+        )
+
+
+    def test_historical_price_analysis_excludes_draft_and_cancelled_transactions(self):
+        """
+        Draft and cancelled transactions must not contribute to
+        historical price analysis.
+        """
+
+        draft_purchase = Purchase.objects.create(
+            reference="PRICE-DRAFT",
+            supplier=self.supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.DRAFT,
+            total_amount=Decimal("100.00"),
+            created_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=draft_purchase,
+            product=self.product,
+            quantity=Decimal("1.000"),
+            unit_cost=Decimal("999.00"),
+            line_total=Decimal("999.00"),
+        )
+
+        cancelled_purchase = Purchase.objects.create(
+            reference="PRICE-CANCELLED",
+            supplier=self.supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.CANCELLED,
+            total_amount=Decimal("100.00"),
+            created_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=cancelled_purchase,
+            product=self.product,
+            quantity=Decimal("1.000"),
+            unit_cost=Decimal("888.00"),
+            line_total=Decimal("888.00"),
+        )
+
+        result = get_historical_price_analysis(
+            product_id=self.product.id,
+        )
+
+        self.assertEqual(result, [])
+
+
+    def test_historical_price_analysis_date_range_filters_transactions(self):
+        """
+        Date filtering should apply independently to completed purchases
+        and completed sales.
+        """
+
+        january_purchase = Purchase.objects.create(
+            reference="PRICE-DATE-001",
+            supplier=self.supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("100.00"),
+            created_by=self.user,
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 1, 10, 12, 0),
+            ),
+            completed_by=self.user,
+        )
+
+        february_purchase = Purchase.objects.create(
+            reference="PRICE-DATE-002",
+            supplier=self.supplier,
+            payment_type=Purchase.PaymentType.CASH,
+            status=Purchase.Status.COMPLETED,
+            total_amount=Decimal("120.00"),
+            created_by=self.user,
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 2, 10, 12, 0),
+            ),
+            completed_by=self.user,
+        )
+
+        PurchaseItem.objects.create(
+            purchase=january_purchase,
+            product=self.product,
+            quantity=Decimal("1.000"),
+            unit_cost=Decimal("50.00"),
+            line_total=Decimal("50.00"),
+        )
+
+        PurchaseItem.objects.create(
+            purchase=february_purchase,
+            product=self.product,
+            quantity=Decimal("1.000"),
+            unit_cost=Decimal("70.00"),
+            line_total=Decimal("70.00"),
+        )
+
+        january_sale = self.create_completed_sale(
+            reference="PRICE-DATE-SALE-001",
+            total_amount=Decimal("80.00"),
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 1, 15, 12, 0),
+            ),
+        )
+
+        february_sale = self.create_completed_sale(
+            reference="PRICE-DATE-SALE-002",
+            total_amount=Decimal("100.00"),
+            completed_at=django_timezone.make_aware(
+                datetime(2026, 2, 15, 12, 0),
+            ),
+        )
+
+        SaleItem.objects.create(
+            sale=january_sale,
+            product=self.product,
+            quantity=Decimal("1.000"),
+            unit_price=Decimal("80.00"),
+            line_total=Decimal("80.00"),
+            unit_cost=Decimal("50.00"),
+        )
+
+        SaleItem.objects.create(
+            sale=february_sale,
+            product=self.product,
+            quantity=Decimal("1.000"),
+            unit_price=Decimal("100.00"),
+            line_total=Decimal("100.00"),
+            unit_cost=Decimal("70.00"),
+        )
+
+        result = get_historical_price_analysis(
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 1, 31),
+        )
+
+        self.assertEqual(len(result), 1)
+
+        self.assertEqual(
+            result[0]["minimum_purchase_cost"],
+            Decimal("50.00"),
+        )
+
+        self.assertEqual(
+            result[0]["maximum_purchase_cost"],
+            Decimal("50.00"),
+        )
+
+        self.assertEqual(
+            result[0]["average_purchase_cost"],
+            Decimal("50.00"),
+        )
+
+        self.assertEqual(
+            result[0]["minimum_sell_price"],
+            Decimal("80.00"),
+        )
+
+        self.assertEqual(
+            result[0]["maximum_sell_price"],
+            Decimal("80.00"),
+        )
+
+        self.assertEqual(
+            result[0]["average_sell_price"],
+            Decimal("80.00"),
         )
