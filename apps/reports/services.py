@@ -1,8 +1,8 @@
 from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 
 from django.db import models
 from django.db.models.functions import Coalesce
-
 from apps.customers.models import Customer
 from apps.expenses.models import Expense
 from apps.payments.models import CustomerPayment, SupplierPayment
@@ -70,7 +70,7 @@ def get_sales_summary():
                     models.F("quantity") * models.F("unit_cost"),
                     output_field=models.DecimalField(
                         max_digits=20,
-                        decimal_places=2,
+                        decimal_places=5,
                     ),
                 )
             )
@@ -90,9 +90,12 @@ def get_sales_summary():
     if total_revenue > Decimal("0.00"):
         gross_margin = (
             gross_profit / total_revenue * Decimal("100")
-        ).quantize(Decimal("0.01"))
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP,
+    )
     else:
-        gross_margin = Decimal("0.00")
+        gross_margin = None
 
     return {
         "sales_count": (
