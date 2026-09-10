@@ -9,60 +9,91 @@
         <p>{% trans "Manage your products and inventory." %}</p>
     </div>
 
-    <a href="{% url 'product_create' %}" class="btn-primary">
-        + {% trans "New Product" %}
-    </a>
+
+<a href="{% url 'product_create' %}" class="btn-primary">
+    + {% trans "New Product" %}
+</a>
+
+
 </div>
 
 <div class="card">
 
-    <div class="table-toolbar">
 
-        <input
-            type="text"
-            class="form-input"
-            placeholder="{% trans 'Search products...' %}"
-        >
+<div class="table-toolbar">
 
-    </div>
+    <input
+        type="text"
+        class="form-input"
+        placeholder="{% trans 'Search products...' %}"
+    >
 
-    <table class="data-table">
+</div>
 
-        <thead>
+<table class="data-table">
+
+    <thead>
+        <tr>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Category" %}</th>
+            <th>{% trans "Unit" %}</th>
+            <th>{% trans "Stock" %}</th>
+            <th>{% trans "Sell Price" %}</th>
+            <th>{% trans "Actions" %}</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for product in products %}
+
             <tr>
-                <th>{% trans "Name" %}</th>
-                <th>{% trans "Category" %}</th>
-                <th>{% trans "Unit" %}</th>
-                <th>{% trans "Stock" %}</th>
-                <th>{% trans "Sell Price" %}</th>
+                <td>{{ product.name }}</td>
+
+                <td>
+                    {{ product.category.name }}
+                </td>
+
+                <td>
+                    {{ product.unit.symbol }}
+                </td>
+
+                <td>
+                    {{ product.current_stock }}
+                </td>
+
+                <td>
+                    {{ product.current_sell_price }}
+                </td>
+
+                <td>
+                    <div class="table-actions">
+
+                        <a
+                            href="{% url 'product_edit' product.id %}"
+                            class="btn-secondary btn-small"
+                        >
+                            {% trans "Edit" %}
+                        </a>
+
+                    </div>
+                </td>
             </tr>
-        </thead>
 
-        <tbody>
+        {% empty %}
 
-            {% for product in products %}
+            <tr>
+                <td colspan="6">
+                    {% trans "No products found." %}
+                </td>
+            </tr>
 
-                <tr>
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.category.name }}</td>
-                    <td>{{ product.unit.symbol }}</td>
-                    <td>{{ product.current_stock }}</td>
-                    <td>{{ product.current_sell_price }}</td>
-                </tr>
+        {% endfor %}
 
-            {% empty %}
+    </tbody>
 
-                <tr>
-                    <td colspan="5">
-                        {% trans "No products found." %}
-                    </td>
-                </tr>
+</table>
 
-            {% endfor %}
-
-        </tbody>
-
-    </table>
 
 </div>
 

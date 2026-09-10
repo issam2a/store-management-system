@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import Product ,Category ,Unit
 from django.contrib import messages
 from .forms import ProductForm ,CategoryForm ,UnitForm
+from django.utils.translation import gettext as _
 
 from .services import (
     activate_category,
@@ -15,6 +16,7 @@ from .services import (
     deactivate_unit,
     update_category,
     update_unit,
+    update_product,
 )
 
 def product_list(request):
@@ -61,9 +63,58 @@ def product_create(request):
 
     return render(
         request,
-        "products/product_create.html",
+        "products/product_form.html",
         {
             "form": form,
+            "page_title": _("Create Product"),
+            "page_description": _(
+                "Add a new product to your store."
+            ),
+            "submit_label": _("Create Product"),
+        },
+    )
+
+def product_edit(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+
+    if request.method == "POST":
+        form = ProductForm(request.POST, instance=product)
+
+        if form.is_valid():
+            try:
+                update_product(
+                    product_id=product.id,
+                    name=form.cleaned_data["name"],
+                    category_id=form.cleaned_data["category"].id,
+                    unit_id=form.cleaned_data["unit"].id,
+                    current_purchase_cost=form.cleaned_data[
+                        "current_purchase_cost"
+                    ],
+                    current_sell_price=form.cleaned_data[
+                        "current_sell_price"
+                    ],
+                    minimum_stock=form.cleaned_data["minimum_stock"],
+                )
+            except ValidationError as exc:
+                form.add_error(None, exc)
+            else:
+                messages.success(
+                    request,
+                    "Product updated successfully.",
+                )
+                return redirect("product_list")
+    else:
+        form = ProductForm(instance=product)
+
+    return render(
+        request,
+        "products/product_form.html",
+        {
+            "form": form,
+            "product": product,
+            "page_title": _("Edit Product"),
+            "page_description": _("Update product information."),
+            "submit_label": _("Save Changes"),
         },
     )
 

@@ -7,6 +7,7 @@ from .views import (
     category_edit,
     category_list,
     product_create,
+    product_edit,
     product_list,
     unit_activate,
     unit_create,
@@ -56,5 +57,11 @@ urlpatterns = [
         "units/<int:unit_id>/deactivate/",
         unit_deactivate,
         name="unit_deactivate",
+    ),
+
+    path(
+        "<int:product_id>/edit/",
+        product_edit,
+        name="product_edit",
     ),
 ]

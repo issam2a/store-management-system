@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Create Product" %} — StoreFlow
+    {{ page_title }} — StoreFlow
 {% endblock %}
 
 {% block content %}
@@ -16,13 +16,13 @@
 
             <span>/</span>
 
-            <span>{% trans "Create Product" %}</span>
+            <span>{{ page_title }}</span>
         </div>
 
-        <h1>{% trans "Create Product" %}</h1>
+        <h1>{{ page_title }}</h1>
 
         <p>
-            {% trans "Add a new product to your store." %}
+            {{ page_description }}
         </p>
     </div>
 </div>
@@ -161,7 +161,7 @@
                 type="submit"
                 class="btn-primary"
             >
-                {% trans "Create Product" %}
+                {{ submit_label }}
             </button>
 
         </div>
