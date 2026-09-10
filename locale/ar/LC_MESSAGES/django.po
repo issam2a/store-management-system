@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 19:48+0300\n"
+"POT-Creation-Date: 2026-09-10 21:18+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,12 +19,10 @@ msgid "Customer created successfully."
 msgstr "تم إنشاء الفئة بنجاح."
 
 #: .\apps\customers\views.py:94 .\apps\customers\views.py:98
-
 msgid "Create Customer"
 msgstr "إنشاء عميل"
 
 #: .\apps\customers\views.py:96
-
 msgid "Add a new customer to your store."
 msgstr "إضافة عميل جديد إلى متجرك."
 
@@ -47,6 +45,7 @@ msgid "Update customer information."
 msgstr "تحديث معلومات المنتج"
 
 #: .\apps\customers\views.py:152 .\apps\products\views.py:159
+#: .\apps\suppliers\views.py:158
 msgid "Save Changes"
 msgstr "حفظ التغييرات"
 
@@ -89,6 +88,46 @@ msgstr "تم تفعيل المنتج بنجاح."
 msgid "Product deactivated successfully."
 msgstr "تم إلغاء تفعيل المنتج بنجاح."
 
+#: .\apps\suppliers\views.py:85
+
+msgid "Supplier created successfully."
+msgstr "تم إنشاء المورد بنجاح."
+
+#: .\apps\suppliers\views.py:98 .\apps\suppliers\views.py:102
+
+msgid "Create Supplier"
+msgstr "إنشاء مورد"
+
+#: .\apps\suppliers\views.py:100
+
+msgid "Add a new supplier to your store."
+msgstr "أضف مورداً جديداً إلى متجرك."
+
+#: .\apps\suppliers\views.py:132
+
+msgid "Supplier updated successfully."
+msgstr "تم تحديث المورد بنجاح."
+
+#: .\apps\suppliers\views.py:154
+
+msgid "Edit Supplier"
+msgstr "تعديل المورد"
+
+#: .\apps\suppliers\views.py:156
+
+msgid "Update supplier information."
+msgstr "تحديث بيانات المورد"
+
+#: .\apps\suppliers\views.py:178
+
+msgid "Supplier activated successfully."
+msgstr "تم تفعيل المورد بنجاح"
+
+#: .\apps\suppliers\views.py:198
+
+msgid "Supplier deactivated successfully."
+msgstr "تم إلغاء تفعيل المورد بنجاح."
+
 # ============================================================
 # Base
 # ============================================================
@@ -120,6 +159,7 @@ msgstr "لوحة التحكم"
 
 #: .\dashboard\templates\components\sidebar.html:57
 #: .\dashboard\templates\customers\customer_list.html:17
+#: .\dashboard\templates\suppliers\supplier_list.html:13
 msgid "Management"
 msgstr "الإدارة"
 
@@ -180,6 +220,9 @@ msgid "Customers"
 msgstr "العملاء"
 
 #: .\dashboard\templates\components\sidebar.html:112
+#: .\dashboard\templates\suppliers\supplier_form.html:14
+#: .\dashboard\templates\suppliers\supplier_list.html:5
+#: .\dashboard\templates\suppliers\supplier_list.html:17
 msgid "Suppliers"
 msgstr "الموردون"
 
@@ -238,31 +281,29 @@ msgstr "قائمة المستخدم"
 msgid "Administrator"
 msgstr "مدير النظام"
 
-#: .\dashboard\templates\customers\customer_form.html:32
-
-msgid "Back to Customers"
-msgstr "العودة إلى العملاء"
-
-#: .\dashboard\templates\customers\customer_form.html:65
-
+#: .\dashboard\templates\customers\customer_form.html:58
 msgid "Customer Name"
 msgstr "اسم العميل"
 
-#: .\dashboard\templates\customers\customer_form.html:85
+#: .\dashboard\templates\customers\customer_form.html:78
 #: .\dashboard\templates\customers\customer_list.html:132
+#: .\dashboard\templates\suppliers\supplier_form.html:72
+#: .\dashboard\templates\suppliers\supplier_list.html:100
 msgid "Phone"
 msgstr "رقم الهاتف"
 
-#: .\dashboard\templates\customers\customer_form.html:105
+#: .\dashboard\templates\customers\customer_form.html:98
 #: .\dashboard\templates\customers\customer_list.html:136
-
+#: .\dashboard\templates\suppliers\supplier_form.html:92
+#: .\dashboard\templates\suppliers\supplier_list.html:101
 msgid "Contact Information"
 msgstr "معلومات الاتصال"
 
-#: .\dashboard\templates\customers\customer_form.html:127
+#: .\dashboard\templates\customers\customer_form.html:120
 #: .\dashboard\templates\products\category_form.html:81
 #: .\dashboard\templates\products\product_form.html:157
 #: .\dashboard\templates\products\unit_form.html:81
+#: .\dashboard\templates\suppliers\supplier_form.html:114
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -271,17 +312,16 @@ msgid "Manage your store customers and their contact information."
 msgstr "إدارة عملاء متجرك ومعلومات الاتصال الخاصة بهم"
 
 #: .\dashboard\templates\customers\customer_list.html:37
-
 msgid "Add Customer"
 msgstr "اضافةعميل"
 
 #: .\dashboard\templates\customers\customer_list.html:60
-
 msgid "Search customers..."
 msgstr "البحث عن العملاء..."
 
 #: .\dashboard\templates\customers\customer_list.html:73
 #: .\dashboard\templates\products\product_list.html:88
+#: .\dashboard\templates\suppliers\supplier_list.html:56
 msgid "All Statuses"
 msgstr "كل الحالات"
 
@@ -291,6 +331,8 @@ msgstr "كل الحالات"
 #: .\dashboard\templates\products\product_list.html:97
 #: .\dashboard\templates\products\product_list.html:192
 #: .\dashboard\templates\products\unit_list.html:67
+#: .\dashboard\templates\suppliers\supplier_list.html:63
+#: .\dashboard\templates\suppliers\supplier_list.html:142
 msgid "Active"
 msgstr "نشط"
 
@@ -300,16 +342,20 @@ msgstr "نشط"
 #: .\dashboard\templates\products\product_list.html:106
 #: .\dashboard\templates\products\product_list.html:198
 #: .\dashboard\templates\products\unit_list.html:71
+#: .\dashboard\templates\suppliers\supplier_list.html:70
+#: .\dashboard\templates\suppliers\supplier_list.html:146
 msgid "Inactive"
 msgstr "غير نشط"
 
 #: .\dashboard\templates\customers\customer_list.html:102
 #: .\dashboard\templates\products\product_list.html:118
+#: .\dashboard\templates\suppliers\supplier_list.html:79
 msgid "Filter"
 msgstr ""
 
 #: .\dashboard\templates\customers\customer_list.html:111
 #: .\dashboard\templates\products\product_list.html:128
+#: .\dashboard\templates\suppliers\supplier_list.html:87
 #: .\venv\Lib\site-packages\django\forms\widgets.py:573
 msgid "Clear"
 msgstr "مسح"
@@ -318,6 +364,7 @@ msgstr "مسح"
 #: .\dashboard\templates\products\category_list.html:40
 #: .\dashboard\templates\products\product_list.html:142
 #: .\dashboard\templates\products\unit_list.html:40
+#: .\dashboard\templates\suppliers\supplier_list.html:99
 msgid "Name"
 msgstr "الاسم"
 
@@ -326,6 +373,7 @@ msgstr "الاسم"
 #: .\dashboard\templates\products\category_list.html:41
 #: .\dashboard\templates\products\product_list.html:152
 #: .\dashboard\templates\products\unit_list.html:42
+#: .\dashboard\templates\suppliers\supplier_list.html:102
 msgid "Status"
 msgstr "الحالة"
 
@@ -333,6 +381,7 @@ msgstr "الحالة"
 #: .\dashboard\templates\products\category_list.html:43
 #: .\dashboard\templates\products\product_list.html:154
 #: .\dashboard\templates\products\unit_list.html:44
+#: .\dashboard\templates\suppliers\supplier_list.html:103
 msgid "Actions"
 msgstr "الإجراءات"
 
@@ -340,6 +389,7 @@ msgstr "الإجراءات"
 #: .\dashboard\templates\products\category_list.html:82
 #: .\dashboard\templates\products\product_list.html:214
 #: .\dashboard\templates\products\unit_list.html:87
+#: .\dashboard\templates\suppliers\supplier_list.html:158
 msgid "Edit"
 msgstr "تعديل"
 
@@ -347,6 +397,7 @@ msgstr "تعديل"
 #: .\dashboard\templates\products\category_list.html:98
 #: .\dashboard\templates\products\product_list.html:232
 #: .\dashboard\templates\products\unit_list.html:103
+#: .\dashboard\templates\suppliers\supplier_list.html:173
 msgid "Deactivate"
 msgstr "تعطيل"
 
@@ -354,6 +405,7 @@ msgstr "تعطيل"
 #: .\dashboard\templates\products\category_list.html:115
 #: .\dashboard\templates\products\product_list.html:251
 #: .\dashboard\templates\products\unit_list.html:120
+#: .\dashboard\templates\suppliers\supplier_list.html:189
 msgid "Activate"
 msgstr "تفعيل"
 
@@ -382,16 +434,17 @@ msgstr[5] ""
 
 #: .\dashboard\templates\customers\customer_list.html:290
 #: .\dashboard\templates\products\product_list.html:306
+#: .\dashboard\templates\suppliers\supplier_list.html:227
 msgid "Previous"
 msgstr "السابق"
 
 #: .\dashboard\templates\customers\customer_list.html:324
 #: .\dashboard\templates\products\product_list.html:340
+#: .\dashboard\templates\suppliers\supplier_list.html:257
 msgid "Next"
 msgstr "التالي"
 
 #: .\dashboard\templates\customers\customer_list.html:339
-
 msgid "No customers found."
 msgstr "لم يتم العثور على عملاء."
 
@@ -655,6 +708,54 @@ msgstr "وحدات"
 
 #: .\dashboard\templates\products\unit_list.html:135
 msgid "No units found."
+msgstr "لم يتم العثور على وحدات."
+
+#: .\dashboard\templates\suppliers\supplier_form.html:52
+#, fuzzy
+#| msgid "Suppliers"
+msgid "Supplier Name"
+msgstr "الموردون"
+
+#: .\dashboard\templates\suppliers\supplier_list.html:21
+#, fuzzy
+#| msgid "Manage your store customers and their contact information."
+msgid "Manage your store suppliers and their contact information."
+msgstr "إدارة عملاء متجرك ومعلومات الاتصال الخاصة بهم"
+
+#: .\dashboard\templates\suppliers\supplier_list.html:31
+
+msgid "Add Supplier"
+msgstr "إضافة مورد"
+
+#: .\dashboard\templates\suppliers\supplier_list.html:46
+#, fuzzy
+#| msgid "Search customers..."
+msgid "Search suppliers..."
+msgstr "البحث عن العملاء..."
+
+#: .\dashboard\templates\suppliers\supplier_list.html:210
+#, python-format
+msgid ""
+"\n"
+"                    Showing %(page_obj.start_index)s–%(page_obj.end_index)s "
+"of %(total)s supplier\n"
+"                "
+msgid_plural ""
+"\n"
+"                    Showing %(page_obj.start_index)s–%(page_obj.end_index)s "
+"of %(total)s suppliers\n"
+"                "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+#: .\dashboard\templates\suppliers\supplier_list.html:270
+#, fuzzy
+#| msgid "No units found."
+msgid "No suppliers found."
 msgstr "لم يتم العثور على وحدات."
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
@@ -1994,6 +2095,9 @@ msgstr ""
 #: .\venv\Lib\site-packages\django\views\templates\default_urlconf.html:239
 msgid "Connect, get help, or contribute"
 msgstr ""
+
+#~ msgid "Back to Customers"
+#~ msgstr "العودة إلى العملاء"
 
 # ============================================================
 # Dashboard

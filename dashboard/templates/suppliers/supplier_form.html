@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+{{ page_title }} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+<div>
+    <div class="page-eyebrow">
+        {% trans "Suppliers" %}
+    </div>
+
+
+<h1 class="page-title">
+    {{ page_title }}
+</h1>
+
+<p class="page-description">
+    {{ page_description }}
+</p>
+
+
+</div>
+
+</div>
+
+<div class="content-card form-card">
+
+{% if form.non_field_errors %} <div class="form-error-summary">
+{% for error in form.non_field_errors %} <div>
+{{ error }} </div>
+{% endfor %} </div>
+{% endif %}
+
+<form method="post" novalidate>
+
+
+{% csrf_token %}
+
+<div class="form-grid">
+
+    <div class="form-group">
+
+        <label
+            for="{{ form.name.id_for_label }}"
+            class="form-label"
+        >
+            {% trans "Supplier Name" %}
+        </label>
+
+        {{ form.name }}
+
+        {% for error in form.name.errors %}
+            <div class="form-error">
+                {{ error }}
+            </div>
+        {% endfor %}
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label
+            for="{{ form.phone.id_for_label }}"
+            class="form-label"
+        >
+            {% trans "Phone" %}
+        </label>
+
+        {{ form.phone }}
+
+        {% for error in form.phone.errors %}
+            <div class="form-error">
+                {{ error }}
+            </div>
+        {% endfor %}
+
+    </div>
+
+
+    <div class="form-group form-group-full">
+
+        <label
+            for="{{ form.contact_information.id_for_label }}"
+            class="form-label"
+        >
+            {% trans "Contact Information" %}
+        </label>
+
+        {{ form.contact_information }}
+
+        {% for error in form.contact_information.errors %}
+            <div class="form-error">
+                {{ error }}
+            </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<div class="form-actions">
+
+    <a
+        href="{% url 'supplier_list' %}"
+        class="btn-secondary"
+    >
+        {% trans "Cancel" %}
+    </a>
+
+    <button
+        type="submit"
+        class="btn-primary"
+    >
+        {{ submit_label }}
+    </button>
+
+</div>
+
+
+</form>
+
+</div>
+
+{% endblock %}
