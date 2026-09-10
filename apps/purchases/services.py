@@ -4,9 +4,66 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
-from .models import Purchase
+from .models import (
+    Purchase,
+    PurchaseItem,
+)
 from apps.products.models import Product
 
+
+def generate_purchase_reference():
+    last_purchase = (
+        Purchase.objects
+        .order_by("-id")
+        .first()
+    )
+
+    if last_purchase is None:
+        next_number = 1
+    else:
+        next_number = last_purchase.id + 1
+
+    return f"PUR-{next_number:06d}"
+
+def create_purchase(
+    *,
+    supplier,
+    payment_type,
+    user,
+):
+    """
+    Create a draft purchase.
+
+    Business effects:
+    - Create a new purchase in DRAFT status.
+    - Assign the supplier and payment type.
+    - Record the user who created the purchase.
+    - Do not affect inventory.
+    - Do not update product purchase costs.
+    - Do not create supplier payment records.
+    """
+
+    if not supplier.is_active:
+        raise ValidationError(
+            "Supplier must be active."
+        )
+
+    if payment_type not in Purchase.PaymentType.values:
+        raise ValidationError(
+            "Invalid payment type."
+        )
+
+    with transaction.atomic():
+        purchase = Purchase.objects.create(
+            reference=generate_purchase_reference(),
+            supplier=supplier,
+            payment_type=payment_type,
+            status=Purchase.Status.DRAFT,
+            created_by=user,
+            total_amount=Decimal("0.00"),
+        )
+
+        return purchase
 
 def complete_purchase(purchase_id, user):
     """
@@ -211,3 +268,167 @@ def cancel_purchase(purchase_id, user, reason):
         )
 
         return purchase, cancellation
+
+
+def add_purchase_item(
+    *,
+    purchase_id,
+    product,
+    quantity,
+    unit_cost,
+):
+    """
+    Add an item to a draft purchase.
+
+    Business effects:
+    - Creates a PurchaseItem.
+    - Calculates line_total.
+    - Updates purchase total.
+    - Does NOT affect inventory.
+    """
+
+    with transaction.atomic():
+
+        purchase = (
+            Purchase.objects
+            .select_for_update()
+            .get(pk=purchase_id)
+        )
+
+        if purchase.status != Purchase.Status.DRAFT:
+            raise ValidationError(
+                "Items can only be added to draft purchases."
+            )
+
+        if not product.is_active:
+            raise ValidationError(
+                "Product must be active."
+            )
+
+        if quantity <= 0:
+            raise ValidationError(
+                "Quantity must be greater than zero."
+            )
+
+        if unit_cost < 0:
+            raise ValidationError(
+                "Unit cost cannot be negative."
+            )
+
+        line_total = (
+            quantity * unit_cost
+        ).quantize(Decimal("0.01"))
+
+        item = purchase.items.create(
+            product=product,
+            quantity=quantity,
+            unit_cost=unit_cost,
+            line_total=line_total,
+        )
+
+        recalculate_purchase_total(
+            purchase
+        )
+
+        return item
+
+def recalculate_purchase_total(
+    purchase,
+):
+    total_amount = sum(
+        (
+            item.line_total
+            for item in purchase.items.all()
+        ),
+        Decimal("0.00"),
+    )
+
+    purchase.total_amount = total_amount
+
+    purchase.save(
+        update_fields=[
+            "total_amount",
+        ]
+    )
+
+    return purchase
+
+def update_purchase_item(
+    *,
+    item_id,
+    quantity,
+    unit_cost,
+):
+    with transaction.atomic():
+
+        item = (
+            PurchaseItem.objects
+            .select_related("purchase")
+            .select_for_update()
+            .get(pk=item_id)
+        )
+
+        if (
+            item.purchase.status
+            != Purchase.Status.DRAFT
+        ):
+            raise ValidationError(
+                "Items can only be edited in draft purchases."
+            )
+
+        if quantity <= 0:
+            raise ValidationError(
+                "Quantity must be greater than zero."
+            )
+
+        if unit_cost < 0:
+            raise ValidationError(
+                "Unit cost cannot be negative."
+            )
+
+        item.quantity = quantity
+        item.unit_cost = unit_cost
+        item.line_total = (
+            quantity * unit_cost
+        ).quantize(Decimal("0.01"))
+
+        item.save(
+            update_fields=[
+                "quantity",
+                "unit_cost",
+                "line_total",
+            ]
+        )
+
+        recalculate_purchase_total(
+            item.purchase
+        )
+
+        return item
+
+def remove_purchase_item(
+    item_id,
+):
+    with transaction.atomic():
+
+        item = (
+            PurchaseItem.objects
+            .select_related("purchase")
+            .select_for_update()
+            .get(pk=item_id)
+        )
+
+        purchase = item.purchase
+
+        if purchase.status != Purchase.Status.DRAFT:
+            raise ValidationError(
+                "Items can only be removed from draft purchases."
+            )
+
+        item.delete()
+
+        recalculate_purchase_total(
+            purchase
+        )
+
+        return purchase
