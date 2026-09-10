@@ -310,12 +310,12 @@
                             <div class="stock-item-quantity">
 
                                 <strong>
-                                    {{ product.current_stock|floatformat:3 }}
+                                    {{ product.current_stock|floatformat:"-3" }}
                                 </strong>
 
                                 <span>
                                     /
-                                    {{ product.minimum_stock|floatformat:3 }}
+                                    {{ product.minimum_stock|floatformat:"-3" }}
                                     {{ product.unit.symbol }}
                                 </span>
 
@@ -531,7 +531,7 @@
                             </strong>
 
                             <span>
-                                {{ product.quantity_sold|floatformat:3 }}
+                                {{ product.quantity_sold|floatformat:-3 }}
                                 {{ product.product__unit__symbol }}
                                 {% trans "sold" %}
                             </span>
