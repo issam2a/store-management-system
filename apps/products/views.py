@@ -17,6 +17,9 @@ from .services import (
     update_category,
     update_unit,
     update_product,
+    activate_product,
+    deactivate_product,
+
 )
 
 def product_list(request):
@@ -118,6 +121,28 @@ def product_edit(request, product_id):
         },
     )
 
+def product_activate(request, product_id):
+    if request.method == "POST":
+        activate_product(product_id=product_id)
+
+        messages.success(
+            request,
+            _("Product activated successfully."),
+        )
+
+    return redirect("product_list")
+
+
+def product_deactivate(request, product_id):
+    if request.method == "POST":
+        deactivate_product(product_id=product_id)
+
+        messages.success(
+            request,
+            _("Product deactivated successfully."),
+        )
+
+    return redirect("product_list")
 # -------------------------------------------------------------------
 # Category CRUD
 # -------------------------------------------------------------------

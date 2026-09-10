@@ -14,6 +14,8 @@ from .views import (
     unit_deactivate,
     unit_edit,
     unit_list,
+    product_activate,
+    product_deactivate,
 )
 
 urlpatterns = [
@@ -63,5 +65,15 @@ urlpatterns = [
         "<int:product_id>/edit/",
         product_edit,
         name="product_edit",
+    ),
+    path(
+        "<int:product_id>/activate/",
+        product_activate,
+        name="product_activate",
+    ),
+    path(
+        "<int:product_id>/deactivate/",
+        product_deactivate,
+        name="product_deactivate",
     ),
 ]

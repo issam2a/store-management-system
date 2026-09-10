@@ -9,91 +9,139 @@
         <p>{% trans "Manage your products and inventory." %}</p>
     </div>
 
-
-<a href="{% url 'product_create' %}" class="btn-primary">
-    + {% trans "New Product" %}
-</a>
-
-
+    <a href="{% url 'product_create' %}" class="btn-primary">
+        + {% trans "New Product" %}
+    </a>
 </div>
 
 <div class="card">
 
+    <div class="table-toolbar">
 
-<div class="table-toolbar">
+        <input
+            type="text"
+            class="form-input"
+            placeholder="{% trans 'Search products...' %}"
+        >
 
-    <input
-        type="text"
-        class="form-input"
-        placeholder="{% trans 'Search products...' %}"
-    >
+    </div>
 
-</div>
+    <table class="data-table">
 
-<table class="data-table">
-
-    <thead>
-        <tr>
-            <th>{% trans "Name" %}</th>
-            <th>{% trans "Category" %}</th>
-            <th>{% trans "Unit" %}</th>
-            <th>{% trans "Stock" %}</th>
-            <th>{% trans "Sell Price" %}</th>
-            <th>{% trans "Actions" %}</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-        {% for product in products %}
-
+        <thead>
             <tr>
-                <td>{{ product.name }}</td>
-
-                <td>
-                    {{ product.category.name }}
-                </td>
-
-                <td>
-                    {{ product.unit.symbol }}
-                </td>
-
-                <td>
-                    {{ product.current_stock }}
-                </td>
-
-                <td>
-                    {{ product.current_sell_price }}
-                </td>
-
-                <td>
-                    <div class="table-actions">
-
-                        <a
-                            href="{% url 'product_edit' product.id %}"
-                            class="btn-secondary btn-small"
-                        >
-                            {% trans "Edit" %}
-                        </a>
-
-                    </div>
-                </td>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Category" %}</th>
+                <th>{% trans "Unit" %}</th>
+                <th>{% trans "Stock" %}</th>
+                <th>{% trans "Sell Price" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Actions" %}</th>
             </tr>
+        </thead>
 
-        {% empty %}
+        <tbody>
 
-            <tr>
-                <td colspan="6">
-                    {% trans "No products found." %}
-                </td>
-            </tr>
+            {% for product in products %}
 
-        {% endfor %}
+                <tr>
 
-    </tbody>
+                    <td>
+                        {{ product.name }}
+                    </td>
 
-</table>
+                    <td>
+                        {{ product.category.name }}
+                    </td>
 
+                    <td>
+                        {{ product.unit.symbol }}
+                    </td>
+
+                    <td>
+                        {{ product.current_stock }}
+                    </td>
+
+                    <td>
+                        {{ product.current_sell_price }}
+                    </td>
+
+                    <td>
+                        {% if product.is_active %}
+                            <span class="status-badge status-success">
+                                {% trans "Active" %}
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-muted">
+                                {% trans "Inactive" %}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <div class="table-actions">
+
+                            <a
+                                href="{% url 'product_edit' product.id %}"
+                                class="btn-secondary btn-small"
+                            >
+                                {% trans "Edit" %}
+                            </a>
+
+                            {% if product.is_active %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'product_deactivate' product.id %}"
+                                    class="inline-form"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn-danger btn-small"
+                                    >
+                                        {% trans "Deactivate" %}
+                                    </button>
+                                </form>
+
+                            {% else %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'product_activate' product.id %}"
+                                    class="inline-form"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn-secondary btn-small"
+                                    >
+                                        {% trans "Activate" %}
+                                    </button>
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+                    </td>
+
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="7">
+                        {% trans "No products found." %}
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
 
 </div>
 

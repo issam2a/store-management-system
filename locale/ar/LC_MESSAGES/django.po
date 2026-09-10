@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 17:06+0300\n"
+"POT-Creation-Date: 2026-09-10 17:31+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,26 +15,33 @@ msgstr ""
 # ============================================================
 # Products
 # ============================================================
-#: .\apps\products\views.py:69 .\apps\products\views.py:73
+#: .\apps\products\views.py:72 .\apps\products\views.py:76
 msgid "Create Product"
 msgstr "إنشاء منتج"
 
-#: .\apps\products\views.py:71
+#: .\apps\products\views.py:74
 msgid "Add a new product to your store."
 msgstr "إضافة منتج جديد إلى متجرك."
 
-#: .\apps\products\views.py:115
+#: .\apps\products\views.py:118
 msgid "Edit Product"
 msgstr "تعديل المنتج"
 
-#: .\apps\products\views.py:116
-
+#: .\apps\products\views.py:119
 msgid "Update product information."
 msgstr "تحديث معلومات المنتج"
 
-#: .\apps\products\views.py:117
+#: .\apps\products\views.py:120
 msgid "Save Changes"
 msgstr "حفظ التغييرات"
+
+#: .\apps\products\views.py:130
+msgid "Product activated successfully."
+msgstr "تم تفعيل المنتج بنجاح."
+
+#: .\apps\products\views.py:142
+msgid "Product deactivated successfully."
+msgstr "تم إلغاء تفعيل المنتج بنجاح."
 
 # ============================================================
 # Base
@@ -277,6 +284,7 @@ msgstr "المبلغ"
 
 #: .\dashboard\templates\dashboard\home.html:417
 #: .\dashboard\templates\products\category_list.html:41
+#: .\dashboard\templates\products\product_list.html:38
 #: .\dashboard\templates\products\unit_list.html:42
 msgid "Status"
 msgstr "الحالة"
@@ -338,7 +346,7 @@ msgid "categories"
 msgstr "فئات"
 
 #: .\dashboard\templates\products\category_list.html:40
-#: .\dashboard\templates\products\product_list.html:37
+#: .\dashboard\templates\products\product_list.html:33
 #: .\dashboard\templates\products\unit_list.html:40
 msgid "Name"
 msgstr "الاسم"
@@ -349,33 +357,37 @@ msgid "Created"
 msgstr "تاريخ الإنشاء"
 
 #: .\dashboard\templates\products\category_list.html:43
-#: .\dashboard\templates\products\product_list.html:42
+#: .\dashboard\templates\products\product_list.html:39
 #: .\dashboard\templates\products\unit_list.html:44
 msgid "Actions"
 msgstr "الإجراءات"
 
 #: .\dashboard\templates\products\category_list.html:62
+#: .\dashboard\templates\products\product_list.html:72
 #: .\dashboard\templates\products\unit_list.html:67
 msgid "Active"
 msgstr "نشط"
 
 #: .\dashboard\templates\products\category_list.html:66
+#: .\dashboard\templates\products\product_list.html:76
 #: .\dashboard\templates\products\unit_list.html:71
 msgid "Inactive"
 msgstr "غير نشط"
 
 #: .\dashboard\templates\products\category_list.html:82
-#: .\dashboard\templates\products\product_list.html:76
+#: .\dashboard\templates\products\product_list.html:88
 #: .\dashboard\templates\products\unit_list.html:87
 msgid "Edit"
 msgstr "تعديل"
 
 #: .\dashboard\templates\products\category_list.html:98
+#: .\dashboard\templates\products\product_list.html:104
 #: .\dashboard\templates\products\unit_list.html:103
 msgid "Deactivate"
 msgstr "تعطيل"
 
 #: .\dashboard\templates\products\category_list.html:115
+#: .\dashboard\templates\products\product_list.html:121
 #: .\dashboard\templates\products\unit_list.html:120
 msgid "Activate"
 msgstr "تفعيل"
@@ -389,12 +401,12 @@ msgid "Product Name"
 msgstr "اسم المنتج"
 
 #: .\dashboard\templates\products\product_form.html:64
-#: .\dashboard\templates\products\product_list.html:38
+#: .\dashboard\templates\products\product_list.html:34
 msgid "Category"
 msgstr "الفئة"
 
 #: .\dashboard\templates\products\product_form.html:81
-#: .\dashboard\templates\products\product_list.html:39
+#: .\dashboard\templates\products\product_list.html:35
 msgid "Unit"
 msgstr "الوحدة"
 
@@ -414,23 +426,23 @@ msgstr "الحد الأدنى للمخزون"
 msgid "Manage your products and inventory."
 msgstr "إدارة منتجاتك ومخزونك."
 
-#: .\dashboard\templates\products\product_list.html:14
+#: .\dashboard\templates\products\product_list.html:13
 msgid "New Product"
 msgstr "إضافة منتج"
 
-#: .\dashboard\templates\products\product_list.html:28
+#: .\dashboard\templates\products\product_list.html:24
 msgid "Search products..."
 msgstr "البحث عن المنتجات..."
 
-#: .\dashboard\templates\products\product_list.html:40
+#: .\dashboard\templates\products\product_list.html:36
 msgid "Stock"
 msgstr "المخزون"
 
-#: .\dashboard\templates\products\product_list.html:41
+#: .\dashboard\templates\products\product_list.html:37
 msgid "Sell Price"
 msgstr "سعر البيع"
 
-#: .\dashboard\templates\products\product_list.html:87
+#: .\dashboard\templates\products\product_list.html:136
 #, fuzzy
 #| msgid "No units found."
 msgid "No products found."
