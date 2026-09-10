@@ -67,12 +67,32 @@ class CategoryForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(
                 attrs={
+                    "class": "form-input",
                     "placeholder": "Enter category name",
                 }
             ),
         }
 
 
+class UnitForm(forms.ModelForm):
+    class Meta:
+        model = Unit
+        fields = ["name", "symbol"]
+
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-input",
+                    "placeholder": "Enter unit name",
+                }
+            ),
+            "symbol": forms.TextInput(
+                attrs={
+                    "class": "form-input",
+                    "placeholder": "Enter unit symbol",
+                }
+            ),
+        }
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
@@ -87,18 +107,41 @@ class ProductForm(forms.ModelForm):
 
         widgets = {
             "name": forms.TextInput(
-                attrs={"placeholder": "Enter product name"}
+                attrs={
+                    "class": "form-input",
+                    "placeholder": "Enter product name",
+                }
             ),
-            "category": forms.Select(),
-            "unit": forms.Select(),
+            "category": forms.Select(
+                attrs={
+                    "class": "form-input",
+                }
+            ),
+            "unit": forms.Select(
+                attrs={
+                    "class": "form-input",
+                }
+            ),
             "current_purchase_cost": forms.NumberInput(
-                attrs={"step": "0.01", "min": "0"}
+                attrs={
+                    "class": "form-input",
+                    "step": "0.01",
+                    "min": "0",
+                }
             ),
             "current_sell_price": forms.NumberInput(
-                attrs={"step": "0.01", "min": "0"}
+                attrs={
+                    "class": "form-input",
+                    "step": "0.01",
+                    "min": "0",
+                }
             ),
             "minimum_stock": forms.NumberInput(
-                attrs={"step": "0.001", "min": "0"}
+                attrs={
+                    "class": "form-input",
+                    "step": "0.001",
+                    "min": "0",
+                }
             ),
         }
 

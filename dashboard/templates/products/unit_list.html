@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Units" %} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>{% trans "Units" %}</h1>
+
+        <p>
+            {% trans "Manage the units used to measure your products." %}
+        </p>
+    </div>
+
+    <a
+        href="{% url 'unit_create' %}"
+        class="btn-primary"
+    >
+        + {% trans "New Unit" %}
+    </a>
+</div>
+
+<div class="card">
+
+    <div class="table-toolbar">
+        <span class="table-count">
+            {{ units|length }}
+            {% trans "units" %}
+        </span>
+    </div>
+
+    <table class="data-table">
+
+        <thead>
+            <tr>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Symbol" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Created" %}</th>
+                <th>{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for unit in units %}
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ unit.name }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ unit.symbol }}
+                    </td>
+
+                    <td>
+                        {% if unit.is_active %}
+                            <span class="status-badge status-success">
+                                {% trans "Active" %}
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-muted">
+                                {% trans "Inactive" %}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ unit.created_at|date:"Y-m-d" }}
+                    </td>
+
+                    <td>
+                        <div class="table-actions">
+
+                            <a
+                                href="{% url 'unit_edit' unit.id %}"
+                                class="btn-secondary btn-small"
+                            >
+                                {% trans "Edit" %}
+                            </a>
+
+                            {% if unit.is_active %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'unit_deactivate' unit.id %}"
+                                    class="inline-form"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn-danger btn-small"
+                                    >
+                                        {% trans "Deactivate" %}
+                                    </button>
+                                </form>
+
+                            {% else %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'unit_activate' unit.id %}"
+                                    class="inline-form"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn-primary btn-small"
+                                    >
+                                        {% trans "Activate" %}
+                                    </button>
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+                    </td>
+
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="5">
+                        {% trans "No units found." %}
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

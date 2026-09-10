@@ -1,15 +1,20 @@
 from django.shortcuts import render ,redirect
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Product ,Category 
+from .models import Product ,Category ,Unit
 from django.contrib import messages
-from .forms import ProductForm ,CategoryForm
+from .forms import ProductForm ,CategoryForm ,UnitForm
+
 from .services import (
     activate_category,
+    activate_unit,
     create_category,
     create_product,
+    create_unit,
     deactivate_category,
+    deactivate_unit,
     update_category,
+    update_unit,
 )
 
 def product_list(request):
@@ -195,3 +200,112 @@ def category_activate(request, category_id):
     )
 
     return redirect("category_list")
+
+def unit_list(request):
+    units = Unit.objects.all()
+
+    return render(
+        request,
+        "products/unit_list.html",
+        {"units": units},
+    )
+
+
+def unit_create(request):
+    if request.method == "POST":
+        form = UnitForm(request.POST)
+
+        if form.is_valid():
+            try:
+                create_unit(
+                    name=form.cleaned_data["name"],
+                    symbol=form.cleaned_data["symbol"],
+                )
+            except ValidationError as exc:
+                form.add_error(None, exc)
+            else:
+                messages.success(
+                    request,
+                    "Unit created successfully.",
+                )
+                return redirect("unit_list")
+    else:
+        form = UnitForm()
+
+    return render(
+        request,
+        "products/unit_form.html",
+        {
+            "form": form,
+            "page_title": "Create Unit",
+            "submit_label": "Create Unit",
+        },
+    )
+
+
+def unit_edit(request, unit_id):
+    unit = get_object_or_404(Unit, pk=unit_id)
+
+    if request.method == "POST":
+        form = UnitForm(request.POST, instance=unit)
+
+        if form.is_valid():
+            try:
+                update_unit(
+                    unit_id=unit.id,
+                    name=form.cleaned_data["name"],
+                    symbol=form.cleaned_data["symbol"],
+                )
+            except ValidationError as exc:
+                form.add_error(None, exc)
+            else:
+                messages.success(
+                    request,
+                    "Unit updated successfully.",
+                )
+                return redirect("unit_list")
+    else:
+        form = UnitForm(instance=unit)
+
+    return render(
+        request,
+        "products/unit_form.html",
+        {
+            "form": form,
+            "page_title": "Edit Unit",
+            "submit_label": "Save Changes",
+            "unit": unit,
+        },
+    )
+
+
+def unit_deactivate(request, unit_id):
+    if request.method != "POST":
+        return redirect("unit_list")
+
+    unit = get_object_or_404(Unit, pk=unit_id)
+
+    deactivate_unit(unit_id=unit.id)
+
+    messages.success(
+        request,
+        "Unit deactivated successfully.",
+    )
+
+    return redirect("unit_list")
+
+
+def unit_activate(request, unit_id):
+    if request.method != "POST":
+        return redirect("unit_list")
+
+    unit = get_object_or_404(Unit, pk=unit_id)
+
+    activate_unit(unit_id=unit.id)
+
+    messages.success(
+        request,
+        "Unit activated successfully.",
+    )
+
+    return redirect("unit_list")

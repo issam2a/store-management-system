@@ -8,6 +8,11 @@ from .views import (
     category_list,
     product_create,
     product_list,
+    unit_activate,
+    unit_create,
+    unit_deactivate,
+    unit_edit,
+    unit_list,
 )
 
 urlpatterns = [
@@ -38,5 +43,18 @@ urlpatterns = [
         "categories/<int:category_id>/deactivate/",
         category_deactivate,
         name="category_deactivate",
+    ),
+    path("units/", unit_list, name="unit_list"),
+    path("units/create/", unit_create, name="unit_create"),
+    path("units/<int:unit_id>/edit/", unit_edit, name="unit_edit"),
+    path(
+        "units/<int:unit_id>/activate/",
+        unit_activate,
+        name="unit_activate",
+    ),
+    path(
+        "units/<int:unit_id>/deactivate/",
+        unit_deactivate,
+        name="unit_deactivate",
     ),
 ]

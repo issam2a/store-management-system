@@ -355,3 +355,59 @@ msgstr "إدارة منتجاتك ومخزونك"
 
 msgid "New Product"
 msgstr "إضافة منتج"
+
+# ============================================================
+# Units
+# ============================================================
+
+msgid "Units"
+msgstr "الوحدات"
+
+msgid "Manage the units used to measure your products."
+msgstr "إدارة وحدات قياس المنتجات المستخدمة في متجرك."
+
+msgid "New Unit"
+msgstr "وحدة جديدة"
+
+msgid "units"
+msgstr "وحدات"
+
+msgid "Symbol"
+msgstr "الرمز"
+
+msgid "Unit Name"
+msgstr "اسم الوحدة"
+
+msgid "Update this product unit."
+msgstr "تحديث وحدة المنتج هذه."
+
+msgid "Add a new product unit to your store."
+msgstr "إضافة وحدة منتجات جديدة إلى متجرك."
+
+msgid "Unit created successfully."
+msgstr "تم إنشاء الوحدة بنجاح."
+
+msgid "Unit updated successfully."
+msgstr "تم تحديث الوحدة بنجاح."
+
+msgid "Unit activated successfully."
+msgstr "تم تفعيل الوحدة بنجاح."
+
+msgid "Unit deactivated successfully."
+msgstr "تم تعطيل الوحدة بنجاح."
+
+msgid "No units found."
+msgstr "لم يتم العثور على وحدات."
+
+msgid "KG"
+msgstr "كغ"
+
+msgid "Piece (pcs)"
+msgstr "قطعة"
+
+msgid "- Select an option -"
+msgstr "حدد خيار"
+
+
+msgid "Create Unit"
+msgstr "انشاء وحدة"

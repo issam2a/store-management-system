@@ -1706,3 +1706,28 @@ body.sidebar-collapsed .app-main {
     color: #7E8B7B;
     font-size: 0.85rem;
 }
+
+.form-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid rgba(237, 241, 214, 0.10);
+    border-radius: 10px;
+    background: rgba(20, 28, 22, 0.72);
+    color: #EDF1D6;
+    font: inherit;
+    outline: none;
+    transition:
+        border-color 180ms ease,
+        background 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.form-input::placeholder {
+    color: #7E8B7B;
+}
+
+.form-input:focus {
+    border-color: rgba(157, 192, 139, 0.45);
+    background: rgba(20, 28, 22, 0.90);
+    box-shadow: 0 0 0 3px rgba(157, 192, 139, 0.08);
+}
