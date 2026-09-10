@@ -5,6 +5,7 @@ from .models import Product ,Category ,Unit
 from django.contrib import messages
 from .forms import ProductForm ,CategoryForm ,UnitForm
 from django.utils.translation import gettext as _
+from django.core.paginator import Paginator
 
 from .services import (
     activate_category,
@@ -29,13 +30,51 @@ def product_list(request):
         .all()
     )
 
+    search_query = request.GET.get("q", "").strip()
+    category_id = request.GET.get("category", "").strip()
+    status = request.GET.get("status", "").strip()
+
+    if search_query:
+        products = products.filter(
+            name__icontains=search_query,
+        )
+
+    if category_id:
+        products = products.filter(
+            category_id=category_id,
+        )
+
+    if status == "active":
+        products = products.filter(
+            is_active=True,
+        )
+    elif status == "inactive":
+        products = products.filter(
+            is_active=False,
+        )
+
+    categories = Category.objects.all()
+
+    paginator = Paginator(products, 20)
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(page_number)
+
     return render(
         request,
         "products/product_list.html",
         {
-            "products": products,
+            "products": page_obj,
+            "page_obj": page_obj,
+            "paginator": paginator,
+            "categories": categories,
+            "search_query": search_query,
+            "selected_category": category_id,
+            "selected_status": status,
         },
     )
+
 
 def product_create(request):
     if request.method == "POST":

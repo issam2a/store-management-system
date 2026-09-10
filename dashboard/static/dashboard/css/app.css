@@ -863,9 +863,7 @@ a {
    RTL / LTR
    ========================================================= */
 
-[dir="rtl"] .sidebar {
-    right: auto;
-}
+
 
 [dir="rtl"] .nav-item:hover {
     transform: translateX(-2px);
@@ -1730,4 +1728,93 @@ body.sidebar-collapsed .app-main {
     border-color: rgba(157, 192, 139, 0.45);
     background: rgba(20, 28, 22, 0.90);
     box-shadow: 0 0 0 3px rgba(157, 192, 139, 0.08);
+}
+
+.table-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    min-width: 180px;
+}
+
+.filter-group:first-child {
+    flex: 1;
+    min-width: 240px;
+}
+
+.table-toolbar .form-input {
+    margin: 0;
+}
+
+.table-toolbar select.form-input {
+    cursor: pointer;
+}
+
+.table-toolbar .btn-primary,
+.table-toolbar .btn-secondary {
+    white-space: nowrap;
+}
+.table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(237, 241, 214, 0.08);
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.pagination-link,
+.pagination-current {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    text-decoration: none;
+}
+
+.pagination-link {
+    color: #B8C4B3;
+    background: rgba(20, 28, 22, 0.55);
+    border: 1px solid rgba(237, 241, 214, 0.08);
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease;
+}
+
+.pagination-link:hover {
+    color: #EDF1D6;
+    background: rgba(64, 81, 59, 0.45);
+    border-color: rgba(157, 192, 139, 0.22);
+}
+
+.pagination-current {
+    color: #EDF1D6;
+    background: rgba(111, 175, 114, 0.14);
+    border: 1px solid rgba(111, 175, 114, 0.25);
+    font-weight: 600;
+}
+
+@media (max-width: 700px) {
+    .table-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 }
