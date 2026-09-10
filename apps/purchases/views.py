@@ -333,17 +333,17 @@ def purchase_complete(request, purchase_id):
             error.message,
         )
 
-    else:
-        messages.success(
-            request,
-            "Purchase completed successfully.",
+        return redirect(
+            "purchase_detail",
+            purchase.id,
         )
 
-    return redirect(
-        "purchase_detail",
-        purchase.id,
+    messages.success(
+        request,
+        "Purchase completed successfully.",
     )
 
+    return redirect("purchase_list")
 @login_required
 @require_POST
 def purchase_delete(request, purchase_id):
