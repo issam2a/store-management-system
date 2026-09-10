@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+{{ purchase.reference }} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <div class="page-eyebrow">
+            {% trans "Purchases" %}
+        </div>
+
+        <h1 class="page-title">
+            {{ purchase.reference }}
+        </h1>
+
+        <p class="page-description">
+            {% if purchase.status == purchase.Status.DRAFT %}
+                {% trans "Purchase draft details." %}
+            {% elif purchase.status == purchase.Status.COMPLETED %}
+                {% trans "Completed purchase details." %}
+            {% else %}
+                {% trans "Cancelled purchase details." %}
+            {% endif %}
+        </p>
+
+    </div>
+
+    <div class="page-header-actions">
+
+        {% if purchase.status == purchase.Status.DRAFT and items %}
+            <form
+                method="post"
+                action="{% url 'purchase_complete' purchase.id %}"
+                class="inline-form"
+            >
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    {% trans "Complete Purchase" %}
+                </button>
+            </form>
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Supplier" %}
+            </label>
+
+            <div>
+                {{ purchase.supplier.name }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Payment Type" %}
+            </label>
+
+            <div>
+                {{ purchase.get_payment_type_display }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Status" %}
+            </label>
+
+            <div>
+                {{ purchase.get_status_display }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Created By" %}
+            </label>
+
+            <div>
+                {{ purchase.created_by }}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="page-header">
+
+        <h2>
+            {% trans "Items" %}
+        </h2>
+
+        {% if purchase.status == purchase.Status.DRAFT %}
+            <a
+                href="{% url 'purchase_item_create' purchase.id %}"
+                class="btn-primary"
+            >
+                {% trans "Add Item" %}
+            </a>
+        {% endif %}
+
+    </div>
+
+   <table class="data-table">
+
+    <thead>
+        <tr>
+            <th>{% trans "Product" %}</th>
+            <th>{% trans "Quantity" %}</th>
+            <th>{% trans "Unit" %}</th>
+            <th>{% trans "Unit Cost" %}</th>
+            <th>{% trans "Line Total" %}</th>
+
+            {% if purchase.status == purchase.Status.DRAFT %}
+                <th>{% trans "Actions" %}</th>
+            {% endif %}
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for item in items %}
+
+            <tr>
+
+                <td>
+                    {{ item.product.name }}
+                </td>
+
+                <td>
+                    {{ item.quantity }}
+                </td>
+
+                <td>
+                    {{ item.product.unit.symbol }}
+                </td>
+
+                <td>
+                    {{ item.unit_cost }}
+                </td>
+
+                <td>
+                    {{ item.line_total }}
+                </td>
+
+                {% if purchase.status == purchase.Status.DRAFT %}
+                    <td>
+                        <div class="table-actions">
+                            <a
+                                href="{% url 'purchase_item_edit' item.id %}"
+                                class="btn-secondary btn-small"
+                            >
+                                {% trans "Edit" %}
+                            </a>
+                            <form
+                                method="post"
+                                action="{% url 'purchase_item_delete' item.id %}"
+                                class="inline-form"
+                                    >
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="btn-danger btn-small"
+                                >
+                                    {% trans "Delete" %}
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                {% endif %}
+
+            </tr>
+
+        {% empty %}
+
+            <tr>
+                <td colspan="{% if purchase.status == purchase.Status.DRAFT %}6{% else %}5{% endif %}">
+                    {% trans "No items added yet." %}
+                </td>
+            </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+<div class="content-card">
+
+    <div class="table-footer">
+
+        <strong>
+            {% trans "Total:" %}
+            {{ purchase.total_amount }}
+        </strong>
+
+    </div>
+
+</div>
+
+{% endblock %}

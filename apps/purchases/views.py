@@ -1,15 +1,26 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, render
-from .models import Purchase
+from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
+from django.shortcuts import (
+    get_object_or_404,
+    redirect,
+    render,
+    
+)
 
-from django.contrib import messages
-from django.shortcuts import redirect
-
-from .forms import PurchaseForm
-from .services import create_purchase
-
+from .forms import PurchaseForm, PurchaseItemForm
+from .models import Purchase ,PurchaseItem
+from .services import (
+    create_purchase,
+    add_purchase_item,
+    update_purchase_item,
+    remove_purchase_item,
+    complete_purchase,
+)
 
 @login_required
 def purchase_list(request):
@@ -102,6 +113,149 @@ def purchase_create(request):
         "purchases/purchase_form.html",
         context,
     )
+@login_required
+
+
+def purchase_item_create(request, purchase_id):
+    purchase = get_object_or_404(
+        Purchase,
+        pk=purchase_id,
+    )
+
+    if purchase.status != Purchase.Status.DRAFT:
+        messages.error(
+            request,
+            "Items can only be added to draft purchases.",
+        )
+        return redirect(
+            "purchase_detail",
+            purchase.id,
+        )
+
+    if request.method == "POST":
+
+        form = PurchaseItemForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            try:
+                add_purchase_item(
+                    purchase_id=purchase.id,
+                    product=form.cleaned_data["product"],
+                    quantity=form.cleaned_data["quantity"],
+                    unit_cost=form.cleaned_data["unit_cost"],
+                )
+
+            except ValidationError as error:
+                form.add_error(
+                    None,
+                    error.message,
+                )
+
+            else:
+                messages.success(
+                    request,
+                    "Purchase item added successfully.",
+                )
+
+                return redirect(
+                    "purchase_detail",
+                    purchase.id,
+                )
+
+    else:
+        form = PurchaseItemForm()
+
+    context = {
+        "form": form,
+        "purchase": purchase,
+        "page_title": _("Add Purchase Item"),
+        "submit_label": _("Add Item"),
+    }
+
+    return render(
+        request,
+        "purchases/purchase_item_form.html",
+        context,
+    )
+
+
+@login_required
+def purchase_item_edit(request, item_id):
+    item = get_object_or_404(
+        PurchaseItem.objects.select_related(
+            "purchase",
+            "product",
+        ),
+        pk=item_id,
+    )
+
+    purchase = item.purchase
+
+    if purchase.status != Purchase.Status.DRAFT:
+        messages.error(
+            request,
+            "Items can only be edited in draft purchases.",
+        )
+        return redirect(
+            "purchase_detail",
+            purchase.id,
+        )
+
+    if request.method == "POST":
+
+        form = PurchaseItemForm(
+            request.POST,
+            instance=item,
+        )
+
+        if form.is_valid():
+
+            try:
+                update_purchase_item(
+                    item_id=item.id,
+                    quantity=form.cleaned_data["quantity"],
+                    unit_cost=form.cleaned_data["unit_cost"],
+                )
+
+            except ValidationError as error:
+                form.add_error(
+                    None,
+                    error.message,
+                )
+
+            else:
+                messages.success(
+                    request,
+                    "Purchase item updated successfully.",
+                )
+
+                return redirect(
+                    "purchase_detail",
+                    purchase.id,
+                )
+
+    else:
+        form = PurchaseItemForm(
+            instance=item,
+        )
+
+    context = {
+        "form": form,
+        "purchase": purchase,
+        "item": item,
+        "page_title": _("Edit Purchase Item"),
+        "submit_label": _("Save Changes"),
+    }
+
+    return render(
+        request,
+        "purchases/purchase_item_form.html",
+        context,
+    )
+
 
 def purchase_detail(request, purchase_id):
     purchase = get_object_or_404(
@@ -125,4 +279,66 @@ def purchase_detail(request, purchase_id):
         request,
         "purchases/purchase_detail.html",
         context,
+    )
+
+@login_required
+@require_POST
+def purchase_item_delete(request, item_id):
+    item = get_object_or_404(
+        PurchaseItem.objects.select_related("purchase"),
+        pk=item_id,
+    )
+
+    purchase = item.purchase
+
+    try:
+        remove_purchase_item(item.id)
+
+    except ValidationError as error:
+        messages.error(
+            request,
+            error.message,
+        )
+
+    else:
+        messages.success(
+            request,
+            "Purchase item deleted successfully.",
+        )
+
+    return redirect(
+        "purchase_detail",
+        purchase.id,
+    )
+
+
+@login_required
+@require_POST
+def purchase_complete(request, purchase_id):
+    purchase = get_object_or_404(
+        Purchase,
+        pk=purchase_id,
+    )
+
+    try:
+        complete_purchase(
+            purchase_id=purchase.id,
+            user=request.user,
+        )
+
+    except ValidationError as error:
+        messages.error(
+            request,
+            error.message,
+        )
+
+    else:
+        messages.success(
+            request,
+            "Purchase completed successfully.",
+        )
+
+    return redirect(
+        "purchase_detail",
+        purchase.id,
     )
