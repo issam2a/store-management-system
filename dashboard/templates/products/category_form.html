@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {{ page_title }} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <div class="page-breadcrumb">
+            <a href="{% url 'category_list' %}">
+                {% trans "Categories" %}
+            </a>
+
+            <span>/</span>
+
+            <span>
+                {% trans page_title %}
+            </span>
+        </div>
+
+        <h1>
+            {% trans page_title %}
+        </h1>
+
+        <p>
+            {% if category %}
+                {% trans "Update this product category." %}
+            {% else %}
+                {% trans "Add a new product category to your store." %}
+            {% endif %}
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="form-card">
+
+    <form method="post" novalidate>
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-grid">
+
+            <div class="form-field form-field-full">
+
+                <label for="{{ form.name.id_for_label }}">
+                    {% trans "Category Name" %}
+                </label>
+
+                {{ form.name }}
+
+                {% for error in form.name.errors %}
+                    <div class="field-error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+
+            <a
+                href="{% url 'category_list' %}"
+                class="btn-secondary"
+            >
+                {% trans "Cancel" %}
+            </a>
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                {% trans submit_label %}
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

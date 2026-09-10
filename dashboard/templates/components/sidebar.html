@@ -57,9 +57,14 @@
                 {% trans "Management" %}
             </span>
 
-            <a href="#" class="nav-item">
+            <a href="{% url 'product_list' %}" class="nav-item">
                 <span class="nav-icon" aria-hidden="true">▣</span>
                 <span class="nav-label">{% trans "Products" %}</span>
+            </a>
+
+            <a href="{% url 'category_list' %}" class="nav-item">
+                <span class="nav-icon" aria-hidden="true">▣</span>
+                <span class="nav-label">{% trans "Categories" %}</span>
             </a>
 
             <a href="#" class="nav-item">
@@ -78,12 +83,11 @@
             </a>
 
             <a href="#" class="nav-item">
-                <span class="nav-item-icon">...</span>
-                <span class="nav-item-label">{% trans "Expenses" %}</span>
+                <span class="nav-icon" aria-hidden="true">...</span>
+                <span class="nav-label">{% trans "Expenses" %}</span>
             </a>
 
         </div>
-
 
         <!-- Relationships -->
 

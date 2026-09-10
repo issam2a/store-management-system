@@ -1460,3 +1460,249 @@ body.sidebar-collapsed .app-main {
     width: 100%;
     height: 320px;
 }
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.btn-primary {
+    padding: 12px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    color: white;
+    background: var(--color-accent);
+}
+
+.card {
+    background: rgba(20, 20, 20, 0.45);
+    backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 24px;
+}
+
+.table-toolbar {
+    margin-bottom: 20px;
+}
+
+.table-toolbar input {
+    width: 300px;
+    padding: 10px 14px;
+    border-radius: 10px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+    padding: 14px;
+    text-align: left;
+}
+
+.data-table thead {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.data-table tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.form-card {
+    max-width: 900px;
+    background: rgba(20, 28, 22, 0.72);
+    border: 1px solid rgba(237, 241, 214, 0.10);
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(16px);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-field-full {
+    grid-column: 1 / -1;
+}
+
+.form-field label {
+    color: #EDF1D6;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.form-field input,
+.form-field select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(237, 241, 214, 0.12);
+    background: rgba(15, 21, 16, 0.75);
+    color: #EDF1D6;
+    font: inherit;
+    outline: none;
+    transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    border-color: rgba(157, 192, 139, 0.65);
+    box-shadow: 0 0 0 3px rgba(157, 192, 139, 0.10);
+}
+
+.form-field select option {
+    background: #141C16;
+    color: #EDF1D6;
+}
+
+
+.field-error,
+.form-errors {
+    color: #D66B6B;
+    font-size: 0.82rem;
+}
+
+.form-errors {
+    margin-bottom: 20px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(237, 241, 214, 0.12);
+    color: #B8C4B3;
+    background: rgba(64, 81, 59, 0.28);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-secondary:hover {
+    color: #EDF1D6;
+    background: rgba(64, 81, 59, 0.42);
+}
+
+.page-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: #7E8B7B;
+    font-size: 0.85rem;
+}
+
+.page-breadcrumb a {
+    color: #9DC08B;
+    text-decoration: none;
+}
+
+@media (max-width: 700px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-field-full {
+        grid-column: auto;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .form-actions a,
+    .form-actions button {
+        width: 100%;
+    }
+}
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.inline-form {
+    display: inline;
+    margin: 0;
+}
+
+.btn-small {
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 0.82rem;
+}
+
+.btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 9px;
+    border: 1px solid rgba(214, 107, 107, 0.25);
+    color: #D66B6B;
+    background: rgba(214, 107, 107, 0.08);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease;
+}
+
+.btn-danger:hover {
+    background: rgba(214, 107, 107, 0.16);
+    border-color: rgba(214, 107, 107, 0.40);
+    color: #EDF1D6;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.status-success {
+    color: #9DC08B;
+    background: rgba(111, 175, 114, 0.12);
+    border: 1px solid rgba(111, 175, 114, 0.18);
+}
+
+.status-muted {
+    color: #7E8B7B;
+    background: rgba(126, 139, 123, 0.10);
+    border: 1px solid rgba(126, 139, 123, 0.14);
+}
+
+.table-count {
+    color: #7E8B7B;
+    font-size: 0.85rem;
+}

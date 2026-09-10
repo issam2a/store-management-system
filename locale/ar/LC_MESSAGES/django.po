@@ -7,122 +7,141 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : "
+"n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: .\dashboard\templates\base.html:15
+
+# ============================================================
+# Base
+# ============================================================
+
+#: dashboard/templates/base.html:15
 msgid "Store management and retail operations platform"
 msgstr "منصة لإدارة المتجر وعمليات البيع بالتجزئة"
 
-#: .\dashboard\templates\components\sidebar.html:18
+
+# ============================================================
+# Sidebar
+# ============================================================
+
+#: dashboard/templates/components/sidebar.html:18
 msgid "Toggle navigation"
 msgstr "تبديل القائمة"
 
-#: .\dashboard\templates\components\sidebar.html:29
+#: dashboard/templates/components/sidebar.html:29
 msgid "Main navigation"
 msgstr "القائمة الرئيسية"
 
-#: .\dashboard\templates\components\sidebar.html:36
+#: dashboard/templates/components/sidebar.html:36
 msgid "Overview"
 msgstr "نظرة عامة"
 
-#: .\dashboard\templates\components\sidebar.html:44
-#: .\dashboard\templates\components\topbar.html:21
-#: .\dashboard\templates\dashboard\home.html:5
-#: .\dashboard\templates\dashboard\home.html:15
+#: dashboard/templates/components/sidebar.html:44
+#: dashboard/templates/components/topbar.html:21
+#: dashboard/templates/dashboard/home.html:5
+#: dashboard/templates/dashboard/home.html:15
 msgid "Dashboard"
 msgstr "لوحة التحكم"
 
-#: .\dashboard\templates\components\sidebar.html:57
+#: dashboard/templates/components/sidebar.html:57
 msgid "Management"
 msgstr "الإدارة"
 
-#: .\dashboard\templates\components\sidebar.html:62
+#: dashboard/templates/components/sidebar.html:62
 msgid "Products"
 msgstr "المنتجات"
 
-#: .\dashboard\templates\components\sidebar.html:67
+#: dashboard/templates/components/sidebar.html:67
 msgid "Inventory"
 msgstr "المخزون"
 
-#: .\dashboard\templates\components\sidebar.html:72
+#: dashboard/templates/components/sidebar.html:72
 msgid "Sales"
 msgstr "المبيعات"
 
-#: .\dashboard\templates\components\sidebar.html:77
+#: dashboard/templates/components/sidebar.html:77
 msgid "Purchases"
 msgstr "المشتريات"
 
-#: .\dashboard\templates\components\sidebar.html:82
+#: dashboard/templates/components/sidebar.html:82
 msgid "Expenses"
 msgstr "المصروفات"
 
-
-#: .\dashboard\templates\components\sidebar.html:88
+#: dashboard/templates/components/sidebar.html:88
 msgid "Relationships"
 msgstr "العلاقات"
 
-#: .\dashboard\templates\components\sidebar.html:93
+#: dashboard/templates/components/sidebar.html:93
 msgid "Customers"
 msgstr "العملاء"
 
-#: .\dashboard\templates\components\sidebar.html:98
+#: dashboard/templates/components/sidebar.html:98
 msgid "Suppliers"
 msgstr "الموردون"
 
-#: .\dashboard\templates\components\sidebar.html:109
+#: dashboard/templates/components/sidebar.html:109
 msgid "Insights"
-msgstr "التحليلات"
+msgstr "الرؤى"
 
-#: .\dashboard\templates\components\sidebar.html:114
+#: dashboard/templates/components/sidebar.html:114
 msgid "Reports"
 msgstr "التقارير"
 
-#: .\dashboard\templates\components\sidebar.html:119
+#: dashboard/templates/components/sidebar.html:119
 msgid "Analytics"
 msgstr "التحليلات"
 
-#: .\dashboard\templates\components\sidebar.html:130
+#: dashboard/templates/components/sidebar.html:130
 msgid "System"
 msgstr "النظام"
 
-#: .\dashboard\templates\components\sidebar.html:135
+#: dashboard/templates/components/sidebar.html:135
 msgid "Settings"
 msgstr "الإعدادات"
 
-#: .\dashboard\templates\components\sidebar.html:154
+#: dashboard/templates/components/sidebar.html:154
 msgid "Store Online"
 msgstr "المتجر متصل"
 
-#: .\dashboard\templates\components\sidebar.html:158
+#: dashboard/templates/components/sidebar.html:158
 msgid "System operational"
 msgstr "النظام يعمل بشكل طبيعي"
 
-#: .\dashboard\templates\components\topbar.html:12
+
+# ============================================================
+# Topbar
+# ============================================================
+
+#: dashboard/templates/components/topbar.html:12
 msgid "Open navigation"
 msgstr "فتح القائمة"
 
-#: .\dashboard\templates\components\topbar.html:41
+#: dashboard/templates/components/topbar.html:41
 msgid "Search..."
 msgstr "بحث..."
 
-#: .\dashboard\templates\components\topbar.html:42
+#: dashboard/templates/components/topbar.html:42
 msgid "Search"
 msgstr "بحث"
 
-#: .\dashboard\templates\components\topbar.html:55
+#: dashboard/templates/components/topbar.html:55
 msgid "Notifications"
 msgstr "الإشعارات"
 
-#: .\dashboard\templates\components\topbar.html:72
+#: dashboard/templates/components/topbar.html:72
 msgid "User menu"
 msgstr "قائمة المستخدم"
 
-#: .\dashboard\templates\components\topbar.html:86
+#: dashboard/templates/components/topbar.html:86
 msgid "Administrator"
 msgstr "مدير النظام"
 
-#: .\dashboard\templates\dashboard\home.html:19
+
+# ============================================================
+# Dashboard
+# ============================================================
+
+#: dashboard/templates/dashboard/home.html:19
 msgid "Welcome back. Here's what's happening in your store."
 msgstr "مرحبًا بعودتك. إليك ما يحدث في متجرك."
 
@@ -221,3 +240,118 @@ msgstr "الإيرادات ناقص تكلفة البضاعة المباعة"
 
 msgid "Completed sales"
 msgstr "المبيعات المكتملة"
+
+
+# ============================================================
+# Products
+# ============================================================
+
+msgid "Create Product"
+msgstr "إنشاء منتج"
+
+msgid "Add a new product to your store."
+msgstr "إضافة منتج جديد إلى متجرك."
+
+msgid "Product Name"
+msgstr "اسم المنتج"
+
+msgid "Category"
+msgstr "الفئة"
+
+msgid "Unit"
+msgstr "الوحدة"
+
+msgid "Purchase Cost"
+msgstr "تكلفة الشراء"
+
+msgid "Selling Price"
+msgstr "سعر البيع"
+
+msgid "Minimum Stock"
+msgstr "الحد الأدنى للمخزون"
+
+msgid "Product is active"
+msgstr "المنتج نشط"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Product created successfully."
+msgstr "تم إنشاء المنتج بنجاح."
+
+msgid "Enter product name"
+msgstr "أدخل اسم المنتج"
+
+
+# ============================================================
+# Categories
+# ============================================================
+
+msgid "Categories"
+msgstr "الفئات"
+
+msgid "Manage the product categories used in your store."
+msgstr "إدارة فئات المنتجات المستخدمة في متجرك."
+
+msgid "New Category"
+msgstr "فئة جديدة"
+
+msgid "categories"
+msgstr "فئات"
+
+msgid "Name"
+msgstr "الاسم"
+
+msgid "Category Name"
+msgstr "اسم الفئة"
+
+msgid "Update this product category."
+msgstr "تحديث فئة المنتج هذه."
+
+msgid "Add a new product category to your store."
+msgstr "إضافة فئة منتجات جديدة إلى متجرك."
+
+msgid "Created"
+msgstr "تاريخ الإنشاء"
+
+msgid "Actions"
+msgstr "الإجراءات"
+
+msgid "Active"
+msgstr "نشط"
+
+msgid "Inactive"
+msgstr "غير نشط"
+
+msgid "Edit"
+msgstr "تعديل"
+
+msgid "Deactivate"
+msgstr "تعطيل"
+
+msgid "Activate"
+msgstr "تفعيل"
+
+msgid "No categories found."
+msgstr "لم يتم العثور على فئات."
+
+msgid "Save Changes"
+msgstr "حفظ التغييرات"
+
+msgid "Category created successfully."
+msgstr "تم إنشاء الفئة بنجاح."
+
+msgid "Category updated successfully."
+msgstr "تم تحديث الفئة بنجاح."
+
+msgid "Category activated successfully."
+msgstr "تم تفعيل الفئة بنجاح."
+
+msgid "Category deactivated successfully."
+msgstr "تم تعطيل الفئة بنجاح."
+
+msgid "Manage your products and inventory."
+msgstr "إدارة منتجاتك ومخزونك"
+
+msgid "New Product"
+msgstr "إضافة منتج"

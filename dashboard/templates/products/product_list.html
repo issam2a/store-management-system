@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>{% trans "Products" %}</h1>
+        <p>{% trans "Manage your products and inventory." %}</p>
+    </div>
+
+    <a href="{% url 'product_create' %}" class="btn-primary">
+        + {% trans "New Product" %}
+    </a>
+</div>
+
+<div class="card">
+
+    <div class="table-toolbar">
+
+        <input
+            type="text"
+            placeholder="{% trans 'Search products...' %}"
+        >
+
+    </div>
+
+    <table class="data-table">
+
+        <thead>
+            <tr>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Category" %}</th>
+                <th>{% trans "Unit" %}</th>
+                <th>{% trans "Stock" %}</th>
+                <th>{% trans "Sell Price" %}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for product in products %}
+
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category.name }}</td>
+                    <td>{{ product.unit.symbol }}</td>
+                    <td>{{ product.current_stock }}</td>
+                    <td>{{ product.current_sell_price }}</td>
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="5">
+                        {% trans "No products found." %}
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}
