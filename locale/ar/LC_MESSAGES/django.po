@@ -4,13 +4,63 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 17:55+0300\n"
+"POT-Creation-Date: 2026-09-10 19:48+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: .\apps\customers\views.py:81
+#, fuzzy
+#| msgid "Category created successfully."
+msgid "Customer created successfully."
+msgstr "تم إنشاء الفئة بنجاح."
+
+#: .\apps\customers\views.py:94 .\apps\customers\views.py:98
+
+msgid "Create Customer"
+msgstr "إنشاء عميل"
+
+#: .\apps\customers\views.py:96
+
+msgid "Add a new customer to your store."
+msgstr "إضافة عميل جديد إلى متجرك."
+
+#: .\apps\customers\views.py:128
+#, fuzzy
+#| msgid "Category updated successfully."
+msgid "Customer updated successfully."
+msgstr "تم تحديث الفئة بنجاح."
+
+#: .\apps\customers\views.py:148
+#, fuzzy
+#| msgid "Customer"
+msgid "Edit Customer"
+msgstr "العميل"
+
+#: .\apps\customers\views.py:150
+#, fuzzy
+#| msgid "Update product information."
+msgid "Update customer information."
+msgstr "تحديث معلومات المنتج"
+
+#: .\apps\customers\views.py:152 .\apps\products\views.py:159
+msgid "Save Changes"
+msgstr "حفظ التغييرات"
+
+#: .\apps\customers\views.py:172
+#, fuzzy
+#| msgid "Category activated successfully."
+msgid "Customer activated successfully."
+msgstr "تم تفعيل الفئة بنجاح."
+
+#: .\apps\customers\views.py:192
+#, fuzzy
+#| msgid "Category deactivated successfully."
+msgid "Customer deactivated successfully."
+msgstr "تم تعطيل الفئة بنجاح."
 
 # ============================================================
 # Products
@@ -30,10 +80,6 @@ msgstr "تعديل المنتج"
 #: .\apps\products\views.py:158
 msgid "Update product information."
 msgstr "تحديث معلومات المنتج"
-
-#: .\apps\products\views.py:159
-msgid "Save Changes"
-msgstr "حفظ التغييرات"
 
 #: .\apps\products\views.py:169
 msgid "Product activated successfully."
@@ -73,6 +119,7 @@ msgid "Dashboard"
 msgstr "لوحة التحكم"
 
 #: .\dashboard\templates\components\sidebar.html:57
+#: .\dashboard\templates\customers\customer_list.html:17
 msgid "Management"
 msgstr "الإدارة"
 
@@ -126,6 +173,9 @@ msgid "Relationships"
 msgstr "العلاقات"
 
 #: .\dashboard\templates\components\sidebar.html:107
+#: .\dashboard\templates\customers\customer_form.html:15
+#: .\dashboard\templates\customers\customer_list.html:6
+#: .\dashboard\templates\customers\customer_list.html:21
 msgid "Customers"
 msgstr "العملاء"
 
@@ -187,6 +237,163 @@ msgstr "قائمة المستخدم"
 #: .\dashboard\templates\components\topbar.html:86
 msgid "Administrator"
 msgstr "مدير النظام"
+
+#: .\dashboard\templates\customers\customer_form.html:32
+
+msgid "Back to Customers"
+msgstr "العودة إلى العملاء"
+
+#: .\dashboard\templates\customers\customer_form.html:65
+
+msgid "Customer Name"
+msgstr "اسم العميل"
+
+#: .\dashboard\templates\customers\customer_form.html:85
+#: .\dashboard\templates\customers\customer_list.html:132
+msgid "Phone"
+msgstr "رقم الهاتف"
+
+#: .\dashboard\templates\customers\customer_form.html:105
+#: .\dashboard\templates\customers\customer_list.html:136
+
+msgid "Contact Information"
+msgstr "معلومات الاتصال"
+
+#: .\dashboard\templates\customers\customer_form.html:127
+#: .\dashboard\templates\products\category_form.html:81
+#: .\dashboard\templates\products\product_form.html:157
+#: .\dashboard\templates\products\unit_form.html:81
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: .\dashboard\templates\customers\customer_list.html:25
+msgid "Manage your store customers and their contact information."
+msgstr "إدارة عملاء متجرك ومعلومات الاتصال الخاصة بهم"
+
+#: .\dashboard\templates\customers\customer_list.html:37
+
+msgid "Add Customer"
+msgstr "اضافةعميل"
+
+#: .\dashboard\templates\customers\customer_list.html:60
+
+msgid "Search customers..."
+msgstr "البحث عن العملاء..."
+
+#: .\dashboard\templates\customers\customer_list.html:73
+#: .\dashboard\templates\products\product_list.html:88
+msgid "All Statuses"
+msgstr "كل الحالات"
+
+#: .\dashboard\templates\customers\customer_list.html:82
+#: .\dashboard\templates\customers\customer_list.html:186
+#: .\dashboard\templates\products\category_list.html:62
+#: .\dashboard\templates\products\product_list.html:97
+#: .\dashboard\templates\products\product_list.html:192
+#: .\dashboard\templates\products\unit_list.html:67
+msgid "Active"
+msgstr "نشط"
+
+#: .\dashboard\templates\customers\customer_list.html:91
+#: .\dashboard\templates\customers\customer_list.html:192
+#: .\dashboard\templates\products\category_list.html:66
+#: .\dashboard\templates\products\product_list.html:106
+#: .\dashboard\templates\products\product_list.html:198
+#: .\dashboard\templates\products\unit_list.html:71
+msgid "Inactive"
+msgstr "غير نشط"
+
+#: .\dashboard\templates\customers\customer_list.html:102
+#: .\dashboard\templates\products\product_list.html:118
+msgid "Filter"
+msgstr ""
+
+#: .\dashboard\templates\customers\customer_list.html:111
+#: .\dashboard\templates\products\product_list.html:128
+#: .\venv\Lib\site-packages\django\forms\widgets.py:573
+msgid "Clear"
+msgstr "مسح"
+
+#: .\dashboard\templates\customers\customer_list.html:128
+#: .\dashboard\templates\products\category_list.html:40
+#: .\dashboard\templates\products\product_list.html:142
+#: .\dashboard\templates\products\unit_list.html:40
+msgid "Name"
+msgstr "الاسم"
+
+#: .\dashboard\templates\customers\customer_list.html:140
+#: .\dashboard\templates\dashboard\home.html:417
+#: .\dashboard\templates\products\category_list.html:41
+#: .\dashboard\templates\products\product_list.html:152
+#: .\dashboard\templates\products\unit_list.html:42
+msgid "Status"
+msgstr "الحالة"
+
+#: .\dashboard\templates\customers\customer_list.html:144
+#: .\dashboard\templates\products\category_list.html:43
+#: .\dashboard\templates\products\product_list.html:154
+#: .\dashboard\templates\products\unit_list.html:44
+msgid "Actions"
+msgstr "الإجراءات"
+
+#: .\dashboard\templates\customers\customer_list.html:207
+#: .\dashboard\templates\products\category_list.html:82
+#: .\dashboard\templates\products\product_list.html:214
+#: .\dashboard\templates\products\unit_list.html:87
+msgid "Edit"
+msgstr "تعديل"
+
+#: .\dashboard\templates\customers\customer_list.html:224
+#: .\dashboard\templates\products\category_list.html:98
+#: .\dashboard\templates\products\product_list.html:232
+#: .\dashboard\templates\products\unit_list.html:103
+msgid "Deactivate"
+msgstr "تعطيل"
+
+#: .\dashboard\templates\customers\customer_list.html:243
+#: .\dashboard\templates\products\category_list.html:115
+#: .\dashboard\templates\products\product_list.html:251
+#: .\dashboard\templates\products\unit_list.html:120
+msgid "Activate"
+msgstr "تفعيل"
+
+#: .\dashboard\templates\customers\customer_list.html:267
+#, python-format
+msgid ""
+"\n"
+"\n"
+"                Showing %(page_obj.start_index)s–%(page_obj.end_index)s of "
+"%(total)s customer\n"
+"\n"
+"            "
+msgid_plural ""
+"\n"
+"\n"
+"                Showing %(page_obj.start_index)s–%(page_obj.end_index)s of "
+"%(total)s customers\n"
+"\n"
+"            "
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+#: .\dashboard\templates\customers\customer_list.html:290
+#: .\dashboard\templates\products\product_list.html:306
+msgid "Previous"
+msgstr "السابق"
+
+#: .\dashboard\templates\customers\customer_list.html:324
+#: .\dashboard\templates\products\product_list.html:340
+msgid "Next"
+msgstr "التالي"
+
+#: .\dashboard\templates\customers\customer_list.html:339
+
+msgid "No customers found."
+msgstr "لم يتم العثور على عملاء."
 
 #: .\dashboard\templates\dashboard\home.html:20
 msgid "Store overview"
@@ -282,13 +489,6 @@ msgstr "العميل"
 msgid "Amount"
 msgstr "المبلغ"
 
-#: .\dashboard\templates\dashboard\home.html:417
-#: .\dashboard\templates\products\category_list.html:41
-#: .\dashboard\templates\products\product_list.html:152
-#: .\dashboard\templates\products\unit_list.html:42
-msgid "Status"
-msgstr "الحالة"
-
 #: .\dashboard\templates\dashboard\home.html:442
 msgid "Walk-in customer"
 msgstr ""
@@ -327,12 +527,6 @@ msgstr "إضافة فئة منتجات جديدة إلى متجرك."
 msgid "Category Name"
 msgstr "اسم الفئة"
 
-#: .\dashboard\templates\products\category_form.html:81
-#: .\dashboard\templates\products\product_form.html:157
-#: .\dashboard\templates\products\unit_form.html:81
-msgid "Cancel"
-msgstr "إلغاء"
-
 #: .\dashboard\templates\products\category_list.html:15
 msgid "Manage the product categories used in your store."
 msgstr "إدارة فئات المنتجات المستخدمة في متجرك."
@@ -345,54 +539,10 @@ msgstr "فئة جديدة"
 msgid "categories"
 msgstr "فئات"
 
-#: .\dashboard\templates\products\category_list.html:40
-#: .\dashboard\templates\products\product_list.html:142
-#: .\dashboard\templates\products\unit_list.html:40
-msgid "Name"
-msgstr "الاسم"
-
 #: .\dashboard\templates\products\category_list.html:42
 #: .\dashboard\templates\products\unit_list.html:43
 msgid "Created"
 msgstr "تاريخ الإنشاء"
-
-#: .\dashboard\templates\products\category_list.html:43
-#: .\dashboard\templates\products\product_list.html:154
-#: .\dashboard\templates\products\unit_list.html:44
-msgid "Actions"
-msgstr "الإجراءات"
-
-#: .\dashboard\templates\products\category_list.html:62
-#: .\dashboard\templates\products\product_list.html:97
-#: .\dashboard\templates\products\product_list.html:192
-#: .\dashboard\templates\products\unit_list.html:67
-msgid "Active"
-msgstr "نشط"
-
-#: .\dashboard\templates\products\category_list.html:66
-#: .\dashboard\templates\products\product_list.html:106
-#: .\dashboard\templates\products\product_list.html:198
-#: .\dashboard\templates\products\unit_list.html:71
-msgid "Inactive"
-msgstr "غير نشط"
-
-#: .\dashboard\templates\products\category_list.html:82
-#: .\dashboard\templates\products\product_list.html:214
-#: .\dashboard\templates\products\unit_list.html:87
-msgid "Edit"
-msgstr "تعديل"
-
-#: .\dashboard\templates\products\category_list.html:98
-#: .\dashboard\templates\products\product_list.html:232
-#: .\dashboard\templates\products\unit_list.html:103
-msgid "Deactivate"
-msgstr "تعطيل"
-
-#: .\dashboard\templates\products\category_list.html:115
-#: .\dashboard\templates\products\product_list.html:251
-#: .\dashboard\templates\products\unit_list.html:120
-msgid "Activate"
-msgstr "تفعيل"
 
 #: .\dashboard\templates\products\category_list.html:130
 msgid "No categories found."
@@ -440,19 +590,6 @@ msgstr "البحث عن المنتجات..."
 msgid "All Categories"
 msgstr "كل الفئات"
 
-#: .\dashboard\templates\products\product_list.html:88
-msgid "All Statuses"
-msgstr "كل الحالات"
-
-#: .\dashboard\templates\products\product_list.html:118
-msgid "Filter"
-msgstr ""
-
-#: .\dashboard\templates\products\product_list.html:128
-#: .\venv\Lib\site-packages\django\forms\widgets.py:573
-msgid "Clear"
-msgstr ""
-
 #: .\dashboard\templates\products\product_list.html:148
 msgid "Stock"
 msgstr "المخزون"
@@ -486,14 +623,6 @@ msgstr[2] ""
 msgstr[3] ""
 msgstr[4] ""
 msgstr[5] ""
-
-#: .\dashboard\templates\products\product_list.html:306
-msgid "Previous"
-msgstr "السابق"
-
-#: .\dashboard\templates\products\product_list.html:340
-msgid "Next"
-msgstr "التالي"
 
 #: .\dashboard\templates\products\unit_form.html:23
 msgid "Update this product unit."
@@ -1883,18 +2012,6 @@ msgstr ""
 
 #~ msgid "Product updated successfully."
 #~ msgstr "تم تحديث المنتج بنجاح."
-
-#~ msgid "Category created successfully."
-#~ msgstr "تم إنشاء الفئة بنجاح."
-
-#~ msgid "Category updated successfully."
-#~ msgstr "تم تحديث الفئة بنجاح."
-
-#~ msgid "Category activated successfully."
-#~ msgstr "تم تفعيل الفئة بنجاح."
-
-#~ msgid "Category deactivated successfully."
-#~ msgstr "تم تعطيل الفئة بنجاح."
 
 #~ msgid "Unit created successfully."
 #~ msgstr "تم إنشاء الوحدة بنجاح."

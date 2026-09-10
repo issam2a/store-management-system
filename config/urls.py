@@ -23,4 +23,5 @@ urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
     path("", include("dashboard.urls")),
     path("products/", include("apps.products.urls")),
+    path("customers/", include("apps.customers.urls")),
 ]

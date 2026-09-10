@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block title %}
+{% trans "Customers" %} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+
+<div>
+
+    <div class="page-eyebrow">
+        {% trans "Management" %}
+    </div>
+
+    <h1 class="page-title">
+        {% trans "Customers" %}
+    </h1>
+
+    <p class="page-description">
+        {% trans "Manage your store customers and their contact information." %}
+    </p>
+
+</div>
+
+<div class="page-header-actions">
+
+    <a
+        href="{% url 'customer_create' %}"
+        class="btn-primary"
+    >
+        <span aria-hidden="true">+</span>
+        {% trans "Add Customer" %}
+    </a>
+
+</div>
+
+
+</div>
+
+<div class="card">
+
+
+<form
+    method="get"
+    class="table-toolbar"
+>
+
+    <div class="filter-group">
+
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            class="form-input"
+            placeholder="{% trans 'Search customers...' %}"
+        >
+
+    </div>
+
+    <div class="filter-group">
+
+        <select
+            name="status"
+            class="form-input"
+        >
+
+            <option value="">
+                {% trans "All Statuses" %}
+            </option>
+
+            <option
+                value="active"
+                {% if selected_status == "active" %}
+                    selected
+                {% endif %}
+            >
+                {% trans "Active" %}
+            </option>
+
+            <option
+                value="inactive"
+                {% if selected_status == "inactive" %}
+                    selected
+                {% endif %}
+            >
+                {% trans "Inactive" %}
+            </option>
+
+        </select>
+
+    </div>
+
+    <button
+        type="submit"
+        class="btn-primary"
+    >
+        {% trans "Filter" %}
+    </button>
+
+    {% if query or selected_status %}
+
+        <a
+            href="{% url 'customer_list' %}"
+            class="btn-secondary"
+        >
+            {% trans "Clear" %}
+        </a>
+
+    {% endif %}
+
+</form>
+
+
+{% if customers %}
+
+    <table class="data-table">
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    {% trans "Name" %}
+                </th>
+
+                <th>
+                    {% trans "Phone" %}
+                </th>
+
+                <th>
+                    {% trans "Contact Information" %}
+                </th>
+
+                <th>
+                    {% trans "Status" %}
+                </th>
+
+                <th>
+                    {% trans "Actions" %}
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for customer in customers %}
+
+                <tr>
+
+                    <td>
+                        {{ customer.name }}
+                    </td>
+
+                    <td>
+
+                        {% if customer.phone %}
+                            {{ customer.phone }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if customer.contact_information %}
+                            {{ customer.contact_information|truncatechars:60 }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if customer.is_active %}
+
+                            <span class="status-badge status-success">
+                                {% trans "Active" %}
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge status-muted">
+                                {% trans "Inactive" %}
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        <div class="table-actions">
+
+                            <a
+                                href="{% url 'customer_edit' customer.id %}"
+                                class="btn-secondary btn-small"
+                            >
+                                {% trans "Edit" %}
+                            </a>
+
+                            {% if customer.is_active %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'customer_deactivate' customer.id %}"
+                                    class="inline-form"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn-danger btn-small"
+                                    >
+                                        {% trans "Deactivate" %}
+                                    </button>
+
+                                </form>
+
+                            {% else %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'customer_activate' customer.id %}"
+                                    class="inline-form"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn-secondary btn-small"
+                                    >
+                                        {% trans "Activate" %}
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <div class="table-footer">
+
+        <div class="table-count">
+
+            {% blocktranslate count total=paginator.count %}
+
+                Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ total }} customer
+
+            {% plural %}
+
+                Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ total }} customers
+
+            {% endblocktranslate %}
+
+        </div>
+
+
+        {% if paginator.num_pages > 1 %}
+
+            <div class="pagination">
+
+                {% if page_obj.has_previous %}
+
+                    <a
+                        href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}"
+                        class="btn-secondary btn-small"
+                    >
+                        {% trans "Previous" %}
+                    </a>
+
+                {% endif %}
+
+
+                {% for page_number in paginator.page_range %}
+
+                    {% if page_number == page_obj.number %}
+
+                        <span class="pagination-current">
+                            {{ page_number }}
+                        </span>
+
+                    {% else %}
+
+                        <a
+                            href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_number }}"
+                            class="pagination-link"
+                        >
+                            {{ page_number }}
+                        </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+
+                {% if page_obj.has_next %}
+
+                    <a
+                        href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}"
+                        class="btn-secondary btn-small"
+                    >
+                        {% trans "Next" %}
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+{% else %}
+
+    <div class="table-count">
+        {% trans "No customers found." %}
+    </div>
+
+{% endif %}
+
+
+</div>
+
+{% endblock %}
