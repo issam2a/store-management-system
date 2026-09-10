@@ -20,6 +20,7 @@ from .services import (
     update_purchase_item,
     remove_purchase_item,
     complete_purchase,
+    delete_purchase,
 )
 
 @login_required
@@ -337,6 +338,38 @@ def purchase_complete(request, purchase_id):
             request,
             "Purchase completed successfully.",
         )
+
+    return redirect(
+        "purchase_detail",
+        purchase.id,
+    )
+
+@login_required
+@require_POST
+def purchase_delete(request, purchase_id):
+    purchase = get_object_or_404(
+        Purchase,
+        pk=purchase_id,
+    )
+
+    purchase_reference = purchase.reference
+
+    try:
+        delete_purchase(purchase.id)
+
+    except ValidationError as error:
+        messages.error(
+            request,
+            error.message,
+        )
+
+    else:
+        messages.success(
+            request,
+            f"Purchase {purchase_reference} deleted successfully.",
+        )
+
+        return redirect("purchase_list")
 
     return redirect(
         "purchase_detail",

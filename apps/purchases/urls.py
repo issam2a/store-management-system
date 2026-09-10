@@ -19,6 +19,11 @@ urlpatterns = [
         name="purchase_item_create",
     ),
     path(
+        "<int:purchase_id>/delete/",
+        views.purchase_delete,
+        name="purchase_delete",
+        ),
+    path(
         "<int:purchase_id>/",
         views.purchase_detail,
         name="purchase_detail",
@@ -38,4 +43,5 @@ urlpatterns = [
     views.purchase_complete,
     name="purchase_complete",
     ),
+      
 ]

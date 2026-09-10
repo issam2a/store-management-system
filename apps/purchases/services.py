@@ -432,3 +432,28 @@ def remove_purchase_item(
         )
 
         return purchase
+
+def delete_purchase(purchase_id):
+    """
+    Delete a draft purchase.
+
+    Business effects:
+    - Only DRAFT purchases can be deleted.
+    - Draft purchase items are deleted through CASCADE.
+    - No inventory is affected.
+    - Completed and cancelled purchases cannot be deleted.
+    """
+
+    with transaction.atomic():
+        purchase = (
+            Purchase.objects
+            .select_for_update()
+            .get(pk=purchase_id)
+        )
+
+        if purchase.status != Purchase.Status.DRAFT:
+            raise ValidationError(
+                "Only draft purchases can be deleted."
+            )
+
+        purchase.delete()

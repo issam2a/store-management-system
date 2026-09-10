@@ -2307,3 +2307,12 @@ msgstr "تفاصيل عملية الشراء الملغاة."
 
 msgid "Purchase completed successfully."
 msgstr "تم إتمام عملية الشراء بنجاح."
+
+msgid "Delete Purchase"
+msgstr "حذف عملية الشراء"
+
+msgid "Are you sure you want to delete this draft purchase?"
+msgstr "هل أنت متأكد من رغبتك في حذف مسودة الشراء هذه؟"
+
+msgid "Purchase deleted successfully."
+msgstr "تم حذف عملية الشراء بنجاح."
