@@ -1426,6 +1426,9 @@ a {
     font-size: clamp(28px, 3vw, 36px);
     font-weight: 750;
     letter-spacing: -0.04em;
+    transition:
+        transform 180ms ease,
+        text-shadow 180ms ease;
 }
 
 .kpi-footer {
@@ -1460,7 +1463,12 @@ a {
         0 0 35px rgba(96, 153, 102, 0.08),
         inset 0 1px 0 rgba(237, 241, 214, 0.06);
 }
+.kpi-card:hover .kpi-value {
+    transform: translateY(-2px);
 
+    text-shadow:
+        0 0 18px rgba(157, 192, 139, 0.25);
+}
 
 /* ---------------------------------------------------------
    Dashboard cards
@@ -2374,4 +2382,66 @@ body.sidebar-collapsed .app-main {
         align-items: flex-start;
         flex-direction: column;
     }
+}
+
+/* ============================================================
+   REVENUE CHART — AMBIENT MOTION
+   ============================================================ */
+
+.revenue-chart {
+    position: relative;
+    overflow: hidden;
+}
+
+/*
+ * Ambient light underneath the chart.
+ */
+.revenue-chart::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 15% 8% 10%;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 55%,
+            rgba(157, 192, 139, 0.10),
+            transparent 65%
+        );
+
+    filter: blur(25px);
+
+    opacity: 0;
+
+    animation:
+        revenue-ambient
+        4s
+        2.2s
+        ease-in-out
+        infinite;
+}
+
+@keyframes revenue-ambient {
+    0% {
+        opacity: 0.15;
+        transform: scale(0.96);
+    }
+
+    50% {
+        opacity: 0.75;
+        transform: scale(1.04);
+    }
+
+    100% {
+        opacity: 0.15;
+        transform: scale(0.96);
+    }
+}
+
+.revenue-line {
+    position: relative;
+    z-index: 1;
 }

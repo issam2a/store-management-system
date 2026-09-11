@@ -1,0 +1,963 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "New Sale" %} | StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <div class="page-eyebrow">
+            {% trans "Sales" %}
+        </div>
+
+        <h1 class="page-title">
+            {% if sale.status == "DRAFT" %}
+                {% trans "New Sale" %}
+            {% else %}
+                {{ sale.reference }}
+            {% endif %}
+        </h1>
+
+        <p class="page-description">
+            {% if sale.status == "DRAFT" %}
+                {% trans "Create and complete a customer sale." %}
+            {% else %}
+                {% trans "Sale details and transaction history." %}
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+        {% if sale.status == "DRAFT" %}
+            <span class="status-badge status-muted">
+                {% trans "Draft" %}
+            </span>
+        {% elif sale.status == "COMPLETED" %}
+            <span class="status-badge status-success">
+                {% trans "Completed" %}
+            </span>
+        {% elif sale.status == "CANCELLED" %}
+            <span class="status-badge status-muted">
+                {% trans "Cancelled" %}
+            </span>
+        {% endif %}
+    </div>
+</div>
+
+
+{% if completion_error %}
+    <div class="form-error-summary">
+        {{ completion_error }}
+    </div>
+{% endif %}
+
+
+{% if cancellation_error %}
+    <div class="form-error-summary">
+        {{ cancellation_error }}
+    </div>
+{% endif %}
+
+
+{% if sale.status == "DRAFT" %}
+
+<div class="content-card">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <div class="form-label">
+                {% trans "Customer" %}
+            </div>
+
+            {% if sale.customer %}
+                {{ sale.customer.name }}
+            {% else %}
+                {% trans "Walk-in Customer" %}
+            {% endif %}
+        </div>
+
+
+        <div class="form-group">
+            <div class="form-label">
+                {% trans "Payment Type" %}
+            </div>
+
+            {% if sale.payment_type == "CREDIT" %}
+                {% trans "Credit" %}
+            {% else %}
+                {% trans "Cash" %}
+            {% endif %}
+        </div>
+
+
+        <div class="form-group">
+            <div class="form-label">
+                {% trans "Reference" %}
+            </div>
+
+            {{ sale.reference }}
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">
+                {% trans "Add Product" %}
+            </h2>
+
+            <p class="page-description">
+                {% trans "Search for a product and add it to the current sale." %}
+            </p>
+        </div>
+    </div>
+
+
+    <form
+        method="post"
+        action="{% url 'sale_item_create' sale.id %}"
+        id="sale-item-form"
+    >
+        {% csrf_token %}
+
+        {% if item_form.non_field_errors %}
+            <div class="form-error-summary">
+                {{ item_form.non_field_errors }}
+            </div>
+        {% endif %}
+
+
+        <div class="form-group">
+
+            <label
+                for="product-search"
+                class="form-label"
+            >
+                {% trans "Search Products" %}
+            </label>
+
+            <input
+                type="search"
+                id="product-search"
+                class="form-input"
+                placeholder="{% trans 'Search by product name...' %}"
+                autocomplete="off"
+                data-product-search-url="{% url 'sale_product_search' %}"
+            >
+
+        </div>
+
+
+        <div
+            id="sale-product-search-results"
+            hidden
+        >
+            <div class="table-wrapper">
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>
+                                {% trans "Product" %}
+                            </th>
+
+                            <th>
+                                {% trans "Available" %}
+                            </th>
+
+                            <th>
+                                {% trans "Price" %}
+                            </th>
+
+                            <th>
+                                {% trans "Action" %}
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody
+                        id="sale-product-search-results-body"
+                    >
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label class="form-label">
+                    {% trans "Selected Product" %}
+                </label>
+
+                {{ item_form.product.as_hidden }}
+
+                <div id="selected-product-name">
+                    {% trans "No product selected." %}
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                <div id="sale-quantity-input">
+                    <label
+                        for="{{ item_form.quantity.id_for_label }}"
+                        class="form-label"
+                    >
+                        {% trans "Quantity" %}
+                    </label>
+
+                    {{ item_form.quantity }}
+
+                    <div
+                        id="sale-quantity-unit"
+                        class="form-description"
+                    ></div>
+
+                    {% if item_form.quantity.errors %}
+                        <div class="form-error">
+                            {{ item_form.quantity.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div
+                    id="sale-amount-input"
+                    hidden
+                >
+                    <label
+                        for="{{ item_form.amount.id_for_label }}"
+                        class="form-label"
+                    >
+                        {% trans "Amount" %}
+                    </label>
+
+                    {{ item_form.amount }}
+
+                    <div class="form-description">
+                        {% trans "Selling amount" %}
+                    </div>
+
+                    {% if item_form.amount.errors %}
+                        <div class="form-error">
+                            {{ item_form.amount.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            id="sale-calculated-price"
+            hidden
+        >
+            <span>{% trans "Calculated Price" %}</span>
+            <strong id="sale-calculated-price-value">0.00</strong>
+        </div>
+
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                class="btn-primary"
+                id="add-sale-item-button"
+                disabled
+            >
+                {% trans "Add to Sale" %}
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="page-header">
+
+        <div>
+            <h2 class="page-title">
+                {% trans "Current Sale" %}
+            </h2>
+
+            <p class="page-description">
+                {% trans "Products currently included in this sale." %}
+            </p>
+        </div>
+
+    </div>
+
+
+    {% if items %}
+
+        <div class="table-wrapper">
+
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+
+                        <th>
+                            {% trans "Product" %}
+                        </th>
+
+                        <th>
+                            {% trans "Quantity" %}
+                        </th>
+
+                        <th>
+                            {% trans "Unit" %}
+                        </th>
+
+                        <th>
+                            {% trans "Price" %}
+                        </th>
+
+                        <th>
+                            {% trans "Total" %}
+                        </th>
+
+                        <th>
+                            {% trans "Actions" %}
+                        </th>
+
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in items %}
+
+                        <tr>
+
+                            <td>
+                                {{ item.product.name }}
+                            </td>
+
+                            <td>
+                                {{ item.quantity|floatformat:"-3" }}
+                            </td>
+
+                            <td>
+                                {{ item.product.unit.symbol }}
+                            </td>
+
+                            <td>
+                                {{ item.unit_price|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                {{ item.line_total|floatformat:2 }}
+                            </td>
+
+                            <td>
+
+                                <div class="table-actions">
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'sale_item_remove' item.id %}"
+                                        class="inline-form"
+                                    >
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn-danger btn-small"
+                                            onclick="return confirm(this.dataset.confirmation);"
+                                            data-confirmation="{% trans 'Are you sure you want to remove this item?' %}"
+                                        >
+                                            {% trans "Remove" %}
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <h3>
+                {% trans "No products added yet." %}
+            </h3>
+
+            <p>
+                {% trans "Search for a product above to start the sale." %}
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Subtotal" %}
+            </div>
+
+            {{ sale.subtotal_amount|floatformat:2 }}
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Discount" %}
+            </div>
+
+
+            <form
+                method="post"
+                action="{% url 'sale_discount_update' sale.id %}"
+            >
+                {% csrf_token %}
+
+                {{ discount_form.discount_amount }}
+
+                {% if discount_form.discount_amount.errors %}
+                    <div class="form-error">
+                        {{ discount_form.discount_amount.errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="btn-secondary btn-small"
+                    >
+                        {% trans "Apply Discount" %}
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Total" %}
+            </div>
+
+            {{ sale.total_amount|floatformat:2 }}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="page-header">
+
+        <div>
+            <h2 class="page-title">
+                {% trans "Complete Sale" %}
+            </h2>
+
+            <p class="page-description">
+                {% trans "Review the sale and complete the transaction." %}
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="form-actions">
+
+        <form
+            method="post"
+            action="{% url 'sale_complete' sale.id %}"
+            class="inline-form"
+        >
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn-primary"
+                {% if not items %}disabled{% endif %}
+                onclick="return confirm(this.dataset.confirmation);"
+                data-confirmation="{% trans 'Are you sure you want to complete this sale?' %}"
+            >
+                {% trans "Complete Sale" %}
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% elif sale.status == "COMPLETED" %}
+
+
+<div class="content-card">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Customer" %}
+            </div>
+
+            {% if sale.customer %}
+                {{ sale.customer.name }}
+            {% else %}
+                {% trans "Walk-in Customer" %}
+            {% endif %}
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Payment Type" %}
+            </div>
+
+            {% if sale.payment_type == "CREDIT" %}
+                {% trans "Credit" %}
+            {% else %}
+                {% trans "Cash" %}
+            {% endif %}
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Completed By" %}
+            </div>
+
+            {{ sale.completed_by.username }}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="page-header">
+
+        <div>
+            <h2 class="page-title">
+                {% trans "Sale Items" %}
+            </h2>
+
+            <p class="page-description">
+                {% trans "Products included in this completed sale." %}
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+
+                    <th>
+                        {% trans "Product" %}
+                    </th>
+
+                    <th>
+                        {% trans "Quantity" %}
+                    </th>
+
+                    <th>
+                        {% trans "Unit" %}
+                    </th>
+
+                    <th>
+                        {% trans "Price" %}
+                    </th>
+
+                    <th>
+                        {% trans "Total" %}
+                    </th>
+
+                </tr>
+            </thead>
+
+
+            <tbody>
+
+                {% for item in items %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.product.name }}
+                        </td>
+
+                        <td>
+                            {{ item.quantity|floatformat:"-3" }}
+                        </td>
+
+                        <td>
+                            {{ item.product.unit.symbol }}
+                        </td>
+
+                        <td>
+                            {{ item.unit_price|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ item.line_total|floatformat:2 }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Subtotal" %}
+            </div>
+
+            {{ sale.subtotal_amount|floatformat:2 }}
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Discount" %}
+            </div>
+
+            {{ sale.discount_amount|floatformat:2 }}
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Total" %}
+            </div>
+
+            {{ sale.total_amount|floatformat:2 }}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="page-header">
+
+        <div>
+            <h2 class="page-title">
+                {% trans "Cancel Sale" %}
+            </h2>
+
+            <p class="page-description">
+                {% trans "Cancellation reverses the inventory effect of this sale." %}
+            </p>
+        </div>
+
+    </div>
+
+
+    <form
+        method="post"
+        action="{% url 'sale_cancel' sale.id %}"
+    >
+        {% csrf_token %}
+
+        {% if cancellation_form.non_field_errors %}
+            <div class="form-error-summary">
+                {{ cancellation_form.non_field_errors }}
+            </div>
+        {% endif %}
+
+
+        <div class="form-group">
+
+            <label
+                for="{{ cancellation_form.reason.id_for_label }}"
+                class="form-label"
+            >
+                {% trans "Cancellation Reason" %}
+            </label>
+
+            {{ cancellation_form.reason }}
+
+            {% if cancellation_form.reason.errors %}
+                <div class="form-error">
+                    {{ cancellation_form.reason.errors }}
+                </div>
+            {% endif %}
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                class="btn-danger"
+                onclick="return confirm(this.dataset.confirmation);"
+                data-confirmation="{% trans 'Are you sure you want to cancel this sale?' %}"
+            >
+                {% trans "Cancel Sale" %}
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+{% elif sale.status == "CANCELLED" %}
+
+
+<div class="content-card">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Customer" %}
+            </div>
+
+            {% if sale.customer %}
+                {{ sale.customer.name }}
+            {% else %}
+                {% trans "Walk-in Customer" %}
+            {% endif %}
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Payment Type" %}
+            </div>
+
+            {% if sale.payment_type == "CREDIT" %}
+                {% trans "Credit" %}
+            {% else %}
+                {% trans "Cash" %}
+            {% endif %}
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Cancelled By" %}
+            </div>
+
+            {{ sale.cancelled_by.username }}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="page-header">
+
+        <div>
+            <h2 class="page-title">
+                {% trans "Sale Items" %}
+            </h2>
+
+            <p class="page-description">
+                {% trans "Products included in this cancelled sale." %}
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+
+                    <th>
+                        {% trans "Product" %}
+                    </th>
+
+                    <th>
+                        {% trans "Quantity" %}
+                    </th>
+
+                    <th>
+                        {% trans "Unit" %}
+                    </th>
+
+                    <th>
+                        {% trans "Price" %}
+                    </th>
+
+                    <th>
+                        {% trans "Total" %}
+                    </th>
+
+                </tr>
+            </thead>
+
+
+            <tbody>
+
+                {% for item in items %}
+
+                    <tr>
+
+                        <td>
+                            {{ item.product.name }}
+                        </td>
+
+                        <td>
+                            {{ item.quantity|floatformat:"-3" }}
+                        </td>
+
+                        <td>
+                            {{ item.product.unit.symbol }}
+                        </td>
+
+                        <td>
+                            {{ item.unit_price|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ item.line_total|floatformat:2 }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Subtotal" %}
+            </div>
+
+            {{ sale.subtotal_amount|floatformat:2 }}
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Discount" %}
+            </div>
+
+            {{ sale.discount_amount|floatformat:2 }}
+
+        </div>
+
+
+        <div class="form-group">
+
+            <div class="form-label">
+                {% trans "Total" %}
+            </div>
+
+            {{ sale.total_amount|floatformat:2 }}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

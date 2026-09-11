@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Sales" %} | StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <div class="page-eyebrow">
+            {% trans "Management" %}
+        </div>
+
+        <h1 class="page-title">
+            {% trans "Sales" %}
+        </h1>
+
+        <p class="page-description">
+            {% trans "View completed, cancelled, and draft sales." %}
+        </p>
+
+    </div>
+
+
+    <div class="page-header-actions">
+
+        <a
+            href="{% url 'sale_create' %}"
+            class="btn-primary"
+        >
+            {% trans "New Sale" %}
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="table-toolbar">
+
+        <div class="table-count">
+
+            {% blocktrans count counter=sales|length %}
+                {{ counter }} sale
+            {% plural %}
+                {{ counter }} sales
+            {% endblocktrans %}
+
+        </div>
+
+    </div>
+
+
+    {% if sales %}
+
+        <div class="table-wrapper">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            {% trans "Reference" %}
+                        </th>
+
+                        <th>
+                            {% trans "Customer" %}
+                        </th>
+
+                        <th>
+                            {% trans "Payment Type" %}
+                        </th>
+
+                        <th>
+                            {% trans "Total" %}
+                        </th>
+
+                        <th>
+                            {% trans "Status" %}
+                        </th>
+
+                        <th>
+                            {% trans "Created By" %}
+                        </th>
+
+                        <th>
+                            {% trans "Date" %}
+                        </th>
+
+                        <th>
+                            {% trans "Actions" %}
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for sale in sales %}
+
+                        <tr>
+
+                            <td>
+                                {{ sale.reference }}
+                            </td>
+
+
+                            <td>
+
+                                {% if sale.customer %}
+                                    {{ sale.customer.name }}
+                                {% else %}
+                                    {% trans "Walk-in Customer" %}
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if sale.payment_type == "CREDIT" %}
+                                    {% trans "Credit" %}
+                                {% else %}
+                                    {% trans "Cash" %}
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+                                {{ sale.total_amount|floatformat:2 }}
+                            </td>
+
+
+                            <td>
+
+                                {% if sale.status == "COMPLETED" %}
+
+                                    <span class="status-badge status-success">
+                                        {% trans "Completed" %}
+                                    </span>
+
+                                {% elif sale.status == "CANCELLED" %}
+
+                                    <span class="status-badge status-muted">
+                                        {% trans "Cancelled" %}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-badge status-muted">
+                                        {% trans "Draft" %}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+                                {{ sale.created_by.username }}
+                            </td>
+
+
+                            <td>
+                                {{ sale.created_at|date:"Y-m-d H:i" }}
+                            </td>
+
+
+                            <td>
+
+                                <div class="table-actions">
+
+                                    <a
+                                        href="{% url 'sale_detail' sale.id %}"
+                                        class="btn-secondary btn-small"
+                                    >
+                                        {% trans "View" %}
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <h3>
+                {% trans "No sales yet." %}
+            </h3>
+
+            <p>
+                {% trans "Start your first sale to begin recording transactions." %}
+            </p>
+
+            <a
+                href="{% url 'sale_create' %}"
+                class="btn-primary"
+            >
+                {% trans "New Sale" %}
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

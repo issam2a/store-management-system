@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Add Sale Item" %} | StoreFlow{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="page-eyebrow">
+            {{ sale.reference }}
+        </div>
+
+        <h1 class="page-title">
+            {% trans "Add Sale Item" %}
+        </h1>
+
+        <p class="page-description">
+            {% trans "Add a product to this sale draft." %}
+        </p>
+    </div>
+</div>
+
+<div class="content-card form-card">
+    {% if form.non_field_errors %}
+        <div class="form-error-summary">
+            {% for error in form.non_field_errors %}
+                <div class="form-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label
+                    for="{{ form.product.id_for_label }}"
+                    class="form-label"
+                >
+                    {{ form.product.label }}
+                </label>
+
+                {{ form.product }}
+
+                {% for error in form.product.errors %}
+                    <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label
+                    for="{{ form.quantity.id_for_label }}"
+                    class="form-label"
+                >
+                    {{ form.quantity.label }}
+                </label>
+
+                {{ form.quantity }}
+
+                {% for error in form.quantity.errors %}
+                    <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label
+                    for="{{ form.unit_price.id_for_label }}"
+                    class="form-label"
+                >
+                    {{ form.unit_price.label }}
+                </label>
+
+                {{ form.unit_price }}
+
+                {% for error in form.unit_price.errors %}
+                    <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a
+                href="{% url 'sale_detail' sale.id %}"
+                class="btn-secondary"
+            >
+                {% trans "Cancel" %}
+            </a>
+
+            <button type="submit" class="btn-primary">
+                {% trans "Add Item" %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

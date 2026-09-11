@@ -72,8 +72,12 @@
 
             </div>
 
-            <div class="kpi-value">
-                {{ revenue|floatformat:2 }}
+            <div
+                class="kpi-value"
+                data-count="{{ revenue }}"
+                data-decimals="2"
+            >
+                {{revenue}}
             </div>
 
             <div class="kpi-footer">
@@ -103,8 +107,12 @@
 
             </div>
 
-            <div class="kpi-value">
-                {{ sales_count }}
+            <div
+                class="kpi-value"
+                data-count="{{ sales_count }}"
+                data-decimals="0"
+            >
+                0
             </div>
 
             <div class="kpi-footer">
@@ -134,7 +142,11 @@
 
             </div>
 
-            <div class="kpi-value">
+            <div
+                class="kpi-value"
+                data-count="{{ gross_profit }}"
+                data-decimals="2"
+            >
                 {{ gross_profit|floatformat:2 }}
             </div>
 
@@ -165,8 +177,12 @@
 
             </div>
 
-            <div class="kpi-value">
-                {{ low_stock_count }}
+            <div
+                class="kpi-value"
+                data-count="{{ low_stock_count }}"
+                data-decimals="0"
+            >
+                0
             </div>
 
             <div class="kpi-footer">
@@ -222,20 +238,19 @@
             </div>
 
 
-            <div class="chart-container">
+            <div class="chart-container revenue-chart">
 
                 {% if chart_data %}
 
                     {{ chart_data|json_script:"revenue-chart-data" }}
 
-                        <div class="chart-container">
-                            <canvas id="revenueChart"></canvas>
-                        </div>
+                    <div class="chart-container revenue-line">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
 
                 {% else %}
 
                     <div class="empty-state">
-
                         <span
                             class="empty-state-icon"
                             aria-hidden="true"
@@ -250,7 +265,6 @@
                         <p>
                             {% trans "Completed sales will appear here." %}
                         </p>
-
                     </div>
 
                 {% endif %}
