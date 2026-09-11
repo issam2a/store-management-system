@@ -199,7 +199,13 @@
                     <td>
 
                         <div class="table-actions">
-
+                            <a
+                                href="{% url 'customer_detail' customer.id %}"
+                                class="btn-secondary btn-small"
+                            >
+                                {% trans "View" %}
+                            </a>
+                            
                             <a
                                 href="{% url 'customer_edit' customer.id %}"
                                 class="btn-secondary btn-small"

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-11 15:54+0300\n"
+"POT-Creation-Date: 2026-09-11 16:45+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,80 +12,92 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: .\apps\customers\views.py:81
+#: .\apps\customers\views.py:82
 msgid "Customer created successfully."
 msgstr "تم إنشاء العميل بنجاح."
 
-#: .\apps\customers\views.py:94 .\apps\customers\views.py:98
+#: .\apps\customers\views.py:95 .\apps\customers\views.py:99
 msgid "Create Customer"
 msgstr "إنشاء عميل"
 
-#: .\apps\customers\views.py:96
+#: .\apps\customers\views.py:97
 msgid "Add a new customer to your store."
 msgstr "إضافة عميل جديد إلى متجرك."
 
-#: .\apps\customers\views.py:128
+#: .\apps\customers\views.py:129
 msgid "Customer updated successfully."
 msgstr "تم تحديث العميل بنجاح."
 
-#: .\apps\customers\views.py:148
+#: .\apps\customers\views.py:149
+#: .\dashboard\templates\customers\customer_detail.html:36
 msgid "Edit Customer"
 msgstr "تعديل العميل"
 
-#: .\apps\customers\views.py:150
+#: .\apps\customers\views.py:151
 msgid "Update customer information."
 msgstr "تحديث معلومات العميل"
 
-#: .\apps\customers\views.py:152 .\apps\products\views.py:159
+#: .\apps\customers\views.py:153 .\apps\products\views.py:159
 #: .\apps\purchases\views.py:252 .\apps\suppliers\views.py:163
 msgid "Save Changes"
 msgstr "حفظ التغييرات"
 
-#: .\apps\customers\views.py:172
+#: .\apps\customers\views.py:173
 msgid "Customer activated successfully."
 msgstr "تم تفعيل العميل بنجاح."
 
-#: .\apps\customers\views.py:192
+#: .\apps\customers\views.py:193
 msgid "Customer deactivated successfully."
 msgstr "تم تعطيل العميل بنجاح."
 
-#: .\apps\payments\forms.py:7 .\dashboard\templates\dashboard\home.html:413
+#: .\apps\payments\forms.py:7 .\apps\payments\forms.py:76
+#: .\apps\payments\forms.py:131
+#: .\dashboard\templates\customers\customer_detail.html:214
+#: .\dashboard\templates\dashboard\home.html:413
 #: .\dashboard\templates\suppliers\supplier_detail.html:180
 msgid "Amount"
 msgstr "المبلغ"
 
-#: .\apps\payments\forms.py:21
+#: .\apps\payments\forms.py:21 .\apps\payments\forms.py:90
+#: .\apps\payments\forms.py:145
+#: .\dashboard\templates\customers\customer_detail.html:215
 #: .\dashboard\templates\suppliers\supplier_detail.html:181
 msgid "Payment Method"
 msgstr "طريقة الدفع"
 
-#: .\apps\payments\forms.py:23 .\apps\purchases\models.py:8
+#: .\apps\payments\forms.py:23 .\apps\payments\forms.py:92
+#: .\apps\payments\forms.py:147 .\apps\purchases\models.py:8
 msgid "Cash"
 msgstr "نقدي"
 
-#: .\apps\payments\forms.py:24
+#: .\apps\payments\forms.py:24 .\apps\payments\forms.py:93
+#: .\apps\payments\forms.py:148
 msgid "Bank Transfer"
 msgstr "تحويل مصرفي"
 
-#: .\apps\payments\forms.py:25
+#: .\apps\payments\forms.py:25 .\apps\payments\forms.py:94
+#: .\apps\payments\forms.py:149
 msgid "Card"
 msgstr "بطاقة"
 
-#: .\apps\payments\forms.py:26
+#: .\apps\payments\forms.py:26 .\apps\payments\forms.py:95
+#: .\apps\payments\forms.py:150
 msgid "Other"
-msgstr "Other"
+msgstr "اخرى"
 
-#: .\apps\payments\forms.py:36
+#: .\apps\payments\forms.py:36 .\apps\payments\forms.py:105
+#: .\apps\payments\forms.py:160
+#: .\dashboard\templates\customers\customer_detail.html:216
 #: .\dashboard\templates\suppliers\supplier_detail.html:182
 msgid "Payment Date"
 msgstr "تاريخ الدفع"
 
-#: .\apps\payments\forms.py:46
+#: .\apps\payments\forms.py:46 .\apps\payments\forms.py:115
+#: .\apps\payments\forms.py:170
 msgid "Note"
-msgstr ""
+msgstr "ملحوظة"
 
 #: .\apps\payments\forms.py:61
-
 msgid "Payment method is required."
 msgstr "طريقة الدفع مطلوبة"
 
@@ -272,6 +284,7 @@ msgid "Inventory"
 msgstr "المخزون"
 
 #: .\dashboard\templates\components\sidebar.html:82
+#: .\dashboard\templates\customers\customer_detail.html:102
 #: .\dashboard\templates\dashboard\home.html:97
 msgid "Sales"
 msgstr "المبيعات"
@@ -364,10 +377,27 @@ msgstr "قائمة المستخدم"
 msgid "Administrator"
 msgstr "مدير النظام"
 
-#: .\dashboard\templates\customers\customer_form.html:58
-msgid "Customer Name"
-msgstr "اسم العميل"
+#: .\dashboard\templates\customers\customer_detail.html:11
+#: .\dashboard\templates\customers\customer_payment_create.html:33
+#: .\dashboard\templates\dashboard\home.html:409
+msgid "Customer"
+msgstr "العميل"
 
+#: .\dashboard\templates\customers\customer_detail.html:19
+
+msgid "Customer details, sales, and payment history."
+msgstr "تفاصيل العملاء، والمبيعات، وسجل المدفوعات."
+
+#: .\dashboard\templates\customers\customer_detail.html:29
+#: .\dashboard\templates\customers\customer_payment_create.html:15
+#: .\dashboard\templates\customers\customer_payment_create.html:151
+#: .\dashboard\templates\suppliers\supplier_detail.html:31
+#: .\dashboard\templates\suppliers\supplier_payment_create.html:15
+#: .\dashboard\templates\suppliers\supplier_payment_create.html:169
+msgid "Record Payment"
+msgstr "تسجيل الدفعة"
+
+#: .\dashboard\templates\customers\customer_detail.html:49
 #: .\dashboard\templates\customers\customer_form.html:78
 #: .\dashboard\templates\customers\customer_list.html:132
 #: .\dashboard\templates\suppliers\supplier_detail.html:58
@@ -376,6 +406,56 @@ msgstr "اسم العميل"
 msgid "Phone"
 msgstr "رقم الهاتف"
 
+#: .\dashboard\templates\customers\customer_detail.html:59
+#: .\dashboard\templates\customers\customer_detail.html:126
+#: .\dashboard\templates\customers\customer_list.html:140
+#: .\dashboard\templates\dashboard\home.html:417
+#: .\dashboard\templates\products\category_list.html:41
+#: .\dashboard\templates\products\product_list.html:152
+#: .\dashboard\templates\products\unit_list.html:42
+#: .\dashboard\templates\purchases\purchase_cancel.html:68
+#: .\dashboard\templates\purchases\purchase_detail.html:129
+#: .\dashboard\templates\purchases\purchase_list.html:169
+#: .\dashboard\templates\suppliers\supplier_detail.html:71
+#: .\dashboard\templates\suppliers\supplier_detail.html:118
+#: .\dashboard\templates\suppliers\supplier_list.html:108
+msgid "Status"
+msgstr "الحالة"
+
+#: .\dashboard\templates\customers\customer_detail.html:64
+#: .\dashboard\templates\customers\customer_list.html:82
+#: .\dashboard\templates\customers\customer_list.html:186
+#: .\dashboard\templates\products\category_list.html:62
+#: .\dashboard\templates\products\product_list.html:97
+#: .\dashboard\templates\products\product_list.html:192
+#: .\dashboard\templates\products\unit_list.html:67
+#: .\dashboard\templates\suppliers\supplier_detail.html:76
+#: .\dashboard\templates\suppliers\supplier_list.html:69
+#: .\dashboard\templates\suppliers\supplier_list.html:148
+msgid "Active"
+msgstr "نشط"
+
+#: .\dashboard\templates\customers\customer_detail.html:66
+#: .\dashboard\templates\customers\customer_list.html:91
+#: .\dashboard\templates\customers\customer_list.html:192
+#: .\dashboard\templates\products\category_list.html:66
+#: .\dashboard\templates\products\product_list.html:106
+#: .\dashboard\templates\products\product_list.html:198
+#: .\dashboard\templates\products\unit_list.html:71
+#: .\dashboard\templates\suppliers\supplier_detail.html:80
+#: .\dashboard\templates\suppliers\supplier_list.html:76
+#: .\dashboard\templates\suppliers\supplier_list.html:152
+msgid "Inactive"
+msgstr "غير نشط"
+
+#: .\dashboard\templates\customers\customer_detail.html:73
+#: .\dashboard\templates\customers\customer_payment_create.html:43
+#: .\dashboard\templates\suppliers\supplier_detail.html:88
+#: .\dashboard\templates\suppliers\supplier_payment_create.html:45
+msgid "Outstanding Balance"
+msgstr "الرصيد المستحق"
+
+#: .\dashboard\templates\customers\customer_detail.html:83
 #: .\dashboard\templates\customers\customer_form.html:98
 #: .\dashboard\templates\customers\customer_list.html:136
 #: .\dashboard\templates\suppliers\supplier_form.html:92
@@ -383,7 +463,82 @@ msgstr "رقم الهاتف"
 msgid "Contact Information"
 msgstr "معلومات الاتصال"
 
+#: .\dashboard\templates\customers\customer_detail.html:106
+
+msgid "Sales History"
+msgstr "سجل المبيعات"
+
+#: .\dashboard\templates\customers\customer_detail.html:110
+
+msgid "Completed customer sales."
+msgstr "مبيعات العملاء المكتملة"
+
+#: .\dashboard\templates\customers\customer_detail.html:122
+#: .\dashboard\templates\customers\customer_detail.html:213
+#: .\dashboard\templates\dashboard\home.html:405
+#: .\dashboard\templates\purchases\purchase_cancel.html:38
+#: .\dashboard\templates\purchases\purchase_list.html:153
+#: .\dashboard\templates\suppliers\supplier_detail.html:115
+#: .\dashboard\templates\suppliers\supplier_detail.html:179
+msgid "Reference"
+msgstr "المرجع"
+
+#: .\dashboard\templates\customers\customer_detail.html:123
+#: .\dashboard\templates\purchases\purchase_detail.html:119
+#: .\dashboard\templates\purchases\purchase_form.html:79
+#: .\dashboard\templates\purchases\purchase_list.html:161
+#: .\dashboard\templates\suppliers\supplier_detail.html:116
+msgid "Payment Type"
+msgstr "نوع الدفع"
+
+#: .\dashboard\templates\customers\customer_detail.html:124
+#: .\dashboard\templates\purchases\purchase_cancel.html:58
+#: .\dashboard\templates\purchases\purchase_list.html:165
+#: .\dashboard\templates\suppliers\supplier_detail.html:117
+msgid "Total"
+msgstr "إجمالي"
+
+#: .\dashboard\templates\customers\customer_detail.html:125
+msgid "Date"
+msgstr "التاريخ"
+
+#: .\dashboard\templates\customers\customer_detail.html:172
+
+msgid "No sales found."
+msgstr "لم يتم العثور على مبيعات."
+
+#: .\dashboard\templates\customers\customer_detail.html:193
+#, fuzzy
+#| msgid "Payment Date"
+msgid "Payments"
+msgstr "تاريخ الدفع"
+
+#: .\dashboard\templates\customers\customer_detail.html:197
+#: .\dashboard\templates\suppliers\supplier_detail.html:166
+msgid "Payment History"
+msgstr "سجل المدفوعات"
+
+#: .\dashboard\templates\customers\customer_detail.html:201
+
+msgid "Payments recorded against this customer."
+msgstr "المدفوعات المسجلة لهذا العميل."
+
+#: .\dashboard\templates\customers\customer_detail.html:217
+#: .\dashboard\templates\suppliers\supplier_detail.html:183
+msgid "Recorded By"
+msgstr "تسجيل"
+
+#: .\dashboard\templates\customers\customer_detail.html:253
+#: .\dashboard\templates\suppliers\supplier_detail.html:215
+msgid "No payments recorded."
+msgstr "لم يتم تسجيل أي مدفوعات."
+
+#: .\dashboard\templates\customers\customer_form.html:58
+msgid "Customer Name"
+msgstr "اسم العميل"
+
 #: .\dashboard\templates\customers\customer_form.html:120
+#: .\dashboard\templates\customers\customer_payment_create.html:144
 #: .\dashboard\templates\products\category_form.html:81
 #: .\dashboard\templates\products\product_form.html:157
 #: .\dashboard\templates\products\unit_form.html:81
@@ -412,30 +567,6 @@ msgstr "البحث عن العملاء..."
 msgid "All Statuses"
 msgstr "كل الحالات"
 
-#: .\dashboard\templates\customers\customer_list.html:82
-#: .\dashboard\templates\customers\customer_list.html:186
-#: .\dashboard\templates\products\category_list.html:62
-#: .\dashboard\templates\products\product_list.html:97
-#: .\dashboard\templates\products\product_list.html:192
-#: .\dashboard\templates\products\unit_list.html:67
-#: .\dashboard\templates\suppliers\supplier_detail.html:76
-#: .\dashboard\templates\suppliers\supplier_list.html:69
-#: .\dashboard\templates\suppliers\supplier_list.html:148
-msgid "Active"
-msgstr "نشط"
-
-#: .\dashboard\templates\customers\customer_list.html:91
-#: .\dashboard\templates\customers\customer_list.html:192
-#: .\dashboard\templates\products\category_list.html:66
-#: .\dashboard\templates\products\product_list.html:106
-#: .\dashboard\templates\products\product_list.html:198
-#: .\dashboard\templates\products\unit_list.html:71
-#: .\dashboard\templates\suppliers\supplier_detail.html:80
-#: .\dashboard\templates\suppliers\supplier_list.html:76
-#: .\dashboard\templates\suppliers\supplier_list.html:152
-msgid "Inactive"
-msgstr "غير نشط"
-
 #: .\dashboard\templates\customers\customer_list.html:102
 #: .\dashboard\templates\products\product_list.html:118
 #: .\dashboard\templates\purchases\purchase_list.html:105
@@ -459,20 +590,6 @@ msgstr "مسح"
 msgid "Name"
 msgstr "الاسم"
 
-#: .\dashboard\templates\customers\customer_list.html:140
-#: .\dashboard\templates\dashboard\home.html:417
-#: .\dashboard\templates\products\category_list.html:41
-#: .\dashboard\templates\products\product_list.html:152
-#: .\dashboard\templates\products\unit_list.html:42
-#: .\dashboard\templates\purchases\purchase_cancel.html:68
-#: .\dashboard\templates\purchases\purchase_detail.html:129
-#: .\dashboard\templates\purchases\purchase_list.html:169
-#: .\dashboard\templates\suppliers\supplier_detail.html:71
-#: .\dashboard\templates\suppliers\supplier_detail.html:118
-#: .\dashboard\templates\suppliers\supplier_list.html:108
-msgid "Status"
-msgstr "الحالة"
-
 #: .\dashboard\templates\customers\customer_list.html:144
 #: .\dashboard\templates\products\category_list.html:43
 #: .\dashboard\templates\products\product_list.html:154
@@ -483,7 +600,13 @@ msgstr "الحالة"
 msgid "Actions"
 msgstr "الإجراءات"
 
-#: .\dashboard\templates\customers\customer_list.html:207
+#: .\dashboard\templates\customers\customer_list.html:206
+#: .\dashboard\templates\purchases\purchase_list.html:227
+#: .\dashboard\templates\suppliers\supplier_list.html:165
+msgid "View"
+msgstr "عرض "
+
+#: .\dashboard\templates\customers\customer_list.html:213
 #: .\dashboard\templates\products\category_list.html:82
 #: .\dashboard\templates\products\product_list.html:214
 #: .\dashboard\templates\products\unit_list.html:87
@@ -492,7 +615,7 @@ msgstr "الإجراءات"
 msgid "Edit"
 msgstr "تعديل"
 
-#: .\dashboard\templates\customers\customer_list.html:224
+#: .\dashboard\templates\customers\customer_list.html:230
 #: .\dashboard\templates\products\category_list.html:98
 #: .\dashboard\templates\products\product_list.html:232
 #: .\dashboard\templates\products\unit_list.html:103
@@ -500,7 +623,7 @@ msgstr "تعديل"
 msgid "Deactivate"
 msgstr "تعطيل"
 
-#: .\dashboard\templates\customers\customer_list.html:243
+#: .\dashboard\templates\customers\customer_list.html:249
 #: .\dashboard\templates\products\category_list.html:115
 #: .\dashboard\templates\products\product_list.html:251
 #: .\dashboard\templates\products\unit_list.html:120
@@ -508,7 +631,7 @@ msgstr "تعطيل"
 msgid "Activate"
 msgstr "تفعيل"
 
-#: .\dashboard\templates\customers\customer_list.html:267
+#: .\dashboard\templates\customers\customer_list.html:273
 #, python-format
 msgid ""
 "\n"
@@ -531,23 +654,35 @@ msgstr[3] ""
 msgstr[4] ""
 msgstr[5] ""
 
-#: .\dashboard\templates\customers\customer_list.html:290
+#: .\dashboard\templates\customers\customer_list.html:296
 #: .\dashboard\templates\products\product_list.html:306
 #: .\dashboard\templates\purchases\purchase_list.html:266
 #: .\dashboard\templates\suppliers\supplier_list.html:240
 msgid "Previous"
 msgstr "السابق"
 
-#: .\dashboard\templates\customers\customer_list.html:324
+#: .\dashboard\templates\customers\customer_list.html:330
 #: .\dashboard\templates\products\product_list.html:340
 #: .\dashboard\templates\purchases\purchase_list.html:285
 #: .\dashboard\templates\suppliers\supplier_list.html:270
 msgid "Next"
 msgstr "التالي"
 
-#: .\dashboard\templates\customers\customer_list.html:339
+#: .\dashboard\templates\customers\customer_list.html:345
 msgid "No customers found."
 msgstr "لم يتم العثور على عملاء."
+
+#: .\dashboard\templates\customers\customer_payment_create.html:11
+#, fuzzy
+#| msgid "Customer Name"
+msgid "Customer Payment"
+msgstr "اسم العميل"
+
+#: .\dashboard\templates\customers\customer_payment_create.html:19
+#, fuzzy
+#| msgid "Record a payment against the supplier's outstanding balance."
+msgid "Record a payment against the customer's outstanding balance."
+msgstr "سجّل دفعةً مقابل الرصيد المستحق للمورّد."
 
 #: .\dashboard\templates\dashboard\home.html:20
 msgid "Store overview"
@@ -630,18 +765,6 @@ msgstr "آخر المبيعات"
 #: .\dashboard\templates\dashboard\home.html:510
 msgid "View all"
 msgstr "عرض الكل"
-
-#: .\dashboard\templates\dashboard\home.html:405
-#: .\dashboard\templates\purchases\purchase_cancel.html:38
-#: .\dashboard\templates\purchases\purchase_list.html:153
-#: .\dashboard\templates\suppliers\supplier_detail.html:115
-#: .\dashboard\templates\suppliers\supplier_detail.html:179
-msgid "Reference"
-msgstr "المرجع"
-
-#: .\dashboard\templates\dashboard\home.html:409
-msgid "Customer"
-msgstr "العميل"
 
 #: .\dashboard\templates\dashboard\home.html:442
 msgid "Walk-in customer"
@@ -851,12 +974,6 @@ msgstr "إلغاء عملية شراء مكتملة وعكس أثرها على �
 msgid "Supplier"
 msgstr "المورد"
 
-#: .\dashboard\templates\purchases\purchase_cancel.html:58
-#: .\dashboard\templates\purchases\purchase_list.html:165
-#: .\dashboard\templates\suppliers\supplier_detail.html:117
-msgid "Total"
-msgstr "إجمالي"
-
 #: .\dashboard\templates\purchases\purchase_cancel.html:113
 #: .\dashboard\templates\purchases\purchase_detail.html:85
 msgid "Back"
@@ -889,13 +1006,6 @@ msgstr "حذف عملية الشراء"
 #: .\dashboard\templates\purchases\purchase_detail.html:94
 msgid "Back to Purchases"
 msgstr "العودة إلى المشتريات"
-
-#: .\dashboard\templates\purchases\purchase_detail.html:119
-#: .\dashboard\templates\purchases\purchase_form.html:79
-#: .\dashboard\templates\purchases\purchase_list.html:161
-#: .\dashboard\templates\suppliers\supplier_detail.html:116
-msgid "Payment Type"
-msgstr "نوع الدفع"
 
 #: .\dashboard\templates\purchases\purchase_detail.html:139
 msgid "Created By"
@@ -1017,11 +1127,6 @@ msgstr[5] ""
 "                    %(counter)s عملية شراء\n"
 "                "
 
-#: .\dashboard\templates\purchases\purchase_list.html:227
-#: .\dashboard\templates\suppliers\supplier_list.html:165
-msgid "View"
-msgstr "عرض "
-
 #: .\dashboard\templates\purchases\purchase_list.html:242
 #: .\dashboard\templates\suppliers\supplier_detail.html:153
 msgid "No purchases found."
@@ -1039,17 +1144,6 @@ msgstr ""
 msgid "Supplier details, purchases, and payment history."
 msgstr "تفاصيل الموردين، والمشتريات، وسجل المدفوعات."
 
-#: .\dashboard\templates\suppliers\supplier_detail.html:31
-#: .\dashboard\templates\suppliers\supplier_payment_create.html:15
-#: .\dashboard\templates\suppliers\supplier_payment_create.html:169
-msgid "Record Payment"
-msgstr "تسجيل الدفعة"
-
-#: .\dashboard\templates\suppliers\supplier_detail.html:88
-#: .\dashboard\templates\suppliers\supplier_payment_create.html:45
-msgid "Outstanding Balance"
-msgstr "الرصيد المستحق"
-
 #: .\dashboard\templates\suppliers\supplier_detail.html:102
 msgid "Purchase History"
 msgstr "سجل المشتريات"
@@ -1058,21 +1152,9 @@ msgstr "سجل المشتريات"
 msgid "Completed and historical supplier purchases."
 msgstr "مشتريات الموردين المكتملة والتاريخية."
 
-#: .\dashboard\templates\suppliers\supplier_detail.html:166
-msgid "Payment History"
-msgstr "سجل المدفوعات"
-
 #: .\dashboard\templates\suppliers\supplier_detail.html:170
 msgid "Payments recorded against this supplier."
 msgstr "المدفوعات المسجلة لهذا المورد."
-
-#: .\dashboard\templates\suppliers\supplier_detail.html:183
-msgid "Recorded By"
-msgstr "تسجيل"
-
-#: .\dashboard\templates\suppliers\supplier_detail.html:215
-msgid "No payments recorded."
-msgstr "لم يتم تسجيل أي مدفوعات."
 
 #: .\dashboard\templates\suppliers\supplier_form.html:52
 msgid "Supplier Name"
@@ -1140,7 +1222,6 @@ msgid "No suppliers found."
 msgstr "لم يتم العثور على موردين."
 
 #: .\dashboard\templates\suppliers\supplier_payment_create.html:11
-
 msgid "Supplier Payment"
 msgstr "دفع مستحقات المورد"
 

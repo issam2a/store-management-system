@@ -33,6 +33,43 @@ def generate_supplier_payment_reference():
     return f"SUP-PAY-{next_number:06d}"
 
 
+def get_customer_outstanding_balance(customer_id):
+    """
+    Calculate the customer's outstanding balance.
+
+    Balance:
+        completed credit sales
+        minus customer payments
+    """
+
+    credit_sales_total = (
+        Sale.objects
+        .filter(
+            customer_id=customer_id,
+            payment_type=Sale.PaymentType.CREDIT,
+            status=Sale.Status.COMPLETED,
+        )
+        .aggregate(
+            total=models.Sum("total_amount")
+        )["total"]
+        or Decimal("0.00")
+    )
+
+    customer_payments_total = (
+        CustomerPayment.objects
+        .filter(
+            customer_id=customer_id,
+        )
+        .aggregate(
+            total=models.Sum("amount")
+        )["total"]
+        or Decimal("0.00")
+    )
+
+    return (
+        credit_sales_total - customer_payments_total
+    ).quantize(Decimal("0.01"))
+
 def record_customer_payment(
     customer_id,
     amount,
@@ -69,31 +106,9 @@ def record_customer_payment(
                 "Payment date is required."
             )
 
-        credit_sales_total = (
-            Sale.objects
-            .filter(
-                customer=customer,
-                payment_type=Sale.PaymentType.CREDIT,
-                status=Sale.Status.COMPLETED,
+        outstanding_balance = get_customer_outstanding_balance(
+                customer.id
             )
-            .aggregate(
-                total=models.Sum("total_amount")
-            )["total"]
-            or Decimal("0.00")
-        )
-
-        previous_payments_total = (
-            CustomerPayment.objects
-            .filter(customer=customer)
-            .aggregate(
-                total=models.Sum("amount")
-            )["total"]
-            or Decimal("0.00")
-        )
-
-        outstanding_balance = (
-            credit_sales_total - previous_payments_total
-        )
 
         if amount > outstanding_balance:
             raise ValidationError(

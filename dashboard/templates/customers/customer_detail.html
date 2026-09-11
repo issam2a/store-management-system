@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <div class="page-eyebrow">
+            {% trans "Customer" %}
+        </div>
+
+        <h1 class="page-title">
+            {{ customer.name }}
+        </h1>
+
+        <p class="page-description">
+            {% trans "Customer details, sales, and payment history." %}
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+
+        <a
+            href="{% url 'customer_payment_create' customer.id %}"
+            class="btn-primary"
+        >
+            {% trans "Record Payment" %}
+        </a>
+
+        <a
+            href="{% url 'customer_edit' customer.id %}"
+            class="btn-secondary"
+        >
+            {% trans "Edit Customer" %}
+        </a>
+
+    </div>
+
+</div>
+
+<div class="content-card">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <span class="form-label">
+                {% trans "Phone" %}
+            </span>
+
+            <div class="form-input">
+                {{ customer.phone|default:"—" }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="form-label">
+                {% trans "Status" %}
+            </span>
+
+            <div class="form-input">
+                {% if customer.is_active %}
+                    {% trans "Active" %}
+                {% else %}
+                    {% trans "Inactive" %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="form-label">
+                {% trans "Outstanding Balance" %}
+            </span>
+
+            <div class="form-input">
+                {{ outstanding_balance|floatformat:2 }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <span class="form-label">
+                {% trans "Contact Information" %}
+            </span>
+
+            <div class="form-input">
+                {{ customer.contact_information|default:"—" }}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="page-header">
+
+        <div>
+            <div class="page-eyebrow">
+                {% trans "Sales" %}
+            </div>
+
+            <h2 class="page-title">
+                {% trans "Sales History" %}
+            </h2>
+
+            <p class="page-description">
+                {% trans "Completed customer sales." %}
+            </p>
+        </div>
+
+    </div>
+
+    <div class="table-wrapper">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>{% trans "Reference" %}</th>
+                    <th>{% trans "Payment Type" %}</th>
+                    <th>{% trans "Total" %}</th>
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Status" %}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for sale in sales %}
+
+                    <tr>
+
+                        <td>
+                            {{ sale.reference }}
+                        </td>
+
+                        <td>
+                            {{ sale.get_payment_type_display }}
+                        </td>
+
+                        <td>
+                            {{ sale.total_amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ sale.created_at|date:"Y-m-d H:i" }}
+                        </td>
+
+                        <td>
+
+                            {% if sale.status == sale.Status.COMPLETED %}
+                                <span class="status-badge status-success">
+                                    {{ sale.get_status_display }}
+                                </span>
+                            {% else %}
+                                <span class="status-badge status-muted">
+                                    {{ sale.get_status_display }}
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="5">
+                            {% trans "No sales found." %}
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="page-header">
+
+        <div>
+            <div class="page-eyebrow">
+                {% trans "Payments" %}
+            </div>
+
+            <h2 class="page-title">
+                {% trans "Payment History" %}
+            </h2>
+
+            <p class="page-description">
+                {% trans "Payments recorded against this customer." %}
+            </p>
+        </div>
+
+    </div>
+
+    <div class="table-wrapper">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>{% trans "Reference" %}</th>
+                    <th>{% trans "Amount" %}</th>
+                    <th>{% trans "Payment Method" %}</th>
+                    <th>{% trans "Payment Date" %}</th>
+                    <th>{% trans "Recorded By" %}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for payment in payments %}
+
+                    <tr>
+
+                        <td>
+                            {{ payment.reference }}
+                        </td>
+
+                        <td>
+                            {{ payment.amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ payment.payment_method }}
+                        </td>
+
+                        <td>
+                            {{ payment.payment_date|date:"Y-m-d" }}
+                        </td>
+
+                        <td>
+                            {{ payment.recorded_by.get_username }}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="5">
+                            {% trans "No payments recorded." %}
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -6,6 +6,7 @@ from .views import (
     customer_deactivate,
     customer_edit,
     customer_list,
+    customer_detail,
 )
 
 
@@ -34,5 +35,10 @@ urlpatterns = [
         "<int:customer_id>/deactivate/",
         customer_deactivate,
         name="customer_deactivate",
+    ),
+    path(
+    "<int:customer_id>/",
+    customer_detail,
+    name="customer_detail",
     ),
 ]

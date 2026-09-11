@@ -4,7 +4,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
-
+from django.contrib.auth.decorators import login_required
+from apps.payments.services import get_customer_outstanding_balance
 from .forms import CustomerForm
 from .models import Customer
 from .services import (
@@ -13,7 +14,7 @@ from .services import (
     deactivate_customer,
     update_customer,
 )
-
+from .models import Customer
 
 def customer_list(request):
     customers = Customer.objects.all()
@@ -193,3 +194,40 @@ def customer_deactivate(request, customer_id):
             )
 
     return redirect("customer_list")
+
+
+@login_required
+def customer_detail(request, customer_id):
+    customer = get_object_or_404(
+        Customer,
+        pk=customer_id,
+    )
+
+    outstanding_balance = get_customer_outstanding_balance(
+        customer.id
+    )
+
+    sales = (
+        customer.sales
+        .select_related("created_by")
+        .order_by("-created_at")
+    )
+
+    payments = (
+        customer.payments
+        .select_related("recorded_by")
+        .order_by("-payment_date", "-created_at")
+    )
+
+    context = {
+        "customer": customer,
+        "outstanding_balance": outstanding_balance,
+        "sales": sales,
+        "payments": payments,
+    }
+
+    return render(
+        request,
+        "customers/customer_detail.html",
+        context,
+    )
