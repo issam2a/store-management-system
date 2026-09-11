@@ -11,6 +11,26 @@ from apps.suppliers.models import Supplier
 
 from .models import CustomerPayment, SupplierPayment
 
+def generate_customer_payment_reference():
+    last_payment = CustomerPayment.objects.order_by("-id").first()
+
+    if last_payment is None:
+        next_number = 1
+    else:
+        next_number = last_payment.id + 1
+
+    return f"CUS-PAY-{next_number:06d}"
+
+
+def generate_supplier_payment_reference():
+    last_payment = SupplierPayment.objects.order_by("-id").first()
+
+    if last_payment is None:
+        next_number = 1
+    else:
+        next_number = last_payment.id + 1
+
+    return f"SUP-PAY-{next_number:06d}"
 
 def record_customer_payment(
     customer_id,
@@ -18,7 +38,6 @@ def record_customer_payment(
     payment_method,
     payment_date,
     recorded_by,
-    reference,
     note="",
 ):
     """
@@ -52,11 +71,7 @@ def record_customer_payment(
                 "Payment date is required."
             )
 
-        # Validate payment reference
-        if not reference or not reference.strip():
-            raise ValidationError(
-                "Payment reference is required."
-            )
+    
 
         # Calculate total completed credit sales
         credit_sales_total = (
@@ -97,7 +112,7 @@ def record_customer_payment(
 
         # Create payment
         payment = CustomerPayment.objects.create(
-            reference=reference.strip(),
+            reference=generate_customer_payment_reference(),
             customer=customer,
             amount=amount,
             payment_method=payment_method.strip(),
@@ -115,7 +130,6 @@ def record_supplier_payment(
     payment_method,
     payment_date,
     recorded_by,
-    reference,
     note="",
 ):
     """
@@ -149,11 +163,7 @@ def record_supplier_payment(
                 "Payment date is required."
             )
 
-        # Validate payment reference
-        if not reference or not reference.strip():
-            raise ValidationError(
-                "Payment reference is required."
-            )
+       
 
         # Calculate total completed credit purchases
         credit_purchases_total = (
@@ -194,7 +204,7 @@ def record_supplier_payment(
 
         # Create payment
         payment = SupplierPayment.objects.create(
-            reference=reference.strip(),
+            reference=generate_supplier_payment_reference(),
             supplier=supplier,
             amount=amount,
             payment_method=payment_method.strip(),
@@ -205,3 +215,41 @@ def record_supplier_payment(
 
         return payment
 
+
+def get_supplier_outstanding_balance(supplier_id):
+    """
+    Calculate the supplier's outstanding balance.
+
+    Balance:
+        completed credit purchases
+        minus supplier payments
+    """
+
+    credit_purchases_total = (
+        Purchase.objects
+        .filter(
+            supplier_id=supplier_id,
+            payment_type=Purchase.PaymentType.CREDIT,
+            status=Purchase.Status.COMPLETED,
+        )
+        .aggregate(
+            total=models.Sum("total_amount")
+        )["total"]
+        or Decimal("0.00")
+    )
+
+    supplier_payments_total = (
+        SupplierPayment.objects
+        .filter(
+            supplier_id=supplier_id,
+        )
+        .aggregate(
+            total=models.Sum("amount")
+        )["total"]
+        or Decimal("0.00")
+    )
+
+    return (
+        credit_purchases_total
+        - supplier_payments_total
+    )
