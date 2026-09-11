@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Cancel Purchase" %} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <div class="page-eyebrow">
+            {% trans "Purchases" %}
+        </div>
+
+        <h1 class="page-title">
+            {% trans "Cancel Purchase" %}
+        </h1>
+
+        <p class="page-description">
+            {% trans "Cancel a completed purchase and reverse its inventory effect." %}
+        </p>
+    </div>
+</div>
+
+<div class="form-card">
+
+    <div class="form-error-summary">
+        {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+        {% endif %}
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Reference" %}
+            </label>
+
+            <div>
+                <strong>{{ purchase.reference }}</strong>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Supplier" %}
+            </label>
+
+            <div>
+                {{ purchase.supplier.name }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Total" %}
+            </label>
+
+            <div>
+                {{ purchase.total_amount }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Status" %}
+            </label>
+
+            <div>
+                <span class="status-badge status-success">
+                    {{ purchase.get_status_display }}
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label
+                for="{{ form.reason.id_for_label }}"
+                class="form-label"
+            >
+                {% trans "Cancellation Reason" %}
+            </label>
+
+            {{ form.reason }}
+
+            {% for error in form.reason.errors %}
+                <div class="form-error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                class="btn-danger"
+            >
+                {% trans "Cancel Purchase" %}
+            </button>
+
+            <a
+                href="{% url 'purchase_detail' purchase.id %}"
+                class="btn-secondary"
+            >
+                {% trans "Back" %}
+            </a>
+
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

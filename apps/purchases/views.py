@@ -12,7 +12,7 @@ from django.shortcuts import (
     
 )
 
-from .forms import PurchaseForm, PurchaseItemForm
+from .forms import PurchaseForm, PurchaseItemForm ,PurchaseCancellationForm
 from .models import Purchase ,PurchaseItem
 from .services import (
     create_purchase,
@@ -21,6 +21,7 @@ from .services import (
     remove_purchase_item,
     complete_purchase,
     delete_purchase,
+    cancel_purchase,
 )
 
 @login_required
@@ -105,8 +106,8 @@ def purchase_create(request):
 
     context = {
         "form": form,
-        "page_title": "Create Purchase",
-        "submit_label": "Create Draft",
+        "page_title": _("Create Purchase"),
+        "submit_label": _("Create Draft"),
     }
 
     return render(
@@ -374,4 +375,48 @@ def purchase_delete(request, purchase_id):
     return redirect(
         "purchase_detail",
         purchase.id,
+    )
+
+@login_required
+def purchase_cancel(request, purchase_id):
+    purchase = get_object_or_404(
+        Purchase,
+        pk=purchase_id,
+    )
+
+    if purchase.status != Purchase.Status.COMPLETED:
+        return redirect(
+            "purchase_detail",
+            purchase_id=purchase.id,
+        )
+
+    if request.method == "POST":
+        form = PurchaseCancellationForm(request.POST)
+
+        if form.is_valid():
+            try:
+                cancel_purchase(
+                    purchase_id=purchase.id,
+                    user=request.user,
+                    reason=form.cleaned_data["reason"],
+                )
+
+            except ValidationError as exc:
+                form.add_error(None, exc)
+
+            else:
+                return redirect(
+                    "purchase_detail",
+                    purchase_id=purchase.id,
+                )
+    else:
+        form = PurchaseCancellationForm()
+
+    return render(
+        request,
+        "purchases/purchase_cancel.html",
+        {
+            "purchase": purchase,
+            "form": form,
+        },
     )

@@ -43,5 +43,10 @@ urlpatterns = [
     views.purchase_complete,
     name="purchase_complete",
     ),
-      
+
+    path(
+    "<int:purchase_id>/cancel/",
+    views.purchase_cancel,
+    name="purchase_cancel",
+    ),
 ]

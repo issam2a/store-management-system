@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-11 01:41+0300\n"
+"POT-Creation-Date: 2026-09-11 14:42+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -13,10 +13,8 @@ msgstr ""
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: .\apps\customers\views.py:81
-#, fuzzy
-#| msgid "Category created successfully."
 msgid "Customer created successfully."
-msgstr "تم إنشاء الفئة بنجاح."
+msgstr "تم إنشاء العميل بنجاح."
 
 #: .\apps\customers\views.py:94 .\apps\customers\views.py:98
 msgid "Create Customer"
@@ -27,39 +25,29 @@ msgid "Add a new customer to your store."
 msgstr "إضافة عميل جديد إلى متجرك."
 
 #: .\apps\customers\views.py:128
-#, fuzzy
-#| msgid "Category updated successfully."
 msgid "Customer updated successfully."
-msgstr "تم تحديث الفئة بنجاح."
+msgstr "تم تحديث العميل بنجاح."
 
 #: .\apps\customers\views.py:148
-#, fuzzy
-#| msgid "Customer"
 msgid "Edit Customer"
-msgstr "العميل"
+msgstr "تعديل العميل"
 
 #: .\apps\customers\views.py:150
-#, fuzzy
-#| msgid "Update product information."
 msgid "Update customer information."
-msgstr "تحديث معلومات المنتج"
+msgstr "تحديث معلومات العميل"
 
 #: .\apps\customers\views.py:152 .\apps\products\views.py:159
-#: .\apps\purchases\views.py:249 .\apps\suppliers\views.py:158
+#: .\apps\purchases\views.py:252 .\apps\suppliers\views.py:159
 msgid "Save Changes"
-msgstr "حفظ "
+msgstr "حفظ التغييرات"
 
 #: .\apps\customers\views.py:172
-#, fuzzy
-#| msgid "Category activated successfully."
 msgid "Customer activated successfully."
-msgstr "تم تفعيل الفئة بنجاح."
+msgstr "تم تفعيل العميل بنجاح."
 
 #: .\apps\customers\views.py:192
-#, fuzzy
-#| msgid "Category deactivated successfully."
 msgid "Customer deactivated successfully."
-msgstr "تم تعطيل الفئة بنجاح."
+msgstr "تم تعطيل العميل بنجاح."
 
 # ============================================================
 # Products
@@ -88,48 +76,93 @@ msgstr "تم تفعيل المنتج بنجاح."
 msgid "Product deactivated successfully."
 msgstr "تم إلغاء تفعيل المنتج بنجاح."
 
-#: .\apps\purchases\views.py:173
+#: .\apps\purchases\forms.py:132
+#: .\dashboard\templates\purchases\purchase_cancel.html:88
+msgid "Cancellation Reason"
+msgstr "سبب الإلغاء"
+
+#: .\apps\purchases\forms.py:147
+msgid "Cancellation reason is required."
+msgstr "سبب الإلغاء مطلوب."
+
+#: .\apps\purchases\models.py:8
+msgid "Cash"
+msgstr "نقدي"
+
+#: .\apps\purchases\models.py:9
+msgid "Credit"
+msgstr "دين"
+
+#: .\apps\purchases\models.py:12
+#: .\dashboard\templates\purchases\purchase_list.html:77
+msgid "Draft"
+msgstr "مسودة"
+
+#: .\apps\purchases\models.py:13 .\dashboard\templates\dashboard\home.html:454
+#: .\dashboard\templates\purchases\purchase_list.html:84
+msgid "Completed"
+msgstr "مكتمل"
+
+#: .\apps\purchases\models.py:14
+#: .\dashboard\templates\purchases\purchase_list.html:91
+msgid "Cancelled"
+msgstr "ملغى"
+
+# ============================================================
+# Products
+# ============================================================
+#: .\apps\purchases\views.py:109
+#: .\dashboard\templates\purchases\purchase_list.html:32
+msgid "Create Purchase"
+msgstr "إنشاء عملية شراء"
+
+#: .\apps\purchases\views.py:110
+msgid "Create Draft"
+msgstr "إنشاء مسودة"
+
+#: .\apps\purchases\views.py:176
 msgid "Add Purchase Item"
 msgstr "إضافة عنصر شراء"
 
-#: .\apps\purchases\views.py:174
-#: .\dashboard\templates\purchases\purchase_detail.html:93
+#: .\apps\purchases\views.py:177
+#: .\dashboard\templates\purchases\purchase_detail.html:167
 msgid "Add Item"
 msgstr "إضافة عنصر"
 
-#: .\apps\purchases\views.py:248
+#: .\apps\purchases\views.py:251
 msgid "Edit Purchase Item"
 msgstr "تعديل عنصر الشراء"
 
-#: .\apps\suppliers\views.py:85
+#: .\apps\suppliers\views.py:86
 msgid "Supplier created successfully."
 msgstr "تم إنشاء المورد بنجاح."
 
-#: .\apps\suppliers\views.py:98 .\apps\suppliers\views.py:102
+#: .\apps\suppliers\views.py:99 .\apps\suppliers\views.py:103
 msgid "Create Supplier"
 msgstr "إنشاء مورد"
 
-#: .\apps\suppliers\views.py:100
+#: .\apps\suppliers\views.py:101
 msgid "Add a new supplier to your store."
 msgstr "أضف مورداً جديداً إلى متجرك."
 
-#: .\apps\suppliers\views.py:132
+#: .\apps\suppliers\views.py:133
 msgid "Supplier updated successfully."
 msgstr "تم تحديث المورد بنجاح."
 
-#: .\apps\suppliers\views.py:154
+#: .\apps\suppliers\views.py:155
+#: .\dashboard\templates\suppliers\supplier_detail.html:39
 msgid "Edit Supplier"
 msgstr "تعديل المورد"
 
-#: .\apps\suppliers\views.py:156
+#: .\apps\suppliers\views.py:157
 msgid "Update supplier information."
 msgstr "تحديث بيانات المورد"
 
-#: .\apps\suppliers\views.py:178
+#: .\apps\suppliers\views.py:179
 msgid "Supplier activated successfully."
 msgstr "تم تفعيل المورد بنجاح"
 
-#: .\apps\suppliers\views.py:198
+#: .\apps\suppliers\views.py:199
 msgid "Supplier deactivated successfully."
 msgstr "تم إلغاء تفعيل المورد بنجاح."
 
@@ -165,7 +198,7 @@ msgstr "لوحة التحكم"
 #: .\dashboard\templates\components\sidebar.html:57
 #: .\dashboard\templates\customers\customer_list.html:17
 #: .\dashboard\templates\purchases\purchase_list.html:14
-#: .\dashboard\templates\suppliers\supplier_list.html:13
+#: .\dashboard\templates\suppliers\supplier_list.html:16
 msgid "Management"
 msgstr "الإدارة"
 
@@ -173,8 +206,6 @@ msgstr "الإدارة"
 #: .\dashboard\templates\dashboard\home.html:497
 #: .\dashboard\templates\products\product_form.html:14
 #: .\dashboard\templates\products\product_list.html:12
-#: .\dashboard\templates\purchases\purchase_detail.html:103
-#: .\dashboard\templates\purchases\purchase_item_form.html:52
 msgid "Products"
 msgstr "المنتجات"
 
@@ -209,6 +240,7 @@ msgid "Sales"
 msgstr "المبيعات"
 
 #: .\dashboard\templates\components\sidebar.html:87
+#: .\dashboard\templates\purchases\purchase_cancel.html:13
 #: .\dashboard\templates\purchases\purchase_detail.html:15
 #: .\dashboard\templates\purchases\purchase_form.html:14
 #: .\dashboard\templates\purchases\purchase_item_form.html:14
@@ -233,12 +265,10 @@ msgid "Customers"
 msgstr "العملاء"
 
 #: .\dashboard\templates\components\sidebar.html:112
+#: .\dashboard\templates\suppliers\supplier_detail.html:13
 #: .\dashboard\templates\suppliers\supplier_form.html:14
-#: .\dashboard\templates\suppliers\supplier_list.html:5
-#: .\dashboard\templates\suppliers\supplier_list.html:17
-#: .\dashboard\templates\purchases\purchase_detail.html:37
-#: .\dashboard\templates\purchases\purchase_form.html:59
-#: .\dashboard\templates\purchases\purchase_list.html:157
+#: .\dashboard\templates\suppliers\supplier_list.html:6
+#: .\dashboard\templates\suppliers\supplier_list.html:20
 msgid "Suppliers"
 msgstr "الموردون"
 
@@ -303,15 +333,16 @@ msgstr "اسم العميل"
 
 #: .\dashboard\templates\customers\customer_form.html:78
 #: .\dashboard\templates\customers\customer_list.html:132
+#: .\dashboard\templates\suppliers\supplier_detail.html:58
 #: .\dashboard\templates\suppliers\supplier_form.html:72
-#: .\dashboard\templates\suppliers\supplier_list.html:100
+#: .\dashboard\templates\suppliers\supplier_list.html:106
 msgid "Phone"
 msgstr "رقم الهاتف"
 
 #: .\dashboard\templates\customers\customer_form.html:98
 #: .\dashboard\templates\customers\customer_list.html:136
 #: .\dashboard\templates\suppliers\supplier_form.html:92
-#: .\dashboard\templates\suppliers\supplier_list.html:101
+#: .\dashboard\templates\suppliers\supplier_list.html:107
 msgid "Contact Information"
 msgstr "معلومات الاتصال"
 
@@ -339,7 +370,7 @@ msgstr "البحث عن العملاء..."
 
 #: .\dashboard\templates\customers\customer_list.html:73
 #: .\dashboard\templates\products\product_list.html:88
-#: .\dashboard\templates\suppliers\supplier_list.html:56
+#: .\dashboard\templates\suppliers\supplier_list.html:62
 msgid "All Statuses"
 msgstr "كل الحالات"
 
@@ -349,8 +380,9 @@ msgstr "كل الحالات"
 #: .\dashboard\templates\products\product_list.html:97
 #: .\dashboard\templates\products\product_list.html:192
 #: .\dashboard\templates\products\unit_list.html:67
-#: .\dashboard\templates\suppliers\supplier_list.html:63
-#: .\dashboard\templates\suppliers\supplier_list.html:142
+#: .\dashboard\templates\suppliers\supplier_detail.html:76
+#: .\dashboard\templates\suppliers\supplier_list.html:69
+#: .\dashboard\templates\suppliers\supplier_list.html:148
 msgid "Active"
 msgstr "نشط"
 
@@ -360,22 +392,23 @@ msgstr "نشط"
 #: .\dashboard\templates\products\product_list.html:106
 #: .\dashboard\templates\products\product_list.html:198
 #: .\dashboard\templates\products\unit_list.html:71
-#: .\dashboard\templates\suppliers\supplier_list.html:70
-#: .\dashboard\templates\suppliers\supplier_list.html:146
+#: .\dashboard\templates\suppliers\supplier_detail.html:80
+#: .\dashboard\templates\suppliers\supplier_list.html:76
+#: .\dashboard\templates\suppliers\supplier_list.html:152
 msgid "Inactive"
 msgstr "غير نشط"
 
 #: .\dashboard\templates\customers\customer_list.html:102
 #: .\dashboard\templates\products\product_list.html:118
 #: .\dashboard\templates\purchases\purchase_list.html:105
-#: .\dashboard\templates\suppliers\supplier_list.html:79
+#: .\dashboard\templates\suppliers\supplier_list.html:85
 msgid "Filter"
-msgstr ""
+msgstr "تصفية"
 
 #: .\dashboard\templates\customers\customer_list.html:111
 #: .\dashboard\templates\products\product_list.html:128
 #: .\dashboard\templates\purchases\purchase_list.html:113
-#: .\dashboard\templates\suppliers\supplier_list.html:87
+#: .\dashboard\templates\suppliers\supplier_list.html:93
 #: .\venv\Lib\site-packages\django\forms\widgets.py:573
 msgid "Clear"
 msgstr "مسح"
@@ -384,7 +417,7 @@ msgstr "مسح"
 #: .\dashboard\templates\products\category_list.html:40
 #: .\dashboard\templates\products\product_list.html:142
 #: .\dashboard\templates\products\unit_list.html:40
-#: .\dashboard\templates\suppliers\supplier_list.html:99
+#: .\dashboard\templates\suppliers\supplier_list.html:105
 msgid "Name"
 msgstr "الاسم"
 
@@ -393,9 +426,12 @@ msgstr "الاسم"
 #: .\dashboard\templates\products\category_list.html:41
 #: .\dashboard\templates\products\product_list.html:152
 #: .\dashboard\templates\products\unit_list.html:42
-#: .\dashboard\templates\purchases\purchase_detail.html:57
+#: .\dashboard\templates\purchases\purchase_cancel.html:68
+#: .\dashboard\templates\purchases\purchase_detail.html:131
 #: .\dashboard\templates\purchases\purchase_list.html:169
-#: .\dashboard\templates\suppliers\supplier_list.html:102
+#: .\dashboard\templates\suppliers\supplier_detail.html:71
+#: .\dashboard\templates\suppliers\supplier_detail.html:118
+#: .\dashboard\templates\suppliers\supplier_list.html:108
 msgid "Status"
 msgstr "الحالة"
 
@@ -403,9 +439,9 @@ msgstr "الحالة"
 #: .\dashboard\templates\products\category_list.html:43
 #: .\dashboard\templates\products\product_list.html:154
 #: .\dashboard\templates\products\unit_list.html:44
-#: .\dashboard\templates\purchases\purchase_detail.html:109
+#: .\dashboard\templates\purchases\purchase_detail.html:184
 #: .\dashboard\templates\purchases\purchase_list.html:177
-#: .\dashboard\templates\suppliers\supplier_list.html:103
+#: .\dashboard\templates\suppliers\supplier_list.html:109
 msgid "Actions"
 msgstr "الإجراءات"
 
@@ -413,8 +449,8 @@ msgstr "الإجراءات"
 #: .\dashboard\templates\products\category_list.html:82
 #: .\dashboard\templates\products\product_list.html:214
 #: .\dashboard\templates\products\unit_list.html:87
-#: .\dashboard\templates\purchases\purchase_detail.html:143
-#: .\dashboard\templates\suppliers\supplier_list.html:158
+#: .\dashboard\templates\purchases\purchase_detail.html:222
+#: .\dashboard\templates\suppliers\supplier_list.html:172
 msgid "Edit"
 msgstr "تعديل"
 
@@ -422,7 +458,7 @@ msgstr "تعديل"
 #: .\dashboard\templates\products\category_list.html:98
 #: .\dashboard\templates\products\product_list.html:232
 #: .\dashboard\templates\products\unit_list.html:103
-#: .\dashboard\templates\suppliers\supplier_list.html:173
+#: .\dashboard\templates\suppliers\supplier_list.html:187
 msgid "Deactivate"
 msgstr "تعطيل"
 
@@ -430,7 +466,7 @@ msgstr "تعطيل"
 #: .\dashboard\templates\products\category_list.html:115
 #: .\dashboard\templates\products\product_list.html:251
 #: .\dashboard\templates\products\unit_list.html:120
-#: .\dashboard\templates\suppliers\supplier_list.html:189
+#: .\dashboard\templates\suppliers\supplier_list.html:203
 msgid "Activate"
 msgstr "تفعيل"
 
@@ -460,14 +496,14 @@ msgstr[5] ""
 #: .\dashboard\templates\customers\customer_list.html:290
 #: .\dashboard\templates\products\product_list.html:306
 #: .\dashboard\templates\purchases\purchase_list.html:266
-#: .\dashboard\templates\suppliers\supplier_list.html:227
+#: .\dashboard\templates\suppliers\supplier_list.html:240
 msgid "Previous"
 msgstr "السابق"
 
 #: .\dashboard\templates\customers\customer_list.html:324
 #: .\dashboard\templates\products\product_list.html:340
 #: .\dashboard\templates\purchases\purchase_list.html:285
-#: .\dashboard\templates\suppliers\supplier_list.html:257
+#: .\dashboard\templates\suppliers\supplier_list.html:270
 msgid "Next"
 msgstr "التالي"
 
@@ -532,7 +568,7 @@ msgstr "نظرة عامة على الإيرادات"
 
 #: .\dashboard\templates\dashboard\home.html:247
 msgid "No revenue data yet."
-msgstr ""
+msgstr "لا توجد بيانات الإيرادات بعد."
 
 #: .\dashboard\templates\dashboard\home.html:251
 #, fuzzy
@@ -558,7 +594,10 @@ msgid "View all"
 msgstr "عرض الكل"
 
 #: .\dashboard\templates\dashboard\home.html:405
+#: .\dashboard\templates\purchases\purchase_cancel.html:38
 #: .\dashboard\templates\purchases\purchase_list.html:153
+#: .\dashboard\templates\suppliers\supplier_detail.html:115
+#: .\dashboard\templates\suppliers\supplier_detail.html:179
 msgid "Reference"
 msgstr "المرجع"
 
@@ -567,21 +606,13 @@ msgid "Customer"
 msgstr "العميل"
 
 #: .\dashboard\templates\dashboard\home.html:413
+#: .\dashboard\templates\suppliers\supplier_detail.html:180
 msgid "Amount"
 msgstr "المبلغ"
 
 #: .\dashboard\templates\dashboard\home.html:442
 msgid "Walk-in customer"
-msgstr ""
-
-#: .\dashboard\templates\dashboard\home.html:454
-#: .\dashboard\templates\purchases\purchase_list.html:84
-
-msgid "Completed"
-msgstr "مكتمل"
-
-msgid "Cash"
-msgstr "نقدي"
+msgstr "عميل مباشر"
 
 #: .\dashboard\templates\dashboard\home.html:468
 msgid "No completed sales yet."
@@ -593,7 +624,7 @@ msgstr "المنتجات الأكثر مبيعًا"
 
 #: .\dashboard\templates\dashboard\home.html:536
 msgid "sold"
-msgstr ""
+msgstr "تم البيع"
 
 #: .\dashboard\templates\dashboard\home.html:553
 msgid "Sales data will appear here."
@@ -626,6 +657,7 @@ msgstr "فئات"
 #: .\dashboard\templates\products\category_list.html:42
 #: .\dashboard\templates\products\unit_list.html:43
 #: .\dashboard\templates\purchases\purchase_list.html:173
+#: .\dashboard\templates\suppliers\supplier_detail.html:119
 msgid "Created"
 msgstr "تاريخ الإنشاء"
 
@@ -644,6 +676,7 @@ msgstr "الفئة"
 
 #: .\dashboard\templates\products\product_form.html:81
 #: .\dashboard\templates\products\product_list.html:146
+#: .\dashboard\templates\purchases\purchase_detail.html:179
 msgid "Unit"
 msgstr "الوحدة"
 
@@ -685,10 +718,8 @@ msgstr "سعر البيع"
 
 #: .\dashboard\templates\products\product_list.html:269
 #: .\dashboard\templates\products\product_list.html:354
-#, fuzzy
-#| msgid "No units found."
 msgid "No products found."
-msgstr "لم يتم العثور على وحدات."
+msgstr "لم يتم العثور على منتجات."
 
 #: .\dashboard\templates\products\product_list.html:287
 #, python-format
@@ -703,11 +734,33 @@ msgid_plural ""
 "%(total)s products\n"
 "            "
 msgstr[0] ""
+"\n"
+"                لا توجد منتجات\n"
+"            "
 msgstr[1] ""
+"\n"
+"                عرض المنتج %(page_obj.start_index)s من أصل %(total)s منتج\n"
+"            "
 msgstr[2] ""
+"\n"
+"                عرض %(page_obj.start_index)s–%(page_obj.end_index)s من أصل "
+"%(total)s منتجين\n"
+"            "
 msgstr[3] ""
+"\n"
+"                عرض %(page_obj.start_index)s–%(page_obj.end_index)s من أصل "
+"%(total)s منتجات\n"
+"            "
 msgstr[4] ""
+"\n"
+"                عرض %(page_obj.start_index)s–%(page_obj.end_index)s من أصل "
+"%(total)s منتجًا\n"
+"            "
 msgstr[5] ""
+"\n"
+"                عرض %(page_obj.start_index)s–%(page_obj.end_index)s من أصل "
+"%(total)s منتج\n"
+"            "
 
 #: .\dashboard\templates\products\unit_form.html:23
 msgid "Update this product unit."
@@ -742,29 +795,89 @@ msgstr "وحدات"
 msgid "No units found."
 msgstr "لم يتم العثور على وحدات."
 
-#: .\dashboard\templates\purchases\purchase_detail.html:23
+# ============================================================
+# Products
+# ============================================================
+#: .\dashboard\templates\purchases\purchase_cancel.html:5
+#: .\dashboard\templates\purchases\purchase_cancel.html:17
+#: .\dashboard\templates\purchases\purchase_cancel.html:106
+#: .\dashboard\templates\purchases\purchase_detail.html:78
+msgid "Cancel Purchase"
+msgstr "إلغاء الشراء"
+
+#: .\dashboard\templates\purchases\purchase_cancel.html:21
+msgid "Cancel a completed purchase and reverse its inventory effect."
+msgstr "إلغاء عملية شراء مكتملة وعكس أثرها على المخزون."
+
+#: .\dashboard\templates\purchases\purchase_cancel.html:48
+#: .\dashboard\templates\purchases\purchase_detail.html:111
+#: .\dashboard\templates\purchases\purchase_form.html:59
+#: .\dashboard\templates\purchases\purchase_list.html:157
+#: .\dashboard\templates\suppliers\supplier_detail.html:49
+msgid "Supplier"
+msgstr "المورد"
+
+#: .\dashboard\templates\purchases\purchase_cancel.html:58
+#: .\dashboard\templates\purchases\purchase_list.html:165
+#: .\dashboard\templates\suppliers\supplier_detail.html:117
+msgid "Total"
+msgstr "إجمالي"
+
+#: .\dashboard\templates\purchases\purchase_cancel.html:113
+#: .\dashboard\templates\purchases\purchase_detail.html:85
+msgid "Back"
+msgstr "رجوع"
+
+#: .\dashboard\templates\purchases\purchase_detail.html:24
 msgid "Purchase draft details."
 msgstr "تفاصيل مسودة الشراء."
 
+#: .\dashboard\templates\purchases\purchase_detail.html:26
+msgid "Completed purchase details."
+msgstr "تفاصيل عملية الشراء المكتملة."
 
+#: .\dashboard\templates\purchases\purchase_detail.html:28
+msgid "Cancelled purchase details."
+msgstr "تفاصيل عملية الشراء الملغاة."
 
-#: .\dashboard\templates\purchases\purchase_detail.html:47
+#: .\dashboard\templates\purchases\purchase_detail.html:48
+msgid "Complete Purchase"
+msgstr "إتمام الشراء"
+
+#: .\dashboard\templates\purchases\purchase_detail.html:65
+msgid "Are you sure you want to delete this draft purchase?"
+msgstr "هل أنت متأكد من رغبتك في حذف مسودة الشراء هذه؟"
+
+#: .\dashboard\templates\purchases\purchase_detail.html:67
+msgid "Delete Purchase"
+msgstr "حذف عملية الشراء"
+
+#: .\dashboard\templates\purchases\purchase_detail.html:94
+
+msgid "Back to Purchases"
+msgstr "العودة إلى المشتريات"
+
+#: .\dashboard\templates\purchases\purchase_detail.html:121
 #: .\dashboard\templates\purchases\purchase_form.html:79
 #: .\dashboard\templates\purchases\purchase_list.html:161
+#: .\dashboard\templates\suppliers\supplier_detail.html:116
 msgid "Payment Type"
 msgstr "نوع الدفع"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:67
+#: .\dashboard\templates\purchases\purchase_detail.html:141
 msgid "Created By"
 msgstr "تم الإنشاء بواسطة"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:85
+#: .\dashboard\templates\purchases\purchase_detail.html:159
 msgid "Items"
 msgstr "مواد"
 
+#: .\dashboard\templates\purchases\purchase_detail.html:177
+#: .\dashboard\templates\purchases\purchase_item_form.html:52
+msgid "Product"
+msgstr "المنتج"
 
-
-#: .\dashboard\templates\purchases\purchase_detail.html:104
+#: .\dashboard\templates\purchases\purchase_detail.html:178
 #: .\dashboard\templates\purchases\purchase_item_form.html:72
 msgid "Quantity"
 msgstr "كمية"
@@ -772,26 +885,27 @@ msgstr "كمية"
 # ============================================================
 # Units
 # ============================================================
-#: .\dashboard\templates\purchases\purchase_detail.html:105
+#: .\dashboard\templates\purchases\purchase_detail.html:180
 #: .\dashboard\templates\purchases\purchase_item_form.html:92
 msgid "Unit Cost"
 msgstr "تكلفة الوحدة"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:106
+#: .\dashboard\templates\purchases\purchase_detail.html:181
 msgid "Line Total"
 msgstr " إجمالي السطر"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:156
+#: .\dashboard\templates\purchases\purchase_detail.html:235
 #: .\venv\Lib\site-packages\django\forms\formsets.py:499
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:169
+#: .\dashboard\templates\purchases\purchase_detail.html:248
 msgid "No items added yet."
 msgstr "لم تتم إضافة أي عناصر بعد."
 
-#: .\dashboard\templates\purchases\purchase_detail.html:184
-#: .\dashboard\templates\purchases\purchase_list.html:165
+#: .\dashboard\templates\purchases\purchase_detail.html:263
+#, fuzzy
+#| msgid "Total"
 msgid "Total:"
 msgstr "إجمالي"
 
@@ -807,30 +921,13 @@ msgstr "أضف عنصراً للشراء"
 msgid "Manage supplier purchases and inventory intake."
 msgstr "إدارة مشتريات الموردين واستلام المخزون"
 
-# ============================================================
-# Products
-# ============================================================
-#: .\dashboard\templates\purchases\purchase_list.html:32
-msgid "Create Purchase"
-msgstr "إنشاء عملية شراء"
-
 #: .\dashboard\templates\purchases\purchase_list.html:53
 msgid "Search Reference or supplier"
 msgstr "البحث عن مرجع أو مورد"
 
 #: .\dashboard\templates\purchases\purchase_list.html:70
-#, fuzzy
-#| msgid "All Statuses"
 msgid "All statuses"
-msgstr "كل الحالات"
-
-#: .\dashboard\templates\purchases\purchase_list.html:77
-msgid "Draft"
-msgstr "مسودة"
-
-#: .\dashboard\templates\purchases\purchase_list.html:91
-msgid "Cancelled"
-msgstr "ملغى"
+msgstr "جميع الحالات"
 
 #: .\dashboard\templates\purchases\purchase_list.html:129
 msgid "Purchase Transactions"
@@ -847,20 +944,37 @@ msgid_plural ""
 "                    %(counter)s purchases\n"
 "                "
 msgstr[0] ""
+"\n"
+"                    لا توجد عمليات شراء\n"
+"                "
 msgstr[1] ""
+"\n"
+"                    عملية شراء واحدة\n"
+"                "
 msgstr[2] ""
+"\n"
+"                    عمليتا شراء\n"
+"                "
 msgstr[3] ""
+"\n"
+"                    %(counter)s عمليات شراء\n"
+"                "
 msgstr[4] ""
+"\n"
+"                    %(counter)s عملية شراء\n"
+"                "
 msgstr[5] ""
-
-
-
+"\n"
+"                    %(counter)s عملية شراء\n"
+"                "
 
 #: .\dashboard\templates\purchases\purchase_list.html:227
+#: .\dashboard\templates\suppliers\supplier_list.html:165
 msgid "View"
 msgstr "عرض "
 
 #: .\dashboard\templates\purchases\purchase_list.html:242
+#: .\dashboard\templates\suppliers\supplier_detail.html:153
 msgid "No purchases found."
 msgstr "لم يتم العثور على أي عمليات شراء"
 
@@ -872,50 +986,114 @@ msgid ""
 "                "
 msgstr ""
 
+#: .\dashboard\templates\suppliers\supplier_detail.html:21
+msgid "Supplier details, purchases, and payment history."
+msgstr "تفاصيل الموردين، والمشتريات، وسجل المدفوعات."
+
+#: .\dashboard\templates\suppliers\supplier_detail.html:31
+msgid "Record Payment"
+msgstr "تسجيل الدفعة"
+
+#: .\dashboard\templates\suppliers\supplier_detail.html:88
+msgid "Outstanding Balance"
+msgstr "الرصيد المستحق"
+
+#: .\dashboard\templates\suppliers\supplier_detail.html:102
+msgid "Purchase History"
+msgstr "سجل المشتريات"
+
+#: .\dashboard\templates\suppliers\supplier_detail.html:106
+msgid "Completed and historical supplier purchases."
+msgstr "مشتريات الموردين المكتملة والتاريخية."
+
+#: .\dashboard\templates\suppliers\supplier_detail.html:166
+msgid "Payment History"
+msgstr "سجل المدفوعات"
+
+#: .\dashboard\templates\suppliers\supplier_detail.html:170
+msgid "Payments recorded against this supplier."
+msgstr ""
+
+#: .\dashboard\templates\suppliers\supplier_detail.html:181
+msgid "Payment Method"
+msgstr "طريقة الدفع"
+
+#: .\dashboard\templates\suppliers\supplier_detail.html:182
+msgid "Payment Date"
+msgstr "تاريخ الدفع"
+
+#: .\dashboard\templates\suppliers\supplier_detail.html:183
+msgid "Recorded By"
+msgstr "تسجيل"
+
+#: .\dashboard\templates\suppliers\supplier_detail.html:215
+msgid "No payments recorded."
+msgstr "لم يتم تسجيل أي مدفوعات."
+
 #: .\dashboard\templates\suppliers\supplier_form.html:52
 msgid "Supplier Name"
 msgstr "اسم المورد"
 
-#: .\dashboard\templates\suppliers\supplier_list.html:21
-#, fuzzy
-#| msgid "Manage your store customers and their contact information."
+#: .\dashboard\templates\suppliers\supplier_list.html:24
 msgid "Manage your store suppliers and their contact information."
-msgstr "إدارة عملاء متجرك ومعلومات الاتصال الخاصة بهم"
+msgstr "أدِر مورّدي متجرك وبيانات الاتصال الخاصة بهم."
 
-#: .\dashboard\templates\suppliers\supplier_list.html:31
+#: .\dashboard\templates\suppliers\supplier_list.html:34
 msgid "Add Supplier"
 msgstr "إضافة مورد"
 
-#: .\dashboard\templates\suppliers\supplier_list.html:46
+#: .\dashboard\templates\suppliers\supplier_list.html:52
 #, fuzzy
 #| msgid "Search customers..."
 msgid "Search suppliers..."
-msgstr "البحث عن العملاء..."
+msgstr "البحث عن الموردين..."
 
-#: .\dashboard\templates\suppliers\supplier_list.html:210
+#: .\dashboard\templates\suppliers\supplier_list.html:224
 #, python-format
 msgid ""
 "\n"
-"                    Showing %(page_obj.start_index)s–%(page_obj.end_index)s "
-"of %(total)s supplier\n"
-"                "
+"                Showing %(page_obj.start_index)s–%(page_obj.end_index)s of "
+"%(total)s supplier\n"
+"            "
 msgid_plural ""
 "\n"
-"                    Showing %(page_obj.start_index)s–%(page_obj.end_index)s "
-"of %(total)s suppliers\n"
-"                "
+"                Showing %(page_obj.start_index)s–%(page_obj.end_index)s of "
+"%(total)s suppliers\n"
+"            "
 msgstr[0] ""
+"\n"
+"                عرض %(page_obj.start_index)s–%(page_obj.end_index)s من أصل "
+"%(total)s مورد\n"
+"            "
 msgstr[1] ""
+"\n"
+"                عرض %(page_obj.start_index)s–%(page_obj.end_index)s من أصل "
+"%(total)s موردين\n"
+"            "
 msgstr[2] ""
+"\n"
+"                عرض %(page_obj.start_index)s–%(page_obj.end_index)s من أصل "
+"%(total)s موردين\n"
+"            "
 msgstr[3] ""
+"\n"
+"                عرض %(page_obj.start_index)s–%(page_obj.end_index)s من أصل "
+"%(total)s موردين\n"
+"            "
 msgstr[4] ""
+"\n"
+"                عرض %(page_obj.start_index)s–%(page_obj.end_index)s من أصل "
+"%(total)s موردًا\n"
+"            "
 msgstr[5] ""
+"\n"
+"                عرض %(page_obj.start_index)s–%(page_obj.end_index)s من أصل "
+"%(total)s مورد\n"
+"            "
 
-#: .\dashboard\templates\suppliers\supplier_list.html:270
-#, fuzzy
-#| msgid "No units found."
+#: .\dashboard\templates\suppliers\supplier_list.html:283
 msgid "No suppliers found."
-msgstr "لم يتم العثور على وحدات."
+msgstr "لم يتم العثور على موردين."
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"
@@ -1421,7 +1599,7 @@ msgstr ""
 
 #: .\venv\Lib\site-packages\django\forms\fields.py:93
 msgid "This field is required."
-msgstr ""
+msgstr "هذه الخانة مطلوبه"
 
 #: .\venv\Lib\site-packages\django\forms\fields.py:315
 msgid "Enter a whole number."
@@ -2251,9 +2429,6 @@ msgstr ""
 msgid "Connect, get help, or contribute"
 msgstr ""
 
-#~ msgid "Back to Customers"
-#~ msgstr "العودة إلى العملاء"
-
 # ============================================================
 # Dashboard
 # ============================================================
@@ -2290,29 +2465,8 @@ msgstr ""
 #~ msgid "Piece (pcs)"
 #~ msgstr "قطعة"
 
-#~ msgid "Create Unit"
-#~ msgstr "انشاء وحدة"
+#~ msgid "Purchase completed successfully."
+#~ msgstr "تم إتمام عملية الشراء بنجاح."
 
-#~ msgid "Product"
-#~ msgstr "المنتج"
-
-msgid "Complete Purchase"
-msgstr "إتمام الشراء"
-
-msgid "Completed purchase details."
-msgstr "تفاصيل عملية الشراء المكتملة."
-
-msgid "Cancelled purchase details."
-msgstr "تفاصيل عملية الشراء الملغاة."
-
-msgid "Purchase completed successfully."
-msgstr "تم إتمام عملية الشراء بنجاح."
-
-msgid "Delete Purchase"
-msgstr "حذف عملية الشراء"
-
-msgid "Are you sure you want to delete this draft purchase?"
-msgstr "هل أنت متأكد من رغبتك في حذف مسودة الشراء هذه؟"
-
-msgid "Purchase deleted successfully."
-msgstr "تم حذف عملية الشراء بنجاح."
+#~ msgid "Purchase deleted successfully."
+#~ msgstr "تم حذف عملية الشراء بنجاح."

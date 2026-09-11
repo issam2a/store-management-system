@@ -61,12 +61,41 @@
                 <button
                     type="submit"
                     class="btn-danger"
-                    onclick="return confirm('{% trans "Are you sure you want to delete this draft purchase?" %}');"
+                    onclick="return confirm(this.dataset.confirmation);"
+                    data-confirmation="{% trans 'Are you sure you want to delete this draft purchase?' %}"
                 >
                     {% trans "Delete Purchase" %}
                 </button>
             </form>
         {% endif %}
+
+      
+        {% if purchase.status == purchase.Status.COMPLETED %}
+            <a
+                href="{% url 'purchase_cancel' purchase.id %}"
+                class="btn-danger"
+            >
+                {% trans "Cancel Purchase" %}
+            </a>
+
+            <a
+                href="{% url 'purchase_list' %}"
+                class="btn-secondary"
+            >
+                {% trans "Back" %}
+            </a>
+        {% endif %}
+
+        {% if purchase.status == purchase.Status.CANCELLED %}
+            <a
+                href="{% url 'purchase_list' %}"
+                class="btn-secondary"
+            >
+                {% trans "Back to Purchases" %}
+            </a>
+        {% endif %}
+
+
 
     </div>
 
