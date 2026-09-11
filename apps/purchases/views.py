@@ -11,7 +11,7 @@ from django.shortcuts import (
     render,
     
 )
-
+from apps.transactions.models import TransactionCancellation
 from .forms import PurchaseForm, PurchaseItemForm ,PurchaseCancellationForm
 from .models import Purchase ,PurchaseItem
 from .services import (
@@ -259,6 +259,7 @@ def purchase_item_edit(request, item_id):
     )
 
 
+@login_required
 def purchase_detail(request, purchase_id):
     purchase = get_object_or_404(
         Purchase.objects.select_related(
@@ -266,15 +267,27 @@ def purchase_detail(request, purchase_id):
             "created_by",
             "completed_by",
             "cancelled_by",
-        ).prefetch_related(
-            "items__product",
         ),
         pk=purchase_id,
     )
 
+    items = (
+        purchase.items
+        .select_related("product", "product__unit")
+        .order_by("id")
+    )
+
+    cancellation = (
+        TransactionCancellation.objects
+        .select_related("cancelled_by")
+        .filter(purchase=purchase)
+        .first()
+    )
+
     context = {
         "purchase": purchase,
-        "items": purchase.items.all(),
+        "items": items,
+        "cancellation": cancellation,
     }
 
     return render(
@@ -282,6 +295,7 @@ def purchase_detail(request, purchase_id):
         "purchases/purchase_detail.html",
         context,
     )
+
 
 @login_required
 @require_POST
