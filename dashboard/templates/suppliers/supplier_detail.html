@@ -25,7 +25,7 @@
     <div class="page-header-actions">
         {% if supplier.is_active %}
             <a
-                href="#"
+                href="{% url 'supplier_payment_create' supplier.id %}"
                 class="btn-primary"
             >
                 {% trans "Record Payment" %}

@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.contrib.auth.decorators import login_required
-from apps.payments.services import get_supplier_outstanding_balance
+from django.utils import timezone
 from .forms import SupplierForm
 from .models import Supplier
 from .services import (
@@ -14,7 +14,11 @@ from .services import (
     deactivate_supplier,
     update_supplier,
 )
-
+from apps.payments.forms import SupplierPaymentForm
+from apps.payments.services import (
+    get_supplier_outstanding_balance,
+    record_supplier_payment,
+)
 
 def supplier_list(request):
     suppliers = Supplier.objects.all()
@@ -235,4 +239,55 @@ def supplier_detail(request, supplier_id):
         request,
         "suppliers/supplier_detail.html",
         context,
+    )
+
+@login_required
+def supplier_payment_create(request, supplier_id):
+    supplier = get_object_or_404(
+        Supplier,
+        pk=supplier_id,
+    )
+
+    outstanding_balance = get_supplier_outstanding_balance(
+        supplier.id
+    )
+
+    if request.method == "POST":
+        form = SupplierPaymentForm(request.POST)
+
+        if form.is_valid():
+            try:
+                record_supplier_payment(
+                    supplier_id=supplier.id,
+                    amount=form.cleaned_data["amount"],
+                    payment_method=form.cleaned_data["payment_method"],
+                    payment_date=form.cleaned_data["payment_date"],
+                    recorded_by=request.user,
+                    note=form.cleaned_data["note"],
+                )
+
+            except ValidationError as exc:
+                form.add_error(None, exc)
+
+            else:
+                return redirect(
+                    "supplier_detail",
+                    supplier_id=supplier.id,
+                )
+
+    else:
+        form = SupplierPaymentForm(
+            initial={
+                "payment_date": timezone.localdate(),
+            }
+        )
+
+    return render(
+        request,
+        "suppliers/supplier_payment_create.html",
+        {
+            "supplier": supplier,
+            "outstanding_balance": outstanding_balance,
+            "form": form,
+        },
     )

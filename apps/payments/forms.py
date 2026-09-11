@@ -17,13 +17,17 @@ class SupplierPaymentForm(forms.Form):
         ),
     )
 
-    payment_method = forms.CharField(
+    payment_method = forms.ChoiceField(
         label=_("Payment Method"),
-        max_length=50,
-        widget=forms.TextInput(
+        choices=[
+            ("CASH", _("Cash")),
+            ("BANK_TRANSFER", _("Bank Transfer")),
+            ("CARD", _("Card")),
+            ("OTHER", _("Other")),
+        ],
+        widget=forms.Select(
             attrs={
                 "class": "form-input",
-                "autocomplete": "off",
             }
         ),
     )

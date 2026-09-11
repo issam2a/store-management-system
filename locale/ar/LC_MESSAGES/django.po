@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-11 14:53+0300\n"
+"POT-Creation-Date: 2026-09-11 15:54+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -37,7 +37,7 @@ msgid "Update customer information."
 msgstr "تحديث معلومات العميل"
 
 #: .\apps\customers\views.py:152 .\apps\products\views.py:159
-#: .\apps\purchases\views.py:252 .\apps\suppliers\views.py:159
+#: .\apps\purchases\views.py:252 .\apps\suppliers\views.py:163
 msgid "Save Changes"
 msgstr "حفظ التغييرات"
 
@@ -48,6 +48,46 @@ msgstr "تم تفعيل العميل بنجاح."
 #: .\apps\customers\views.py:192
 msgid "Customer deactivated successfully."
 msgstr "تم تعطيل العميل بنجاح."
+
+#: .\apps\payments\forms.py:7 .\dashboard\templates\dashboard\home.html:413
+#: .\dashboard\templates\suppliers\supplier_detail.html:180
+msgid "Amount"
+msgstr "المبلغ"
+
+#: .\apps\payments\forms.py:21
+#: .\dashboard\templates\suppliers\supplier_detail.html:181
+msgid "Payment Method"
+msgstr "طريقة الدفع"
+
+#: .\apps\payments\forms.py:23 .\apps\purchases\models.py:8
+msgid "Cash"
+msgstr "نقدي"
+
+#: .\apps\payments\forms.py:24
+msgid "Bank Transfer"
+msgstr "تحويل مصرفي"
+
+#: .\apps\payments\forms.py:25
+msgid "Card"
+msgstr "بطاقة"
+
+#: .\apps\payments\forms.py:26
+msgid "Other"
+msgstr "Other"
+
+#: .\apps\payments\forms.py:36
+#: .\dashboard\templates\suppliers\supplier_detail.html:182
+msgid "Payment Date"
+msgstr "تاريخ الدفع"
+
+#: .\apps\payments\forms.py:46
+msgid "Note"
+msgstr ""
+
+#: .\apps\payments\forms.py:61
+
+msgid "Payment method is required."
+msgstr "طريقة الدفع مطلوبة"
 
 # ============================================================
 # Products
@@ -85,10 +125,6 @@ msgstr "سبب الإلغاء"
 #: .\apps\purchases\forms.py:147
 msgid "Cancellation reason is required."
 msgstr "سبب الإلغاء مطلوب."
-
-#: .\apps\purchases\models.py:8
-msgid "Cash"
-msgstr "نقدي"
 
 #: .\apps\purchases\models.py:9
 msgid "Credit"
@@ -134,36 +170,36 @@ msgstr "إضافة عنصر"
 msgid "Edit Purchase Item"
 msgstr "تعديل عنصر الشراء"
 
-#: .\apps\suppliers\views.py:86
+#: .\apps\suppliers\views.py:90
 msgid "Supplier created successfully."
 msgstr "تم إنشاء المورد بنجاح."
 
-#: .\apps\suppliers\views.py:99 .\apps\suppliers\views.py:103
+#: .\apps\suppliers\views.py:103 .\apps\suppliers\views.py:107
 msgid "Create Supplier"
 msgstr "إنشاء مورد"
 
-#: .\apps\suppliers\views.py:101
+#: .\apps\suppliers\views.py:105
 msgid "Add a new supplier to your store."
 msgstr "أضف مورداً جديداً إلى متجرك."
 
-#: .\apps\suppliers\views.py:133
+#: .\apps\suppliers\views.py:137
 msgid "Supplier updated successfully."
 msgstr "تم تحديث المورد بنجاح."
 
-#: .\apps\suppliers\views.py:155
+#: .\apps\suppliers\views.py:159
 #: .\dashboard\templates\suppliers\supplier_detail.html:39
 msgid "Edit Supplier"
 msgstr "تعديل المورد"
 
-#: .\apps\suppliers\views.py:157
+#: .\apps\suppliers\views.py:161
 msgid "Update supplier information."
 msgstr "تحديث بيانات المورد"
 
-#: .\apps\suppliers\views.py:179
+#: .\apps\suppliers\views.py:183
 msgid "Supplier activated successfully."
 msgstr "تم تفعيل المورد بنجاح"
 
-#: .\apps\suppliers\views.py:199
+#: .\apps\suppliers\views.py:203
 msgid "Supplier deactivated successfully."
 msgstr "تم إلغاء تفعيل المورد بنجاح."
 
@@ -354,6 +390,7 @@ msgstr "معلومات الاتصال"
 #: .\dashboard\templates\purchases\purchase_form.html:101
 #: .\dashboard\templates\purchases\purchase_item_form.html:114
 #: .\dashboard\templates\suppliers\supplier_form.html:114
+#: .\dashboard\templates\suppliers\supplier_payment_create.html:162
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -606,11 +643,6 @@ msgstr "المرجع"
 msgid "Customer"
 msgstr "العميل"
 
-#: .\dashboard\templates\dashboard\home.html:413
-#: .\dashboard\templates\suppliers\supplier_detail.html:180
-msgid "Amount"
-msgstr "المبلغ"
-
 #: .\dashboard\templates\dashboard\home.html:442
 msgid "Walk-in customer"
 msgstr "عميل مباشر"
@@ -815,6 +847,7 @@ msgstr "إلغاء عملية شراء مكتملة وعكس أثرها على �
 #: .\dashboard\templates\purchases\purchase_form.html:59
 #: .\dashboard\templates\purchases\purchase_list.html:157
 #: .\dashboard\templates\suppliers\supplier_detail.html:49
+#: .\dashboard\templates\suppliers\supplier_payment_create.html:34
 msgid "Supplier"
 msgstr "المورد"
 
@@ -873,17 +906,14 @@ msgid "Audit"
 msgstr ""
 
 #: .\dashboard\templates\purchases\purchase_detail.html:164
-
 msgid "Cancellation Details"
 msgstr "تفاصيل الإلغاء"
 
 #: .\dashboard\templates\purchases\purchase_detail.html:187
-
 msgid "Cancelled By"
 msgstr "أُلغِيَ بواسطة"
 
 #: .\dashboard\templates\purchases\purchase_detail.html:199
-
 msgid "Cancelled At"
 msgstr "أُلغيت في"
 
@@ -1010,10 +1040,13 @@ msgid "Supplier details, purchases, and payment history."
 msgstr "تفاصيل الموردين، والمشتريات، وسجل المدفوعات."
 
 #: .\dashboard\templates\suppliers\supplier_detail.html:31
+#: .\dashboard\templates\suppliers\supplier_payment_create.html:15
+#: .\dashboard\templates\suppliers\supplier_payment_create.html:169
 msgid "Record Payment"
 msgstr "تسجيل الدفعة"
 
 #: .\dashboard\templates\suppliers\supplier_detail.html:88
+#: .\dashboard\templates\suppliers\supplier_payment_create.html:45
 msgid "Outstanding Balance"
 msgstr "الرصيد المستحق"
 
@@ -1031,15 +1064,7 @@ msgstr "سجل المدفوعات"
 
 #: .\dashboard\templates\suppliers\supplier_detail.html:170
 msgid "Payments recorded against this supplier."
-msgstr ""
-
-#: .\dashboard\templates\suppliers\supplier_detail.html:181
-msgid "Payment Method"
-msgstr "طريقة الدفع"
-
-#: .\dashboard\templates\suppliers\supplier_detail.html:182
-msgid "Payment Date"
-msgstr "تاريخ الدفع"
+msgstr "المدفوعات المسجلة لهذا المورد."
 
 #: .\dashboard\templates\suppliers\supplier_detail.html:183
 msgid "Recorded By"
@@ -1113,6 +1138,15 @@ msgstr[5] ""
 #: .\dashboard\templates\suppliers\supplier_list.html:283
 msgid "No suppliers found."
 msgstr "لم يتم العثور على موردين."
+
+#: .\dashboard\templates\suppliers\supplier_payment_create.html:11
+
+msgid "Supplier Payment"
+msgstr "دفع مستحقات المورد"
+
+#: .\dashboard\templates\suppliers\supplier_payment_create.html:19
+msgid "Record a payment against the supplier's outstanding balance."
+msgstr "سجّل دفعةً مقابل الرصيد المستحق للمورّد."
 
 #: .\venv\Lib\site-packages\django\contrib\messages\apps.py:16
 msgid "Messages"

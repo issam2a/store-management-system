@@ -7,6 +7,7 @@ from .views import (
     supplier_edit,
     supplier_list,
     supplier_detail,
+    supplier_payment_create,
 )
 
 
@@ -32,5 +33,10 @@ urlpatterns = [
         "<int:supplier_id>/",
         supplier_detail,
         name="supplier_detail",
+    ),
+    path(
+        "<int:supplier_id>/payments/create/",
+        supplier_payment_create,
+        name="supplier_payment_create",
     ),
 ]
