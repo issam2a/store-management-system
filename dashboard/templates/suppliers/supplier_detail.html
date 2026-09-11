@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+{{ supplier.name }} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <div class="page-eyebrow">
+            {% trans "Suppliers" %}
+        </div>
+
+        <h1 class="page-title">
+            {{ supplier.name }}
+        </h1>
+
+        <p class="page-description">
+            {% trans "Supplier details, purchases, and payment history." %}
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+        {% if supplier.is_active %}
+            <a
+                href="#"
+                class="btn-primary"
+            >
+                {% trans "Record Payment" %}
+            </a>
+        {% endif %}
+
+        <a
+            href="{% url 'supplier_edit' supplier.id %}"
+            class="btn-secondary"
+        >
+            {% trans "Edit Supplier" %}
+        </a>
+    </div>
+</div>
+
+<div class="content-card">
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Supplier" %}
+            </label>
+            <div>
+                {{ supplier.name }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Phone" %}
+            </label>
+            <div>
+                {% if supplier.phone %}
+                    {{ supplier.phone }}
+                {% else %}
+                    —
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Status" %}
+            </label>
+            <div>
+                {% if supplier.is_active %}
+                    <span class="status-badge status-success">
+                        {% trans "Active" %}
+                    </span>
+                {% else %}
+                    <span class="status-badge status-muted">
+                        {% trans "Inactive" %}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                {% trans "Outstanding Balance" %}
+            </label>
+            <div>
+                <strong>{{ outstanding_balance }}</strong>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="content-card">
+    <div class="table-header">
+        <div>
+            <h2 class="table-title">
+                {% trans "Purchase History" %}
+            </h2>
+
+            <p class="table-description">
+                {% trans "Completed and historical supplier purchases." %}
+            </p>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Reference" %}</th>
+                    <th>{% trans "Payment Type" %}</th>
+                    <th>{% trans "Total" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "Created" %}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for purchase in purchases %}
+                    <tr>
+                        <td>
+                            <strong>
+                                {{ purchase.reference }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ purchase.get_payment_type_display }}
+                        </td>
+
+                        <td>
+                            {{ purchase.total_amount }}
+                        </td>
+
+                        <td>
+                            <span class="status-badge status-{{ purchase.status|lower }}">
+                                {{ purchase.get_status_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ purchase.created_at|date:"Y-m-d H:i" }}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            {% trans "No purchases found." %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="content-card">
+    <div class="table-header">
+        <div>
+            <h2 class="table-title">
+                {% trans "Payment History" %}
+            </h2>
+
+            <p class="table-description">
+                {% trans "Payments recorded against this supplier." %}
+            </p>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Reference" %}</th>
+                    <th>{% trans "Amount" %}</th>
+                    <th>{% trans "Payment Method" %}</th>
+                    <th>{% trans "Payment Date" %}</th>
+                    <th>{% trans "Recorded By" %}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for payment in payments %}
+                    <tr>
+                        <td>
+                            <strong>
+                                {{ payment.reference }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ payment.amount }}
+                        </td>
+
+                        <td>
+                            {{ payment.payment_method }}
+                        </td>
+
+                        <td>
+                            {{ payment.payment_date|date:"Y-m-d" }}
+                        </td>
+
+                        <td>
+                            {{ payment.recorded_by }}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            {% trans "No payments recorded." %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

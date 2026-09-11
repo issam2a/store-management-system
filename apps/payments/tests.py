@@ -48,7 +48,7 @@ class CustomerPaymentServiceTests(TestCase):
         self.customer = Customer.objects.create(
             name="Test Customer",
             phone="0999999999",
-            account_status="ACTIVE",
+            
         )
 
     def create_credit_sale(

@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Purchases" %} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <div class="page-eyebrow">
+            {% trans "Management" %}
+        </div>
+
+        <h1 class="page-title">
+            {% trans "Purchases" %}
+        </h1>
+
+        <p class="page-description">
+            {% trans "Manage supplier purchases and inventory intake." %}
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+
+        <a
+            href="{% url 'purchase_create' %}"
+            class="btn-primary"
+        >
+            {% trans "Create Purchase" %}
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="content-card">
+
+    <form method="get" class="table-toolbar">
+
+        <div class="filter-group">
+
+          
+            <input
+                id="purchase-search"
+                type="search"
+                name="q"
+                value="{{ query }}"
+                class="form-input"
+                placeholder="{% trans 'Search Reference or supplier' %}"
+            >
+
+        </div>
+
+
+        <div class="filter-group">
+
+            
+
+            <select
+                id="purchase-status"
+                name="status"
+                class="form-input"
+            >
+
+                <option value="">
+                    {% trans "All statuses" %}
+                </option>
+
+                <option
+                    value="DRAFT"
+                    {% if selected_status == "DRAFT" %}selected{% endif %}
+                >
+                    {% trans "Draft" %}
+                </option>
+
+                <option
+                    value="COMPLETED"
+                    {% if selected_status == "COMPLETED" %}selected{% endif %}
+                >
+                    {% trans "Completed" %}
+                </option>
+
+                <option
+                    value="CANCELLED"
+                    {% if selected_status == "CANCELLED" %}selected{% endif %}
+                >
+                    {% trans "Cancelled" %}
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-actions">
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                {% trans "Filter" %}
+            </button>
+        {% if query or selected_status %}
+
+            <a
+                href="{% url 'purchase_list' %}"
+                class="btn-secondary"
+            >
+                {% trans "Clear" %}
+            </a>
+        {% endif %}
+        </div>
+
+    </form>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="table-header">
+
+        <div>
+            <h2 class="table-title">
+                {% trans "Purchase Transactions" %}
+            </h2>
+
+            <p class="table-description">
+                {% blocktrans count counter=paginator.count %}
+                    {{ counter }} purchase
+                {% plural %}
+                    {{ counter }} purchases
+                {% endblocktrans %}
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table class="data-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        {% trans "Reference" %}
+                    </th>
+
+                    <th>
+                        {% trans "Supplier" %}
+                    </th>
+
+                    <th>
+                        {% trans "Payment Type" %}
+                    </th>
+
+                    <th>
+                        {% trans "Total" %}
+                    </th>
+
+                    <th>
+                        {% trans "Status" %}
+                    </th>
+
+                    <th>
+                        {% trans "Created" %}
+                    </th>
+
+                    <th>
+                        {% trans "Actions" %}
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for purchase in purchases %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ purchase.reference }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ purchase.supplier.name }}
+                        </td>
+
+                        <td>
+                            {{ purchase.get_payment_type_display }}
+                        </td>
+
+                        <td>
+                            {{ purchase.total_amount }}
+                        </td>
+
+                        <td>
+
+                            <span class="status-badge status-{{ purchase.status|lower }}">
+                                {{ purchase.get_status_display }}
+                            </span>
+
+                        </td>
+
+                        <td>
+                            {{ purchase.created_at|date:"Y-m-d H:i" }}
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{% url 'purchase_detail' purchase.id %}"
+                                class="btn-secondary"
+                            >
+                                {% trans "View" %}
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty-state"
+                        >
+                            {% trans "No purchases found." %}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% if page_obj.has_other_pages %}
+
+        <div class="pagination">
+
+            {% if page_obj.has_previous %}
+
+                <a
+                    href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}"
+                    class="pagination-link"
+                >
+                    {% trans "Previous" %}
+                </a>
+
+            {% endif %}
+
+
+            <span class="pagination-info">
+                {% blocktrans with current=page_obj.number total=page_obj.paginator.num_pages %}
+                    Page {{ current }} of {{ total }}
+                {% endblocktrans %}
+            </span>
+
+
+            {% if page_obj.has_next %}
+
+                <a
+                    href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}"
+                    class="pagination-link"
+                >
+                    {% trans "Next" %}
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

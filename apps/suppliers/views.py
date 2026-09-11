@@ -4,7 +4,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
-
+from django.contrib.auth.decorators import login_required
+from apps.payments.services import get_supplier_outstanding_balance
 from .forms import SupplierForm
 from .models import Supplier
 from .services import (
@@ -199,3 +200,39 @@ def supplier_deactivate(request, supplier_id):
             )
 
     return redirect("supplier_list")
+
+@login_required
+def supplier_detail(request, supplier_id):
+    supplier = get_object_or_404(
+        Supplier,
+        pk=supplier_id,
+    )
+
+    outstanding_balance = get_supplier_outstanding_balance(
+        supplier.id
+    )
+
+    purchases = (
+        supplier.purchases
+        .select_related("created_by")
+        .order_by("-created_at")
+    )
+
+    payments = (
+        supplier.payments
+        .select_related("recorded_by")
+        .order_by("-payment_date", "-created_at")
+    )
+
+    context = {
+        "supplier": supplier,
+        "outstanding_balance": outstanding_balance,
+        "purchases": purchases,
+        "payments": payments,
+    }
+
+    return render(
+        request,
+        "suppliers/supplier_detail.html",
+        context,
+    )

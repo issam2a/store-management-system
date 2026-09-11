@@ -1,276 +1,290 @@
 {% extends "base.html" %}
+
 {% load i18n %}
 
 {% block title %}
-    {% trans "Suppliers" %} — StoreFlow
+{% trans "Suppliers" %} — StoreFlow
 {% endblock %}
 
 {% block content %}
 
 <div class="page-header">
-    <div>
-        <div class="page-eyebrow">
-            {% trans "Management" %}
-        </div>
 
-        <h1 class="page-title">
-            {% trans "Suppliers" %}
-        </h1>
 
-        <p class="page-description">
-            {% trans "Manage your store suppliers and their contact information." %}
-        </p>
+<div>
+    <div class="page-eyebrow">
+        {% trans "Management" %}
     </div>
 
-    <div class="page-header-actions">
-        <a
-            href="{% url 'supplier_create' %}"
-            class="btn-primary"
-        >
-            <span aria-hidden="true">+</span>
-            {% trans "Add Supplier" %}
-        </a>
-    </div>
+    <h1 class="page-title">
+        {% trans "Suppliers" %}
+    </h1>
+
+    <p class="page-description">
+        {% trans "Manage your store suppliers and their contact information." %}
+    </p>
+</div>
+
+<div class="page-header-actions">
+    <a
+        href="{% url 'supplier_create' %}"
+        class="btn-primary"
+    >
+        <span aria-hidden="true">+</span>
+        {% trans "Add Supplier" %}
+    </a>
+</div>
+
+
 </div>
 
 <div class="card">
 
-    <form method="get" class="table-toolbar">
 
-        <div class="filter-group">
-            <input
-                type="text"
-                name="q"
-                value="{{ query }}"
-                class="form-input"
-                placeholder="{% trans 'Search suppliers...' %}"
-            >
-        </div>
+<form method="get" class="table-toolbar">
 
-        <div class="filter-group">
-            <select
-                name="status"
-                class="form-input"
-            >
-                <option value="">
-                    {% trans "All Statuses" %}
-                </option>
-
-                <option
-                    value="active"
-                    {% if selected_status == "active" %}selected{% endif %}
-                >
-                    {% trans "Active" %}
-                </option>
-
-                <option
-                    value="inactive"
-                    {% if selected_status == "inactive" %}selected{% endif %}
-                >
-                    {% trans "Inactive" %}
-                </option>
-            </select>
-        </div>
-
-        <button
-            type="submit"
-            class="btn-primary"
+    <div class="filter-group">
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            class="form-input"
+            placeholder="{% trans 'Search suppliers...' %}"
         >
-            {% trans "Filter" %}
-        </button>
+    </div>
 
-        {% if query or selected_status %}
-            <a
-                href="{% url 'supplier_list' %}"
-                class="btn-secondary"
+    <div class="filter-group">
+        <select
+            name="status"
+            class="form-input"
+        >
+            <option value="">
+                {% trans "All Statuses" %}
+            </option>
+
+            <option
+                value="active"
+                {% if selected_status == "active" %}selected{% endif %}
             >
-                {% trans "Clear" %}
-            </a>
-        {% endif %}
+                {% trans "Active" %}
+            </option>
 
-    </form>
+            <option
+                value="inactive"
+                {% if selected_status == "inactive" %}selected{% endif %}
+            >
+                {% trans "Inactive" %}
+            </option>
+        </select>
+    </div>
 
-    {% if suppliers %}
+    <button
+        type="submit"
+        class="btn-primary"
+    >
+        {% trans "Filter" %}
+    </button>
 
-        <table class="data-table">
+    {% if query or selected_status %}
+        <a
+            href="{% url 'supplier_list' %}"
+            class="btn-secondary"
+        >
+            {% trans "Clear" %}
+        </a>
+    {% endif %}
 
-            <thead>
+</form>
+
+{% if suppliers %}
+
+    <table class="data-table">
+
+        <thead>
+            <tr>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Phone" %}</th>
+                <th>{% trans "Contact Information" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for supplier in suppliers %}
+
                 <tr>
-                    <th>{% trans "Name" %}</th>
-                    <th>{% trans "Phone" %}</th>
-                    <th>{% trans "Contact Information" %}</th>
-                    <th>{% trans "Status" %}</th>
-                    <th>{% trans "Actions" %}</th>
-                </tr>
-            </thead>
 
-            <tbody>
+                    <td>
+                        <strong>
+                            {{ supplier.name }}
+                        </strong>
+                    </td>
 
-                {% for supplier in suppliers %}
+                    <td>
+                        {% if supplier.phone %}
+                            {{ supplier.phone }}
+                        {% else %}
+                            <span class="text-muted">
+                                —
+                            </span>
+                        {% endif %}
+                    </td>
 
-                    <tr>
+                    <td>
+                        {% if supplier.contact_information %}
+                            {{ supplier.contact_information|truncatechars:60 }}
+                        {% else %}
+                            <span class="text-muted">
+                                —
+                            </span>
+                        {% endif %}
+                    </td>
 
-                        <td>
-                            <strong>
-                                {{ supplier.name }}
-                            </strong>
-                        </td>
+                    <td>
+                        {% if supplier.is_active %}
+                            <span class="status-badge status-success">
+                                {% trans "Active" %}
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-danger">
+                                {% trans "Inactive" %}
+                            </span>
+                        {% endif %}
+                    </td>
 
-                        <td>
-                            {% if supplier.phone %}
-                                {{ supplier.phone }}
-                            {% else %}
-                                <span class="text-muted">
-                                    —
-                                </span>
-                            {% endif %}
-                        </td>
+                    <td>
 
-                        <td>
-                            {% if supplier.contact_information %}
-                                {{ supplier.contact_information|truncatechars:60 }}
-                            {% else %}
-                                <span class="text-muted">
-                                    —
-                                </span>
-                            {% endif %}
-                        </td>
+                        <div class="table-actions">
 
-                        <td>
+                            <a
+                                href="{% url 'supplier_detail' supplier.id %}"
+                                class="btn-secondary btn-small"
+                            >
+                                {% trans "View" %}
+                            </a>
+
+                            <a
+                                href="{% url 'supplier_edit' supplier.id %}"
+                                class="btn-secondary btn-small"
+                            >
+                                {% trans "Edit" %}
+                            </a>
+
                             {% if supplier.is_active %}
-                                <span class="status-badge status-success">
-                                    {% trans "Active" %}
-                                </span>
-                            {% else %}
-                                <span class="status-badge status-danger">
-                                    {% trans "Inactive" %}
-                                </span>
-                            {% endif %}
-                        </td>
 
-                        <td>
-                            <div class="table-actions">
-
-                                <a
-                                    href="{% url 'supplier_edit' supplier.id %}"
-                                    class="btn-secondary btn-small"
+                                <form
+                                    method="post"
+                                    action="{% url 'supplier_deactivate' supplier.id %}"
                                 >
-                                    {% trans "Edit" %}
-                                </a>
+                                    {% csrf_token %}
 
-                                {% if supplier.is_active %}
-
-                                    <form
-                                        method="post"
-                                        action="{% url 'supplier_deactivate' supplier.id %}"
+                                    <button
+                                        type="submit"
+                                        class="btn-danger btn-small"
                                     >
-                                        {% csrf_token %}
+                                        {% trans "Deactivate" %}
+                                    </button>
+                                </form>
 
-                                        <button
-                                            type="submit"
-                                            class="btn-danger btn-small"
-                                        >
-                                            {% trans "Deactivate" %}
-                                        </button>
-                                    </form>
+                            {% else %}
 
-                                {% else %}
+                                <form
+                                    method="post"
+                                    action="{% url 'supplier_activate' supplier.id %}"
+                                >
+                                    {% csrf_token %}
 
-                                    <form
-                                        method="post"
-                                        action="{% url 'supplier_activate' supplier.id %}"
+                                    <button
+                                        type="submit"
+                                        class="btn-secondary btn-small"
                                     >
-                                        {% csrf_token %}
+                                        {% trans "Activate" %}
+                                    </button>
+                                </form>
 
-                                        <button
-                                            type="submit"
-                                            class="btn-secondary btn-small"
-                                        >
-                                            {% trans "Activate" %}
-                                        </button>
-                                    </form>
+                            {% endif %}
 
-                                {% endif %}
+                        </div>
 
-                            </div>
-                        </td>
+                    </td>
 
-                    </tr>
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <div class="table-footer">
+
+        <div class="table-count">
+            {% blocktranslate count total=paginator.count %}
+                Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ total }} supplier
+            {% plural %}
+                Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ total }} suppliers
+            {% endblocktranslate %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+
+            <div class="pagination">
+
+                {% if page_obj.has_previous %}
+                    <a
+                        href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}"
+                        class="btn-secondary btn-small"
+                    >
+                        {% trans "Previous" %}
+                    </a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+
+                    {% if page_obj.number == num %}
+
+                        <span class="pagination-current">
+                            {{ num }}
+                        </span>
+
+                    {% else %}
+
+                        <a
+                            href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ num }}"
+                            class="pagination-link"
+                        >
+                            {{ num }}
+                        </a>
+
+                    {% endif %}
 
                 {% endfor %}
 
-            </tbody>
-
-        </table>
-
-        <div class="table-footer">
-
-            <div class="table-count">
-
-                {% blocktranslate count total=paginator.count %}
-                    Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ total }} supplier
-                {% plural %}
-                    Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ total }} suppliers
-                {% endblocktranslate %}
+                {% if page_obj.has_next %}
+                    <a
+                        href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}"
+                        class="btn-secondary btn-small"
+                    >
+                        {% trans "Next" %}
+                    </a>
+                {% endif %}
 
             </div>
 
-            {% if page_obj.has_other_pages %}
+        {% endif %}
 
-                <div class="pagination">
+    </div>
 
-                    {% if page_obj.has_previous %}
-                        <a
-                            href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}"
-                            class="btn-secondary btn-small"
-                        >
-                            {% trans "Previous" %}
-                        </a>
-                    {% endif %}
+{% else %}
 
-                    {% for num in page_obj.paginator.page_range %}
+    <div class="table-count">
+        {% trans "No suppliers found." %}
+    </div>
 
-                        {% if page_obj.number == num %}
+{% endif %}
 
-                            <span class="pagination-current">
-                                {{ num }}
-                            </span>
-
-                        {% else %}
-
-                            <a
-                                href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ num }}"
-                                class="pagination-link"
-                            >
-                                {{ num }}
-                            </a>
-
-                        {% endif %}
-
-                    {% endfor %}
-
-                    {% if page_obj.has_next %}
-                        <a
-                            href="?q={{ query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}"
-                            class="btn-secondary btn-small"
-                        >
-                            {% trans "Next" %}
-                        </a>
-                    {% endif %}
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
-    {% else %}
-
-        <div class="table-count">
-            {% trans "No suppliers found." %}
-        </div>
-
-    {% endif %}
 
 </div>
 

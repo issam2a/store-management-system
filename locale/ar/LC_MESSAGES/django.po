@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-11 14:42+0300\n"
+"POT-Creation-Date: 2026-09-11 14:53+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -78,6 +78,7 @@ msgstr "تم إلغاء تفعيل المنتج بنجاح."
 
 #: .\apps\purchases\forms.py:132
 #: .\dashboard\templates\purchases\purchase_cancel.html:88
+#: .\dashboard\templates\purchases\purchase_detail.html:175
 msgid "Cancellation Reason"
 msgstr "سبب الإلغاء"
 
@@ -125,7 +126,7 @@ msgid "Add Purchase Item"
 msgstr "إضافة عنصر شراء"
 
 #: .\apps\purchases\views.py:177
-#: .\dashboard\templates\purchases\purchase_detail.html:167
+#: .\dashboard\templates\purchases\purchase_detail.html:228
 msgid "Add Item"
 msgstr "إضافة عنصر"
 
@@ -241,7 +242,7 @@ msgstr "المبيعات"
 
 #: .\dashboard\templates\components\sidebar.html:87
 #: .\dashboard\templates\purchases\purchase_cancel.html:13
-#: .\dashboard\templates\purchases\purchase_detail.html:15
+#: .\dashboard\templates\purchases\purchase_detail.html:16
 #: .\dashboard\templates\purchases\purchase_form.html:14
 #: .\dashboard\templates\purchases\purchase_item_form.html:14
 #: .\dashboard\templates\purchases\purchase_list.html:5
@@ -427,7 +428,7 @@ msgstr "الاسم"
 #: .\dashboard\templates\products\product_list.html:152
 #: .\dashboard\templates\products\unit_list.html:42
 #: .\dashboard\templates\purchases\purchase_cancel.html:68
-#: .\dashboard\templates\purchases\purchase_detail.html:131
+#: .\dashboard\templates\purchases\purchase_detail.html:129
 #: .\dashboard\templates\purchases\purchase_list.html:169
 #: .\dashboard\templates\suppliers\supplier_detail.html:71
 #: .\dashboard\templates\suppliers\supplier_detail.html:118
@@ -439,7 +440,7 @@ msgstr "الحالة"
 #: .\dashboard\templates\products\category_list.html:43
 #: .\dashboard\templates\products\product_list.html:154
 #: .\dashboard\templates\products\unit_list.html:44
-#: .\dashboard\templates\purchases\purchase_detail.html:184
+#: .\dashboard\templates\purchases\purchase_detail.html:245
 #: .\dashboard\templates\purchases\purchase_list.html:177
 #: .\dashboard\templates\suppliers\supplier_list.html:109
 msgid "Actions"
@@ -449,7 +450,7 @@ msgstr "الإجراءات"
 #: .\dashboard\templates\products\category_list.html:82
 #: .\dashboard\templates\products\product_list.html:214
 #: .\dashboard\templates\products\unit_list.html:87
-#: .\dashboard\templates\purchases\purchase_detail.html:222
+#: .\dashboard\templates\purchases\purchase_detail.html:285
 #: .\dashboard\templates\suppliers\supplier_list.html:172
 msgid "Edit"
 msgstr "تعديل"
@@ -676,7 +677,7 @@ msgstr "الفئة"
 
 #: .\dashboard\templates\products\product_form.html:81
 #: .\dashboard\templates\products\product_list.html:146
-#: .\dashboard\templates\purchases\purchase_detail.html:179
+#: .\dashboard\templates\purchases\purchase_detail.html:240
 msgid "Unit"
 msgstr "الوحدة"
 
@@ -810,7 +811,7 @@ msgid "Cancel a completed purchase and reverse its inventory effect."
 msgstr "إلغاء عملية شراء مكتملة وعكس أثرها على المخزون."
 
 #: .\dashboard\templates\purchases\purchase_cancel.html:48
-#: .\dashboard\templates\purchases\purchase_detail.html:111
+#: .\dashboard\templates\purchases\purchase_detail.html:109
 #: .\dashboard\templates\purchases\purchase_form.html:59
 #: .\dashboard\templates\purchases\purchase_list.html:157
 #: .\dashboard\templates\suppliers\supplier_detail.html:49
@@ -828,56 +829,74 @@ msgstr "إجمالي"
 msgid "Back"
 msgstr "رجوع"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:24
+#: .\dashboard\templates\purchases\purchase_detail.html:25
 msgid "Purchase draft details."
 msgstr "تفاصيل مسودة الشراء."
 
-#: .\dashboard\templates\purchases\purchase_detail.html:26
+#: .\dashboard\templates\purchases\purchase_detail.html:27
 msgid "Completed purchase details."
 msgstr "تفاصيل عملية الشراء المكتملة."
 
-#: .\dashboard\templates\purchases\purchase_detail.html:28
+#: .\dashboard\templates\purchases\purchase_detail.html:29
 msgid "Cancelled purchase details."
 msgstr "تفاصيل عملية الشراء الملغاة."
 
-#: .\dashboard\templates\purchases\purchase_detail.html:48
+#: .\dashboard\templates\purchases\purchase_detail.html:49
 msgid "Complete Purchase"
 msgstr "إتمام الشراء"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:65
+#: .\dashboard\templates\purchases\purchase_detail.html:66
 msgid "Are you sure you want to delete this draft purchase?"
 msgstr "هل أنت متأكد من رغبتك في حذف مسودة الشراء هذه؟"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:67
+#: .\dashboard\templates\purchases\purchase_detail.html:68
 msgid "Delete Purchase"
 msgstr "حذف عملية الشراء"
 
 #: .\dashboard\templates\purchases\purchase_detail.html:94
-
 msgid "Back to Purchases"
 msgstr "العودة إلى المشتريات"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:121
+#: .\dashboard\templates\purchases\purchase_detail.html:119
 #: .\dashboard\templates\purchases\purchase_form.html:79
 #: .\dashboard\templates\purchases\purchase_list.html:161
 #: .\dashboard\templates\suppliers\supplier_detail.html:116
 msgid "Payment Type"
 msgstr "نوع الدفع"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:141
+#: .\dashboard\templates\purchases\purchase_detail.html:139
 msgid "Created By"
 msgstr "تم الإنشاء بواسطة"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:159
+#: .\dashboard\templates\purchases\purchase_detail.html:160
+msgid "Audit"
+msgstr ""
+
+#: .\dashboard\templates\purchases\purchase_detail.html:164
+
+msgid "Cancellation Details"
+msgstr "تفاصيل الإلغاء"
+
+#: .\dashboard\templates\purchases\purchase_detail.html:187
+
+msgid "Cancelled By"
+msgstr "أُلغِيَ بواسطة"
+
+#: .\dashboard\templates\purchases\purchase_detail.html:199
+
+msgid "Cancelled At"
+msgstr "أُلغيت في"
+
+#: .\dashboard\templates\purchases\purchase_detail.html:220
 msgid "Items"
 msgstr "مواد"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:177
+#: .\dashboard\templates\purchases\purchase_detail.html:238
 #: .\dashboard\templates\purchases\purchase_item_form.html:52
 msgid "Product"
 msgstr "المنتج"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:178
+#: .\dashboard\templates\purchases\purchase_detail.html:239
 #: .\dashboard\templates\purchases\purchase_item_form.html:72
 msgid "Quantity"
 msgstr "كمية"
@@ -885,25 +904,25 @@ msgstr "كمية"
 # ============================================================
 # Units
 # ============================================================
-#: .\dashboard\templates\purchases\purchase_detail.html:180
+#: .\dashboard\templates\purchases\purchase_detail.html:241
 #: .\dashboard\templates\purchases\purchase_item_form.html:92
 msgid "Unit Cost"
 msgstr "تكلفة الوحدة"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:181
+#: .\dashboard\templates\purchases\purchase_detail.html:242
 msgid "Line Total"
 msgstr " إجمالي السطر"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:235
+#: .\dashboard\templates\purchases\purchase_detail.html:299
 #: .\venv\Lib\site-packages\django\forms\formsets.py:499
 msgid "Delete"
 msgstr "حذف"
 
-#: .\dashboard\templates\purchases\purchase_detail.html:248
+#: .\dashboard\templates\purchases\purchase_detail.html:315
 msgid "No items added yet."
 msgstr "لم تتم إضافة أي عناصر بعد."
 
-#: .\dashboard\templates\purchases\purchase_detail.html:263
+#: .\dashboard\templates\purchases\purchase_detail.html:333
 #, fuzzy
 #| msgid "Total"
 msgid "Total:"

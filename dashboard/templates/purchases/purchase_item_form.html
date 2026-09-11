@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {{ page_title }} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <div class="page-eyebrow">
+            {% trans "Purchases" %}
+        </div>
+
+        <h1 class="page-title">
+            {{ page_title }}
+        </h1>
+
+        <p class="page-description">
+            {% trans "Add an item to purchase" %} {{ purchase.reference }}.
+        </p>
+    </div>
+
+</div>
+
+
+<div class="content-card form-card">
+
+    {% if form.non_field_errors %}
+        <div class="form-error-summary">
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
+    <form method="post" novalidate>
+
+        {% csrf_token %}
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label
+                    for="{{ form.product.id_for_label }}"
+                    class="form-label"
+                >
+                    {% trans "Product" %}
+                </label>
+
+                {{ form.product }}
+
+                {% for error in form.product.errors %}
+                    <div class="form-error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label
+                    for="{{ form.quantity.id_for_label }}"
+                    class="form-label"
+                >
+                    {% trans "Quantity" %}
+                </label>
+
+                {{ form.quantity }}
+
+                {% for error in form.quantity.errors %}
+                    <div class="form-error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label
+                    for="{{ form.unit_cost.id_for_label }}"
+                    class="form-label"
+                >
+                    {% trans "Unit Cost" %}
+                </label>
+
+                {{ form.unit_cost }}
+
+                {% for error in form.unit_cost.errors %}
+                    <div class="form-error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <a
+                href="{% url 'purchase_detail' purchase.id %}"
+                class="btn-secondary"
+            >
+                {% trans "Cancel" %}
+            </a>
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                {{ submit_label }}
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

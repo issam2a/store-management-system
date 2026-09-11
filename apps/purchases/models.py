@@ -1,17 +1,17 @@
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 
 class Purchase(models.Model):
     class PaymentType(models.TextChoices):
-        CASH = "CASH", "Cash"
-        CREDIT = "CREDIT", "Credit"
+        CASH = "CASH", _("Cash")
+        CREDIT = "CREDIT", _("Credit")
 
     class Status(models.TextChoices):
-        DRAFT = "DRAFT", "Draft"
-        COMPLETED = "COMPLETED", "Completed"
-        CANCELLED = "CANCELLED", "Cancelled"
+        DRAFT = "DRAFT", _("Draft")
+        COMPLETED = "COMPLETED", _("Completed")
+        CANCELLED = "CANCELLED", _("Cancelled")
 
     reference = models.CharField(max_length=50, unique=True)
 
