@@ -1,14 +1,18 @@
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class InventoryAdjustment(models.Model):
     class AdjustmentType(models.TextChoices):
-        INCREASE = "INCREASE", "Increase"
-        DECREASE = "DECREASE", "Decrease"
+        INCREASE = "INCREASE", _("Increase")
+        DECREASE = "DECREASE", _("Decrease")
 
-    reference = models.CharField(max_length=50, unique=True)
+    reference = models.CharField(
+        max_length=50,
+        unique=True,
+    )
 
     product = models.ForeignKey(
         "products.Product",
@@ -29,12 +33,27 @@ class InventoryAdjustment(models.Model):
 
     reason = models.TextField()
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
 
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="inventory_adjustments",
+    )
+
+    applied_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    applied_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="applied_inventory_adjustments",
     )
 
     class Meta:
