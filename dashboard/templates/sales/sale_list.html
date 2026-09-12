@@ -42,6 +42,82 @@
 
 <div class="content-card">
 
+    <form method="get" class="table-toolbar">
+
+        <div class="filter-group">
+
+            <input
+                id="sale-search"
+                type="search"
+                name="q"
+                value="{{ query }}"
+                class="form-input"
+                placeholder="{% trans 'Search Reference or customer' %}"
+            >
+
+        </div>
+
+        <div class="filter-group">
+
+            <select
+                id="sale-status"
+                name="status"
+                class="form-input"
+            >
+                <option value="">
+                    {% trans "All statuses" %}
+                </option>
+
+                <option
+                    value="DRAFT"
+                    {% if selected_status == "DRAFT" %}selected{% endif %}
+                >
+                    {% trans "Draft" %}
+                </option>
+
+                <option
+                    value="COMPLETED"
+                    {% if selected_status == "COMPLETED" %}selected{% endif %}
+                >
+                    {% trans "Completed" %}
+                </option>
+
+                <option
+                    value="CANCELLED"
+                    {% if selected_status == "CANCELLED" %}selected{% endif %}
+                >
+                    {% trans "Cancelled" %}
+                </option>
+            </select>
+
+        </div>
+
+        <div class="filter-actions">
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                {% trans "Filter" %}
+            </button>
+
+            {% if query or selected_status %}
+                <a
+                    href="{% url 'sale_list' %}"
+                    class="btn-secondary"
+                >
+                    {% trans "Clear" %}
+                </a>
+            {% endif %}
+
+        </div>
+
+    </form>
+
+</div>
+
+<div class="content-card">
+
     <div class="table-toolbar">
 
         <div class="table-count">
@@ -55,6 +131,8 @@
         </div>
 
     </div>
+
+</div>
 
 
     {% if sales %}

@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
-
+from django.db.models import Q
 from apps.products.models import Product
 
 from .forms import (
@@ -28,11 +28,20 @@ from .services import (
 @login_required
 def sale_list(request):
     """
-    Display sales history.
+    Display sales history with search and status filtering.
 
-    This remains useful as the Sales landing page.
-    The POS workflow itself starts from New Sale.
+    Search:
+    - Sale reference
+    - Customer name
+
+    Filters:
+    - Draft
+    - Completed
+    - Cancelled
     """
+
+    query = request.GET.get("q", "").strip()
+    selected_status = request.GET.get("status", "").strip()
 
     sales = (
         Sale.objects
@@ -44,8 +53,21 @@ def sale_list(request):
         .order_by("-created_at")
     )
 
+    if query:
+        sales = sales.filter(
+            Q(reference__icontains=query)
+            | Q(customer__name__icontains=query)
+        )
+
+    if selected_status:
+        sales = sales.filter(
+            status=selected_status
+        )
+
     context = {
         "sales": sales,
+        "query": query,
+        "selected_status": selected_status,
     }
 
     return render(
