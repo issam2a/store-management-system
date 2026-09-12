@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Inventory Adjustment" %} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <div class="page-eyebrow">
+            {% trans "Inventory" %}
+        </div>
+
+        <h1 class="page-title">
+            {% trans "Inventory Adjustment" %}
+        </h1>
+
+        <p class="page-description">
+            {% trans "Adjust physical stock when the actual quantity differs from the recorded quantity." %}
+        </p>
+    </div>
+
+</div>
+
+
+<div class="form-card">
+
+    {% if form.non_field_errors %}
+        <div class="form-error-summary">
+            {% for error in form.non_field_errors %}
+                <div class="form-error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label
+                    for="{{ form.product.id_for_label }}"
+                    class="form-label"
+                >
+                    {{ form.product.label }}
+                </label>
+
+                {{ form.product }}
+
+                {% for error in form.product.errors %}
+                    <div class="form-error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label
+                    for="{{ form.adjustment_type.id_for_label }}"
+                    class="form-label"
+                >
+                    {{ form.adjustment_type.label }}
+                </label>
+
+                {{ form.adjustment_type }}
+
+                {% for error in form.adjustment_type.errors %}
+                    <div class="form-error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label
+                    for="{{ form.quantity.id_for_label }}"
+                    class="form-label"
+                >
+                    {{ form.quantity.label }}
+                </label>
+
+                {{ form.quantity }}
+
+                {% for error in form.quantity.errors %}
+                    <div class="form-error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    {% trans "Current Stock" %}
+                </label>
+
+                <input
+                    id="inventory-current-stock"
+                    type="text"
+                    class="form-input"
+                    value="—"
+                    readonly
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    {% trans "Projected Stock" %}
+                </label>
+
+                <input
+                    id="inventory-projected-stock"
+                    type="text"
+                    class="form-input"
+                    value="—"
+                    readonly
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label
+                    for="{{ form.reason.id_for_label }}"
+                    class="form-label"
+                >
+                    {{ form.reason.label }}
+                </label>
+
+                {{ form.reason }}
+
+                {% for error in form.reason.errors %}
+                    <div class="form-error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <a
+                href="{% url 'inventory_list' %}"
+                class="btn-secondary"
+            >
+                {% trans "Cancel" %}
+            </a>
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                {% trans "Apply Adjustment" %}
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{{ product_stock_data|json_script:"inventory-product-stock-data" }}
+
+{% endblock %}

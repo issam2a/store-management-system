@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Inventory" %} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <div class="page-eyebrow">{% trans "Inventory" %}</div>
+
+        <h1 class="page-title">
+            {% trans "Inventory" %}
+        </h1>
+
+        <p class="page-description">
+            {% trans "Monitor current stock levels and make inventory adjustments." %}
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+        <a
+            href="{% url 'inventory_adjustment_history' %}"
+            class="btn-secondary"
+        >
+            {% trans "Adjustment History" %}
+        </a>
+
+        <a
+            href="{% url 'inventory_adjustment_create' %}"
+            class="btn-primary"
+        >
+            {% trans "+ Inventory Adjustment" %}
+        </a>
+    </div>
+</div>
+
+
+<div class="content-card">
+
+    <form method="get" class="table-toolbar">
+
+        <div class="filter-group">
+            <input
+                id="inventory-search"
+                type="search"
+                name="q"
+                value="{{ query }}"
+                class="form-input"
+                placeholder="{% trans 'Search Product or Category' %}"
+            >
+        </div>
+
+        <div class="filter-group">
+            <select
+                id="inventory-status"
+                name="status"
+                class="form-input"
+            >
+                <option value="">
+                    {% trans "All stock statuses" %}
+                </option>
+
+                <option
+                    value="HEALTHY"
+                    {% if selected_status == "HEALTHY" %}selected{% endif %}
+                >
+                    {% trans "Healthy" %}
+                </option>
+
+                <option
+                    value="LOW"
+                    {% if selected_status == "LOW" %}selected{% endif %}
+                >
+                    {% trans "Low Stock" %}
+                </option>
+
+                <option
+                    value="OUT"
+                    {% if selected_status == "OUT" %}selected{% endif %}
+                >
+                    {% trans "Out of Stock" %}
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                {% trans "Filter" %}
+            </button>
+
+            {% if query or selected_status %}
+                <a
+                    href="{% url 'inventory_list' %}"
+                    class="btn-secondary"
+                >
+                    {% trans "Clear" %}
+                </a>
+            {% endif %}
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="table-toolbar">
+
+        <div class="table-count">
+            {% blocktrans count counter=products|length %}
+                {{ counter }} product
+            {% plural %}
+                {{ counter }} products
+            {% endblocktrans %}
+        </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>{% trans "Product" %}</th>
+                    <th>{% trans "Category" %}</th>
+                    <th>{% trans "Unit" %}</th>
+                    <th>{% trans "Current Stock" %}</th>
+                    <th>{% trans "Minimum Stock" %}</th>
+                    <th>{% trans "Status" %}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for product in products %}
+
+                    <tr>
+
+                        <td>
+                            {{ product.name }}
+                        </td>
+
+                        <td>
+                            {{ product.category.name }}
+                        </td>
+
+                        <td>
+                            {{ product.unit.symbol }}
+                        </td>
+
+                        <td>
+                            {{ product.current_stock|floatformat:"-3" }}
+                        </td>
+
+                        <td>
+                            {{ product.minimum_stock|floatformat:"-3" }}
+                        </td>
+
+                        <td>
+
+                            {% if product.current_stock == 0 %}
+
+                                <span class="status-badge status-muted">
+                                    {% trans "Out of Stock" %}
+                                </span>
+
+                            {% elif product.current_stock <= product.minimum_stock %}
+
+                                <span class="status-badge status-warning">
+                                    {% trans "Low Stock" %}
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-badge status-success">
+                                    {% trans "Healthy" %}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                {% trans "No inventory records found." %}
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

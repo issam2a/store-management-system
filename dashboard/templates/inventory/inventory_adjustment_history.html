@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Adjustment History" %} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <div class="page-eyebrow">
+            {% trans "Inventory" %}
+        </div>
+
+        <h1 class="page-title">
+            {% trans "Adjustment History" %}
+        </h1>
+
+        <p class="page-description">
+            {% trans "Review historical inventory adjustments and their audit information." %}
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+        <a
+            href="{% url 'inventory_list' %}"
+            class="btn-secondary"
+        >
+            {% trans "Inventory" %}
+        </a>
+
+        <a
+            href="{% url 'inventory_adjustment_create' %}"
+            class="btn-primary"
+        >
+            {% trans "+ Inventory Adjustment" %}
+        </a>
+    </div>
+</div>
+
+
+<div class="content-card">
+
+    <div class="table-toolbar">
+        <div class="table-count">
+            {% blocktrans count counter=adjustments|length %}
+                {{ counter }} adjustment
+            {% plural %}
+                {{ counter }} adjustments
+            {% endblocktrans %}
+        </div>
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>{% trans "Reference" %}</th>
+                    <th>{% trans "Product" %}</th>
+                    <th>{% trans "Adjustment" %}</th>
+                    <th>{% trans "Quantity" %}</th>
+                    <th>{% trans "Reason" %}</th>
+                    <th>{% trans "Applied At" %}</th>
+                    <th>{% trans "Applied By" %}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for adjustment in adjustments %}
+
+                    <tr>
+
+                        <td>
+                            {{ adjustment.reference }}
+                        </td>
+
+                        <td>
+                            {{ adjustment.product.name }}
+                        </td>
+
+                        <td>
+
+                            {% if adjustment.adjustment_type == "INCREASE" %}
+
+                                <span class="status-badge status-success">
+                                    {% trans "Increase" %}
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-badge status-muted">
+                                    {% trans "Decrease" %}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ adjustment.quantity|floatformat:"-3" }}
+                            {{ adjustment.product.unit.symbol }}
+                        </td>
+
+                        <td>
+                            {{ adjustment.reason }}
+                        </td>
+
+                        <td>
+                            {{ adjustment.applied_at|date:"Y-m-d H:i" }}
+                        </td>
+
+                        <td>
+                            {{ adjustment.applied_by.get_full_name|default:adjustment.applied_by.username }}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                {% trans "No inventory adjustments have been applied yet." %}
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

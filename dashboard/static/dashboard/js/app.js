@@ -1,6 +1,180 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
+
+        /*
+     * ============================================================
+     * Inventory adjustment stock preview
+     * ============================================================
+     *
+     * This code only runs on the inventory adjustment page.
+     *
+     * Current Stock:
+     *   Shows the selected product's current stock.
+     *
+     * Projected Stock:
+     *   Increase → current stock + quantity
+     *   Decrease → current stock - quantity
+     *
+     * Backend validation remains authoritative.
+     * ============================================================
+     */
+
+    const inventoryProductField =
+        document.getElementById("id_product");
+
+    const inventoryAdjustmentTypeField =
+        document.getElementById("id_adjustment_type");
+
+    const inventoryQuantityField =
+        document.getElementById("id_quantity");
+
+    const inventoryCurrentStockField =
+        document.getElementById("inventory-current-stock");
+
+    const inventoryProjectedStockField =
+        document.getElementById("inventory-projected-stock");
+
+    const inventoryStockDataElement =
+        document.getElementById(
+            "inventory-product-stock-data"
+        );
+
+    if (
+        inventoryProductField &&
+        inventoryAdjustmentTypeField &&
+        inventoryQuantityField &&
+        inventoryCurrentStockField &&
+        inventoryProjectedStockField &&
+        inventoryStockDataElement
+    ) {
+        try {
+            const inventoryProductStockData =
+                JSON.parse(
+                    inventoryStockDataElement.textContent
+                );
+
+            const updateInventoryStockPreview = () => {
+                const productId =
+                    inventoryProductField.value;
+
+                const adjustmentType =
+                    inventoryAdjustmentTypeField.value;
+
+                const quantity =
+                    Number(
+                        inventoryQuantityField.value
+                    );
+
+                const product =
+                    inventoryProductStockData[productId];
+
+                /*
+                 * No product selected.
+                 */
+                if (!product) {
+                    inventoryCurrentStockField.value = "—";
+                    inventoryProjectedStockField.value = "—";
+                    return;
+                }
+
+                const currentStock =
+                    Number(product.stock);
+
+                const unit =
+                    product.unit || "";
+
+                /*
+                 * Current stock.
+                 */
+                inventoryCurrentStockField.value =
+                    `${currentStock.toLocaleString(
+                        undefined,
+                        {
+                            maximumFractionDigits: 3,
+                        }
+                    )} ${unit}`;
+
+                /*
+                 * Quantity is not valid yet.
+                 */
+                if (
+                    !Number.isFinite(quantity) ||
+                    quantity <= 0 ||
+                    !adjustmentType
+                ) {
+                    inventoryProjectedStockField.value = "—";
+                    return;
+                }
+
+                let projectedStock =
+                    currentStock;
+
+                /*
+                 * Calculate projected stock.
+                 */
+                if (
+                    adjustmentType === "INCREASE"
+                ) {
+                    projectedStock =
+                        currentStock + quantity;
+                } else if (
+                    adjustmentType === "DECREASE"
+                ) {
+                    projectedStock =
+                        currentStock - quantity;
+                }
+
+                /*
+                 * Show projected stock.
+                 */
+                inventoryProjectedStockField.value =
+                    `${projectedStock.toLocaleString(
+                        undefined,
+                        {
+                            maximumFractionDigits: 3,
+                        }
+                    )} ${unit}`;
+            };
+
+            /*
+             * Product changed.
+             */
+            inventoryProductField.addEventListener(
+                "change",
+                updateInventoryStockPreview
+            );
+
+            /*
+             * Adjustment type changed.
+             */
+            inventoryAdjustmentTypeField.addEventListener(
+                "change",
+                updateInventoryStockPreview
+            );
+
+            /*
+             * Quantity changed.
+             */
+            inventoryQuantityField.addEventListener(
+                "input",
+                updateInventoryStockPreview
+            );
+
+            /*
+             * Initialize preview.
+             */
+            updateInventoryStockPreview();
+
+        } catch (error) {
+            console.error(
+                "Unable to initialize inventory stock preview:",
+                error
+            );
+        }
+    }
+    
+
     /*
      * ============================================================
      * Desktop sidebar collapse
