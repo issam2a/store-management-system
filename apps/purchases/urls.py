@@ -45,6 +45,11 @@ urlpatterns = [
     ),
 
     path(
+    "<int:purchase_id>/products/create/",
+    views.purchase_product_create,
+    name="purchase_product_create",
+    ),
+    path(
     "<int:purchase_id>/cancel/",
     views.purchase_cancel,
     name="purchase_cancel",

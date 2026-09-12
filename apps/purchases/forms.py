@@ -126,6 +126,102 @@ PurchaseItemFormSet = forms.inlineformset_factory(
     can_delete=True,
 )
 
+class PurchaseProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = [
+            "name",
+            "category",
+            "unit",
+            "current_sell_price",
+            "minimum_stock",
+        ]
+
+        labels = {
+            "name": _("Product Name"),
+            "category": _("Category"),
+            "unit": _("Unit"),
+            "current_sell_price": _("Selling Price"),
+            "minimum_stock": _("Minimum Stock"),
+        }
+
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-input",
+                    "autocomplete": "off",
+                }
+            ),
+            "category": forms.Select(
+                attrs={
+                    "class": "form-input",
+                }
+            ),
+            "unit": forms.Select(
+                attrs={
+                    "class": "form-input",
+                }
+            ),
+            "current_sell_price": forms.NumberInput(
+                attrs={
+                    "class": "form-input",
+                    "step": "0.01",
+                    "min": "0",
+                }
+            ),
+            "minimum_stock": forms.NumberInput(
+                attrs={
+                    "class": "form-input",
+                    "step": "0.001",
+                    "min": "0",
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["category"].queryset = (
+            self.fields["category"].queryset
+            .filter(is_active=True)
+            .order_by("name")
+        )
+
+        self.fields["unit"].queryset = (
+            self.fields["unit"].queryset
+            .filter(is_active=True)
+            .order_by("name")
+        )
+
+    def clean_name(self):
+        name = self.cleaned_data["name"].strip()
+
+        if not name:
+            raise forms.ValidationError(
+                _("Product name is required.")
+            )
+
+        return name
+
+    def clean_current_sell_price(self):
+        price = self.cleaned_data["current_sell_price"]
+
+        if price < 0:
+            raise forms.ValidationError(
+                _("Selling price cannot be negative.")
+            )
+
+        return price
+
+    def clean_minimum_stock(self):
+        minimum_stock = self.cleaned_data["minimum_stock"]
+
+        if minimum_stock < 0:
+            raise forms.ValidationError(
+                _("Minimum stock cannot be negative.")
+            )
+
+        return minimum_stock
 
 class PurchaseCancellationForm(forms.Form):
     reason = forms.CharField(

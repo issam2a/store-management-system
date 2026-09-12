@@ -2445,3 +2445,109 @@ body.sidebar-collapsed .app-main {
     position: relative;
     z-index: 1;
 }
+
+/* =========================================================
+   LOW STOCK KPI
+========================================================= */
+
+.kpi-card-warning {
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* Alert icon */
+
+.kpi-icon-alert {
+    color: #FF3B30;
+    border-color: rgba(255, 59, 48, 0.25);
+    background: rgba(255, 59, 48, 0.08);
+}
+
+
+/* Status */
+
+.kpi-status-warning,
+.kpi-status-good {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+
+.kpi-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex: 0 0 7px;
+}
+
+
+.kpi-status-warning .kpi-status-dot {
+    background: #FF3B30;
+    box-shadow:
+        0 0 0 3px rgba(255, 59, 48, 0.10),
+        0 0 12px rgba(255, 59, 48, 0.45);
+
+    animation: lowStockPulse 2s ease-in-out infinite;
+}
+
+
+.kpi-status-good .kpi-status-dot {
+    background: #9DC08B;
+    box-shadow:
+        0 0 0 3px rgba(157, 192, 139, 0.10),
+        0 0 12px rgba(157, 192, 139, 0.35);
+}
+
+
+/* Bottom severity indicator */
+
+.kpi-severity {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+
+.kpi-severity-fill {
+    display: block;
+    width: 35%;
+    height: 100%;
+    border-radius: 0 4px 4px 0;
+    background: #FF3B30;
+    box-shadow: 0 0 14px rgba(255, 59, 48, 0.45);
+}
+
+
+/* Healthy state */
+
+.kpi-card-warning:has(.kpi-status-good) .kpi-icon-alert {
+    color: #9DC08B;
+    border-color: rgba(157, 192, 139, 0.25);
+    background: rgba(157, 192, 139, 0.08);
+}
+
+
+.kpi-card-warning:has(.kpi-status-good) .kpi-severity-fill {
+    width: 100%;
+    background: #9DC08B;
+    box-shadow: 0 0 14px rgba(157, 192, 139, 0.35);
+}
+
+
+@keyframes lowStockPulse {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.55;
+        transform: scale(0.82);
+    }
+}

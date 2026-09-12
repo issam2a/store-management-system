@@ -17,3 +17,6 @@ __pycache__/
 
 # Power BI temp files
 *.tmp
+
+# Excel
+*.xlsx

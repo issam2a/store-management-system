@@ -3,17 +3,25 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from django.shortcuts import (
     get_object_or_404,
     redirect,
     render,
-    
 )
+
+from apps.products.services import create_product
 from apps.transactions.models import TransactionCancellation
-from .forms import PurchaseForm, PurchaseItemForm ,PurchaseCancellationForm
-from .models import Purchase ,PurchaseItem
+
+from .forms import (
+    PurchaseForm,
+    PurchaseItemForm,
+    PurchaseProductForm,
+    PurchaseCancellationForm,
+)
+from .models import Purchase, PurchaseItem
 from .services import (
     create_purchase,
     add_purchase_item,
@@ -23,6 +31,7 @@ from .services import (
     delete_purchase,
     cancel_purchase,
 )
+
 
 @login_required
 def purchase_list(request):
@@ -74,6 +83,7 @@ def purchase_list(request):
         context,
     )
 
+
 @login_required
 def purchase_create(request):
 
@@ -93,7 +103,7 @@ def purchase_create(request):
 
             messages.success(
                 request,
-                "Purchase draft created successfully."
+                _("Purchase draft created successfully."),
             )
 
             return redirect(
@@ -115,9 +125,88 @@ def purchase_create(request):
         "purchases/purchase_form.html",
         context,
     )
+
+
 @login_required
+def purchase_product_create(request, purchase_id):
+    """
+    Create a new product from a draft purchase workflow.
+
+    The new product starts with zero stock.
+    The actual purchase quantity and purchase cost are entered
+    later as a PurchaseItem.
+    """
+
+    purchase = get_object_or_404(
+        Purchase,
+        pk=purchase_id,
+    )
+
+    if purchase.status != Purchase.Status.DRAFT:
+        messages.error(
+            request,
+            _("Products can only be added while the purchase is a draft."),
+        )
+
+        return redirect(
+            "purchase_detail",
+            purchase.id,
+        )
+
+    if request.method == "POST":
+
+        form = PurchaseProductForm(
+            request.POST,
+        )
+
+        if form.is_valid():
+
+            try:
+                product = create_product(
+                    name=form.cleaned_data["name"],
+                    category_id=form.cleaned_data["category"].id,
+                    unit_id=form.cleaned_data["unit"].id,
+                    current_sell_price=form.cleaned_data["current_sell_price"],
+                    minimum_stock=form.cleaned_data["minimum_stock"],
+                )
+
+            except ValidationError as error:
+
+                form.add_error(
+                    None,
+                    error.message,
+                )
+
+            else:
+
+                messages.success(
+                    request,
+                    _("Product created successfully."),
+                )
+
+                return redirect(
+                    f"{reverse('purchase_item_create', args=[purchase.id])}"
+                    f"?product={product.id}"
+                )
+
+    else:
+        form = PurchaseProductForm()
+
+    context = {
+        "form": form,
+        "purchase": purchase,
+        "page_title": _("Create Product"),
+        "submit_label": _("Create Product"),
+    }
+
+    return render(
+        request,
+        "purchases/purchase_product_form.html",
+        context,
+    )
 
 
+@login_required
 def purchase_item_create(request, purchase_id):
     purchase = get_object_or_404(
         Purchase,
@@ -127,17 +216,20 @@ def purchase_item_create(request, purchase_id):
     if purchase.status != Purchase.Status.DRAFT:
         messages.error(
             request,
-            "Items can only be added to draft purchases.",
+            _("Items can only be added to draft purchases."),
         )
+
         return redirect(
             "purchase_detail",
             purchase.id,
         )
 
+    selected_product_id = request.GET.get("product")
+
     if request.method == "POST":
 
         form = PurchaseItemForm(
-            request.POST
+            request.POST,
         )
 
         if form.is_valid():
@@ -151,15 +243,17 @@ def purchase_item_create(request, purchase_id):
                 )
 
             except ValidationError as error:
+
                 form.add_error(
                     None,
                     error.message,
                 )
 
             else:
+
                 messages.success(
                     request,
-                    "Purchase item added successfully.",
+                    _("Purchase item added successfully."),
                 )
 
                 return redirect(
@@ -168,7 +262,15 @@ def purchase_item_create(request, purchase_id):
                 )
 
     else:
-        form = PurchaseItemForm()
+
+        initial = {}
+
+        if selected_product_id:
+            initial["product"] = selected_product_id
+
+        form = PurchaseItemForm(
+            initial=initial,
+        )
 
     context = {
         "form": form,
@@ -199,8 +301,9 @@ def purchase_item_edit(request, item_id):
     if purchase.status != Purchase.Status.DRAFT:
         messages.error(
             request,
-            "Items can only be edited in draft purchases.",
+            _("Items can only be edited in draft purchases."),
         )
+
         return redirect(
             "purchase_detail",
             purchase.id,
@@ -223,15 +326,17 @@ def purchase_item_edit(request, item_id):
                 )
 
             except ValidationError as error:
+
                 form.add_error(
                     None,
                     error.message,
                 )
 
             else:
+
                 messages.success(
                     request,
-                    "Purchase item updated successfully.",
+                    _("Purchase item updated successfully."),
                 )
 
                 return redirect(
@@ -273,7 +378,10 @@ def purchase_detail(request, purchase_id):
 
     items = (
         purchase.items
-        .select_related("product", "product__unit")
+        .select_related(
+            "product",
+            "product__unit",
+        )
         .order_by("id")
     )
 
@@ -311,15 +419,17 @@ def purchase_item_delete(request, item_id):
         remove_purchase_item(item.id)
 
     except ValidationError as error:
+
         messages.error(
             request,
             error.message,
         )
 
     else:
+
         messages.success(
             request,
-            "Purchase item deleted successfully.",
+            _("Purchase item deleted successfully."),
         )
 
     return redirect(
@@ -343,6 +453,7 @@ def purchase_complete(request, purchase_id):
         )
 
     except ValidationError as error:
+
         messages.error(
             request,
             error.message,
@@ -355,10 +466,14 @@ def purchase_complete(request, purchase_id):
 
     messages.success(
         request,
-        "Purchase completed successfully.",
+        _("Purchase completed successfully."),
     )
 
-    return redirect("purchase_list")
+    return redirect(
+        "purchase_list"
+    )
+
+
 @login_required
 @require_POST
 def purchase_delete(request, purchase_id):
@@ -370,26 +485,36 @@ def purchase_delete(request, purchase_id):
     purchase_reference = purchase.reference
 
     try:
-        delete_purchase(purchase.id)
+        delete_purchase(
+            purchase.id
+        )
 
     except ValidationError as error:
+
         messages.error(
             request,
             error.message,
         )
 
     else:
+
         messages.success(
             request,
-            f"Purchase {purchase_reference} deleted successfully.",
+            _("Purchase %(reference)s deleted successfully.")
+            % {
+                "reference": purchase_reference,
+            },
         )
 
-        return redirect("purchase_list")
+        return redirect(
+            "purchase_list"
+        )
 
     return redirect(
         "purchase_detail",
         purchase.id,
     )
+
 
 @login_required
 def purchase_cancel(request, purchase_id):
@@ -405,9 +530,13 @@ def purchase_cancel(request, purchase_id):
         )
 
     if request.method == "POST":
-        form = PurchaseCancellationForm(request.POST)
+
+        form = PurchaseCancellationForm(
+            request.POST
+        )
 
         if form.is_valid():
+
             try:
                 cancel_purchase(
                     purchase_id=purchase.id,
@@ -416,13 +545,24 @@ def purchase_cancel(request, purchase_id):
                 )
 
             except ValidationError as exc:
-                form.add_error(None, exc)
+
+                form.add_error(
+                    None,
+                    exc,
+                )
 
             else:
+
+                messages.success(
+                    request,
+                    _("Purchase cancelled successfully."),
+                )
+
                 return redirect(
                     "purchase_detail",
                     purchase_id=purchase.id,
                 )
+
     else:
         form = PurchaseCancellationForm()
 

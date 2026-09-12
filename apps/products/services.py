@@ -221,9 +221,9 @@ def create_product(
     name,
     category_id,
     unit_id,
-    current_purchase_cost,
     current_sell_price,
     minimum_stock,
+    current_purchase_cost=Decimal("0.00"),
 ):
     """
     Create a new product.
@@ -281,7 +281,6 @@ def create_product(
         current_stock=Decimal("0"),
         is_active=True,
     )
-
 
 @transaction.atomic
 def update_product(
