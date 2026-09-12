@@ -226,8 +226,8 @@ def add_sale_item(
         if product.current_stock < quantity:
             raise ValidationError(
                 f"Insufficient stock for '{product.name}'. "
-                f"Available: {product.current_stock}, "
-                f"requested: {quantity}."
+                f"Available: {product.current_stock} {product.unit.symbol}, "
+                f"requested: {quantity} {product.unit.symbol}."
             )
 
         existing_item = (
@@ -636,10 +636,10 @@ def cancel_sale(
 
         # Record the cancellation audit event.
         TransactionCancellation.objects.create(
-            transaction_reference=sale.reference,
-            cancelled_by=user,
+            sale=sale,
             reason=reason,
-        )
+            cancelled_by=user,
+)
 
         sale.status = Sale.Status.CANCELLED
         sale.cancelled_at = timezone.now()

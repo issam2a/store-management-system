@@ -751,7 +751,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const QUANTITY_DECIMAL_PLACES = 3;
     const MONEY_DECIMAL_PLACES = 2;
 
+    const showStockError = (message) => {
+        let errorElement =
+            document.querySelector("#sale-stock-error");
 
+        if (!errorElement) {
+            errorElement = document.createElement("div");
+            errorElement.id = "sale-stock-error";
+            errorElement.className = "form-error";
+
+            quantityField
+                .closest(".form-group")
+                ?.appendChild(errorElement);
+        }
+
+        errorElement.textContent = message;
+        errorElement.hidden = false;
+    };
+
+    const clearStockError = () => {
+        const errorElement =
+            document.querySelector("#sale-stock-error");
+
+        if (errorElement) {
+            errorElement.textContent = "";
+            errorElement.hidden = true;
+        }
+    };
     /*
      * ============================================================
      * Helpers
@@ -892,17 +918,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const validateQuantityAgainstStock = () => {
         if (!selectedProduct) {
+            clearStockError();
             disableAddButton();
             return false;
         }
 
-        const quantity =
-            Number(quantityField.value);
-
-        const availableStock =
-            getAvailableStock();
+        const quantity = Number(quantityField.value);
+        const availableStock = getAvailableStock();
 
         quantityField.setCustomValidity("");
+        clearStockError();
 
         if (
             !Number.isFinite(quantity) ||
@@ -912,30 +937,31 @@ document.addEventListener("DOMContentLoaded", () => {
             return false;
         }
 
-        if (
-            !Number.isFinite(
-                availableStock
-            )
-        ) {
-            quantityField.setCustomValidity(
-                "Unable to determine available stock."
-            );
+        if (!Number.isFinite(availableStock)) {
+            const message =
+                "Unable to determine available stock.";
+
+            quantityField.setCustomValidity(message);
+            showStockError(message);
 
             disableAddButton();
             return false;
         }
 
-        if (
-            quantity > availableStock
-        ) {
-            quantityField.setCustomValidity(
-                `Insufficient stock. Available: ${selectedProduct.stock} ${selectedProduct.unit}.`
-            );
+        if (quantity > availableStock) {
+            const message =
+                `Insufficient stock. Available: ` +
+                `${selectedProduct.stock} ${selectedProduct.unit}. ` +
+                `Requested: ${quantity} ${selectedProduct.unit}.`;
+
+            quantityField.setCustomValidity(message);
+            showStockError(message);
 
             disableAddButton();
             return false;
         }
 
+        clearStockError();
         enableAddButton();
         return true;
     };
