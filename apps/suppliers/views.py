@@ -89,7 +89,11 @@ def supplier_create(request):
                     request,
                     _("Supplier created successfully."),
                 )
+                
+                next_url = request.GET.get("next") or request.POST.get("next")
 
+                if next_url:
+                    return redirect(next_url)
                 return redirect("supplier_list")
 
     else:

@@ -41,6 +41,12 @@
 
 {% csrf_token %}
 
+<input
+    type="hidden"
+    name="next"
+    value="{{ request.GET.next }}"
+>
+
 <div class="form-grid">
 
     <div class="form-group">
@@ -107,12 +113,25 @@
 
 <div class="form-actions">
 
+    {% if request.GET.next %}
+
+    <a
+        href="{{ request.GET.next }}"
+        class="btn-secondary"
+    >
+        {% trans "Cancel" %}
+    </a>
+
+{% else %}
+
     <a
         href="{% url 'supplier_list' %}"
         class="btn-secondary"
     >
         {% trans "Cancel" %}
     </a>
+
+{% endif %}
 
     <button
         type="submit"
