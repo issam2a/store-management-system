@@ -1,24 +1,22 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-
-        /*
-     * ============================================================
-     * Inventory adjustment stock preview
-     * ============================================================
-     *
-     * This code only runs on the inventory adjustment page.
-     *
-     * Current Stock:
-     *   Shows the selected product's current stock.
-     *
-     * Projected Stock:
-     *   Increase → current stock + quantity
-     *   Decrease → current stock - quantity
-     *
-     * Backend validation remains authoritative.
-     * ============================================================
-     */
+    /*
+    * ============================================================
+    * Inventory adjustment stock preview
+    * ============================================================
+    *
+    * Shows:
+    *
+    *   Current Stock
+    *   Projected Stock
+    *
+    * Also prevents the user from submitting a decrease that
+    * would result in negative stock.
+    *
+    * Backend validation remains authoritative.
+    * ============================================================
+    */
 
     const inventoryProductField =
         document.getElementById("id_product");
@@ -35,6 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const inventoryProjectedStockField =
         document.getElementById("inventory-projected-stock");
 
+    const inventoryApplyButton =
+        document.getElementById("inventory-apply-button");
+
+    const inventoryStockError =
+        document.getElementById("inventory-stock-error");
+
     const inventoryStockDataElement =
         document.getElementById(
             "inventory-product-stock-data"
@@ -46,6 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
         inventoryQuantityField &&
         inventoryCurrentStockField &&
         inventoryProjectedStockField &&
+        inventoryApplyButton &&
+        inventoryStockError &&
         inventoryStockDataElement
     ) {
         try {
@@ -53,6 +59,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 JSON.parse(
                     inventoryStockDataElement.textContent
                 );
+
+            const clearInventoryStockError = () => {
+                inventoryStockError.textContent = "";
+                inventoryStockError.hidden = true;
+
+                inventoryProjectedStockField.classList.remove(
+                    "form-input-error"
+                );
+            };
+
+            const showInventoryStockError = (message) => {
+                inventoryStockError.textContent = message;
+                inventoryStockError.hidden = false;
+
+                inventoryProjectedStockField.classList.add(
+                    "form-input-error"
+                );
+            };
 
             const updateInventoryStockPreview = () => {
                 const productId =
@@ -69,12 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 const product =
                     inventoryProductStockData[productId];
 
+                clearInventoryStockError();
+
                 /*
-                 * No product selected.
-                 */
+                * No product selected.
+                */
                 if (!product) {
                     inventoryCurrentStockField.value = "—";
                     inventoryProjectedStockField.value = "—";
+                    inventoryApplyButton.disabled = true;
                     return;
                 }
 
@@ -85,8 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     product.unit || "";
 
                 /*
-                 * Current stock.
-                 */
+                * Show current stock.
+                */
                 inventoryCurrentStockField.value =
                     `${currentStock.toLocaleString(
                         undefined,
@@ -96,14 +123,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     )} ${unit}`;
 
                 /*
-                 * Quantity is not valid yet.
-                 */
+                * Invalid quantity / adjustment.
+                */
                 if (
                     !Number.isFinite(quantity) ||
                     quantity <= 0 ||
                     !adjustmentType
                 ) {
                     inventoryProjectedStockField.value = "—";
+                    inventoryApplyButton.disabled = true;
                     return;
                 }
 
@@ -111,8 +139,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     currentStock;
 
                 /*
-                 * Calculate projected stock.
-                 */
+                * Calculate projected stock.
+                */
                 if (
                     adjustmentType === "INCREASE"
                 ) {
@@ -123,11 +151,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) {
                     projectedStock =
                         currentStock - quantity;
+                } else {
+                    inventoryProjectedStockField.value = "—";
+                    inventoryApplyButton.disabled = true;
+                    return;
                 }
 
                 /*
-                 * Show projected stock.
-                 */
+                * Show projected stock.
+                */
                 inventoryProjectedStockField.value =
                     `${projectedStock.toLocaleString(
                         undefined,
@@ -135,35 +167,60 @@ document.addEventListener("DOMContentLoaded", () => {
                             maximumFractionDigits: 3,
                         }
                     )} ${unit}`;
+
+                /*
+                * Prevent negative projected stock.
+                */
+                if (projectedStock < 0) {
+                    showInventoryStockError(
+                        `Insufficient stock. Available: ` +
+                        `${currentStock.toLocaleString(
+                            undefined,
+                            {
+                                maximumFractionDigits: 3,
+                            }
+                        )} ${unit}.`
+                    );
+
+                    inventoryApplyButton.disabled = true;
+                    return;
+                }
+
+                /*
+                * Stock is valid.
+                */
+                inventoryApplyButton.disabled = false;
             };
 
             /*
-             * Product changed.
-             */
+            * Product changed.
+            */
             inventoryProductField.addEventListener(
                 "change",
                 updateInventoryStockPreview
             );
 
             /*
-             * Adjustment type changed.
-             */
+            * Adjustment type changed.
+            */
             inventoryAdjustmentTypeField.addEventListener(
                 "change",
                 updateInventoryStockPreview
             );
 
             /*
-             * Quantity changed.
-             */
+            * Quantity changed.
+            */
             inventoryQuantityField.addEventListener(
                 "input",
                 updateInventoryStockPreview
             );
 
             /*
-             * Initialize preview.
-             */
+            * Initial state.
+            */
+            inventoryApplyButton.disabled = true;
+
             updateInventoryStockPreview();
 
         } catch (error) {
@@ -173,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
     }
-    
+        
 
     /*
      * ============================================================
