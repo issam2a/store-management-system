@@ -126,6 +126,14 @@
         method="post"
         action="{% url 'sale_item_create' sale.id %}"
         id="sale-item-form"
+        data-select-label="{% trans 'Select' %}"
+        data-quantity-invalid="{% trans 'Enter a valid quantity.' %}"
+        data-quantity-positive="{% trans 'Quantity must be greater than zero.' %}"
+        data-quantity-whole="{% trans 'Quantity must be a whole number for this unit.' %}"
+        data-amount-invalid="{% trans 'Enter a valid amount.' %}"
+        data-amount-positive="{% trans 'Amount must be greater than zero.' %}"
+        data-enter-quantity-or-amount="{% trans 'Enter a quantity or an amount.' %}"
+        data-enter-quantity="{% trans 'Enter a quantity.' %}"
     >
         {% csrf_token %}
 

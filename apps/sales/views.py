@@ -275,7 +275,10 @@ def sale_item_edit(request, item_id):
             sale_id=sale.id,
         )
 
-    form = SaleItemUpdateForm(request.POST)
+    form = SaleItemUpdateForm(
+        request.POST,
+        product=item.product,
+    )
 
     if form.is_valid():
         try:

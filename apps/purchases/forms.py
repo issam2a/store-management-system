@@ -4,7 +4,7 @@ from apps.products.models import Product
 from apps.suppliers.models import Supplier
 from django.utils.translation import gettext_lazy as _
 from .models import Purchase, PurchaseItem
-
+from apps.products.quantity import validate_quantity_for_unit
 
 class PurchaseForm(forms.ModelForm):
     class Meta:
@@ -101,13 +101,17 @@ class PurchaseItemForm(forms.ModelForm):
     def clean_quantity(self):
         quantity = self.cleaned_data["quantity"]
 
-        if quantity <= 0:
-            raise forms.ValidationError(
-                "Quantity must be greater than zero."
-            )
+        product = self.cleaned_data.get("product")
+
+        if not product:
+            return quantity
+
+        validate_quantity_for_unit(
+            quantity,
+            product.unit.symbol,
+        )
 
         return quantity
-
     def clean_unit_cost(self):
         unit_cost = self.cleaned_data["unit_cost"]
 

@@ -5,8 +5,10 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.customers.models import Customer
 from apps.products.models import Product
+from apps.products.quantity import validate_quantity_for_unit
 
 from .models import Sale
+
 
 class SaleCreateForm(forms.Form):
     """
@@ -109,6 +111,7 @@ class SaleItemForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
+        product = cleaned_data.get("product")
         quantity = cleaned_data.get("quantity")
         amount = cleaned_data.get("amount")
 
@@ -117,9 +120,15 @@ class SaleItemForm(forms.Form):
                 _("Enter a quantity or an amount.")
             )
 
-        if quantity is not None and quantity <= 0:
-            raise forms.ValidationError(
-                _("Quantity must be greater than zero.")
+        if quantity is not None:
+            if product is None:
+                raise forms.ValidationError(
+                    _("Select a product before entering a quantity.")
+                )
+
+            validate_quantity_for_unit(
+                quantity,
+                product.unit.symbol,
             )
 
         if amount is not None and amount <= 0:
@@ -128,6 +137,7 @@ class SaleItemForm(forms.Form):
             )
 
         return cleaned_data
+
 
 class SaleItemUpdateForm(forms.Form):
     """
@@ -149,13 +159,20 @@ class SaleItemUpdateForm(forms.Form):
         ),
     )
 
+    def __init__(self, *args, product=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.product = product
+
     def clean_quantity(self):
         quantity = self.cleaned_data["quantity"]
 
-        if quantity <= 0:
-            raise forms.ValidationError(
-                _("Quantity must be greater than zero.")
-            )
+        if not self.product:
+            return quantity
+
+        validate_quantity_for_unit(
+            quantity,
+            self.product.unit.symbol,
+        )
 
         return quantity
 

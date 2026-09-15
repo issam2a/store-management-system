@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.products.models import Product
 
 from .models import InventoryAdjustment
-
+from apps.products.quantity import validate_quantity_for_unit
 
 class InventoryAdjustmentForm(forms.ModelForm):
     class Meta:
@@ -71,10 +71,15 @@ class InventoryAdjustmentForm(forms.ModelForm):
     def clean_quantity(self):
         quantity = self.cleaned_data["quantity"]
 
-        if quantity <= 0:
-            raise ValidationError(
-                _("Quantity must be greater than zero.")
-            )
+        product = self.cleaned_data.get("product")
+
+        if not product:
+            return quantity
+
+        validate_quantity_for_unit(
+            quantity,
+            product.unit.symbol,
+        )
 
         return quantity
 
@@ -87,3 +92,6 @@ class InventoryAdjustmentForm(forms.ModelForm):
             )
 
         return reason
+
+
+    

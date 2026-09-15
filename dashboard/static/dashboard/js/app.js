@@ -2,235 +2,516 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     /*
-    * ============================================================
-    * Inventory adjustment stock preview
-    * ============================================================
-    *
-    * Shows:
-    *
-    *   Current Stock
-    *   Projected Stock
-    *
-    * Also prevents the user from submitting a decrease that
-    * would result in negative stock.
-    *
-    * Backend validation remains authoritative.
-    * ============================================================
-    */
+ * ============================================================
+ * Inventory adjustment stock preview
+ * ============================================================
+ *
+ * Shows:
+ *
+ *   Current Stock
+ *   Projected Stock
+ *
+ * Also:
+ *
+ *   - Enforces whole-number quantities for count-based units.
+ *   - Allows decimal quantities for measurement-based units.
+ *   - Prevents decreases that would result in negative stock.
+ *   - Keeps the submit button disabled when the input is invalid.
+ *
+ * Backend validation remains authoritative.
+ * ============================================================
+ */
 
-    const inventoryProductField =
-        document.getElementById("id_product");
+const inventoryProductField =
+    document.getElementById("id_product");
 
-    const inventoryAdjustmentTypeField =
-        document.getElementById("id_adjustment_type");
+const inventoryAdjustmentTypeField =
+    document.getElementById("id_adjustment_type");
 
-    const inventoryQuantityField =
-        document.getElementById("id_quantity");
+const inventoryQuantityField =
+    document.getElementById("id_quantity");
 
-    const inventoryCurrentStockField =
-        document.getElementById("inventory-current-stock");
+const inventoryCurrentStockField =
+    document.getElementById("inventory-current-stock");
 
-    const inventoryProjectedStockField =
-        document.getElementById("inventory-projected-stock");
+const inventoryProjectedStockField =
+    document.getElementById("inventory-projected-stock");
 
-    const inventoryApplyButton =
-        document.getElementById("inventory-apply-button");
+const inventoryApplyButton =
+    document.getElementById("inventory-apply-button");
 
-    const inventoryStockError =
-        document.getElementById("inventory-stock-error");
+const inventoryStockError =
+    document.getElementById("inventory-stock-error");
 
-    const inventoryStockDataElement =
-        document.getElementById(
-            "inventory-product-stock-data"
+const inventoryStockDataElement =
+    document.getElementById(
+        "inventory-product-stock-data"
+    );
+
+
+if (
+    inventoryProductField &&
+    inventoryAdjustmentTypeField &&
+    inventoryQuantityField &&
+    inventoryCurrentStockField &&
+    inventoryProjectedStockField &&
+    inventoryApplyButton &&
+    inventoryStockError &&
+    inventoryStockDataElement
+) {
+    try {
+        const inventoryProductStockData =
+            JSON.parse(
+                inventoryStockDataElement.textContent
+            );
+
+        /*
+         * --------------------------------------------------------
+         * Units that represent countable items.
+         * These units only allow whole-number quantities.
+         * --------------------------------------------------------
+         */
+
+        const INTEGER_UNITS = new Set([
+            "pc",
+            "pcs",
+            "piece",
+            "pieces",
+            "box",
+            "boxes",
+            "pack",
+            "packs",
+            "bag",
+            "bags",
+            "bottle",
+            "bottles",
+            "can",
+            "cans",
+        ]);
+
+
+        /*
+         * --------------------------------------------------------
+         * Unit helpers
+         * --------------------------------------------------------
+         */
+
+        const isIntegerUnit = (unit) => {
+            return INTEGER_UNITS.has(
+                String(unit).trim().toLowerCase()
+            );
+        };
+
+
+        const formatInventoryStock = (
+            value,
+            unit
+        ) => {
+            const numericValue = Number(value);
+
+            if (isIntegerUnit(unit)) {
+                return `${numericValue.toLocaleString(
+                    undefined,
+                    {
+                        maximumFractionDigits: 0,
+                    }
+                )} ${unit}`;
+            }
+
+            return `${numericValue.toLocaleString(
+                undefined,
+                {
+                    maximumFractionDigits: 3,
+                }
+            )} ${unit}`;
+        };
+
+
+        /*
+         * --------------------------------------------------------
+         * Error helpers
+         * --------------------------------------------------------
+         */
+
+        const clearInventoryStockError = () => {
+            inventoryStockError.textContent = "";
+            inventoryStockError.hidden = true;
+
+            inventoryProjectedStockField.classList.remove(
+                "form-input-error"
+            );
+
+            inventoryQuantityField.classList.remove(
+                "form-input-error"
+            );
+        };
+
+
+        const showInventoryStockError = (message) => {
+            inventoryStockError.textContent = message;
+            inventoryStockError.hidden = false;
+
+            inventoryProjectedStockField.classList.add(
+                "form-input-error"
+            );
+        };
+
+
+        /*
+         * --------------------------------------------------------
+         * Configure quantity input according to product unit.
+         *
+         * Count units:
+         *   - text input
+         *   - numeric keyboard on mobile
+         *   - whole numbers only
+         *
+         * Measurement units:
+         *   - number input
+         *   - decimal keyboard
+         *   - decimals allowed
+         * --------------------------------------------------------
+         */
+
+        const configureInventoryQuantityInput = () => {
+            const productId =
+                inventoryProductField.value;
+
+            const product =
+                inventoryProductStockData[productId];
+
+            if (!product) {
+                inventoryQuantityField.type = "number";
+                inventoryQuantityField.inputMode = "decimal";
+                inventoryQuantityField.step = "0.001";
+                inventoryQuantityField.min = "0.001";
+                inventoryQuantityField.pattern = "";
+
+                return;
+            }
+
+            const unit =
+                product.unit || "";
+
+            if (isIntegerUnit(unit)) {
+                inventoryQuantityField.type = "text";
+                inventoryQuantityField.inputMode = "numeric";
+                inventoryQuantityField.pattern = "[0-9]*";
+                inventoryQuantityField.step = "";
+                inventoryQuantityField.min = "";
+            } else {
+                inventoryQuantityField.type = "number";
+                inventoryQuantityField.inputMode = "decimal";
+                inventoryQuantityField.step = "0.001";
+                inventoryQuantityField.min = "0.001";
+                inventoryQuantityField.pattern = "";
+            }
+        };
+
+
+        /*
+         * --------------------------------------------------------
+         * Validate quantity format.
+         *
+         * Important:
+         *
+         * We do NOT modify invalid input.
+         *
+         * Example:
+         *
+         *   2.5 pcs
+         *
+         * remains 2.5 and is rejected.
+         *
+         * It is never silently changed to 2.
+         * --------------------------------------------------------
+         */
+
+        const validateInventoryQuantity = () => {
+            const productId =
+                inventoryProductField.value;
+
+            const product =
+                inventoryProductStockData[productId];
+
+            const rawQuantity =
+                inventoryQuantityField.value.trim();
+
+            inventoryQuantityField.classList.remove(
+                "form-input-error"
+            );
+
+            if (!product || rawQuantity === "") {
+                return true;
+            }
+
+            const unit =
+                product.unit || "";
+
+            if (isIntegerUnit(unit)) {
+                if (!/^\d+$/.test(rawQuantity)) {
+                    inventoryQuantityField.classList.add(
+                        "form-input-error"
+                    );
+
+                    showInventoryStockError(
+                        "This product only allows whole-number quantities."
+                    );
+
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+
+        /*
+         * --------------------------------------------------------
+         * Update stock preview.
+         * --------------------------------------------------------
+         */
+
+        const updateInventoryStockPreview = () => {
+            const productId =
+                inventoryProductField.value;
+
+            const adjustmentType =
+                inventoryAdjustmentTypeField.value;
+
+            const product =
+                inventoryProductStockData[productId];
+
+            clearInventoryStockError();
+
+            /*
+             * No product selected.
+             */
+
+            if (!product) {
+                inventoryCurrentStockField.value = "—";
+                inventoryProjectedStockField.value = "—";
+                inventoryApplyButton.disabled = true;
+
+                configureInventoryQuantityInput();
+
+                return;
+            }
+
+            const currentStock =
+                Number(product.stock);
+
+            const unit =
+                product.unit || "";
+
+            /*
+             * Configure quantity input for this unit.
+             */
+
+            configureInventoryQuantityInput();
+
+            /*
+             * Show current stock.
+             */
+
+            inventoryCurrentStockField.value =
+                formatInventoryStock(
+                    currentStock,
+                    unit
+                );
+
+            /*
+             * Validate quantity format.
+             */
+
+            if (!validateInventoryQuantity()) {
+                inventoryProjectedStockField.value = "—";
+                inventoryApplyButton.disabled = true;
+
+                return;
+            }
+
+            /*
+             * Convert quantity to number after
+             * format validation has passed.
+             */
+
+            const quantity =
+                Number(
+                    inventoryQuantityField.value
+                );
+
+            /*
+             * Invalid quantity / adjustment.
+             */
+
+            if (
+                !Number.isFinite(quantity) ||
+                quantity <= 0 ||
+                !adjustmentType
+            ) {
+                inventoryProjectedStockField.value = "—";
+                inventoryApplyButton.disabled = true;
+
+                return;
+            }
+
+            /*
+             * Calculate projected stock.
+             */
+
+            let projectedStock =
+                currentStock;
+
+            if (
+                adjustmentType === "INCREASE"
+            ) {
+                projectedStock =
+                    currentStock + quantity;
+            } else if (
+                adjustmentType === "DECREASE"
+            ) {
+                projectedStock =
+                    currentStock - quantity;
+            } else {
+                inventoryProjectedStockField.value = "—";
+                inventoryApplyButton.disabled = true;
+
+                return;
+            }
+
+            /*
+             * Show projected stock.
+             */
+
+            inventoryProjectedStockField.value =
+                formatInventoryStock(
+                    projectedStock,
+                    unit
+                );
+
+            /*
+             * Prevent negative projected stock.
+             */
+
+            if (projectedStock < 0) {
+                showInventoryStockError(
+                    `Insufficient stock. Available: ${formatInventoryStock(
+                        currentStock,
+                        unit
+                    )}.`
+                );
+
+                inventoryApplyButton.disabled = true;
+
+                return;
+            }
+
+            /*
+             * Stock is valid.
+             */
+
+            inventoryApplyButton.disabled = false;
+        };
+
+
+        /*
+         * --------------------------------------------------------
+         * Product changed.
+         * --------------------------------------------------------
+         */
+
+        inventoryProductField.addEventListener(
+            "change",
+            () => {
+                configureInventoryQuantityInput();
+                updateInventoryStockPreview();
+            }
         );
 
-    if (
-        inventoryProductField &&
-        inventoryAdjustmentTypeField &&
-        inventoryQuantityField &&
-        inventoryCurrentStockField &&
-        inventoryProjectedStockField &&
-        inventoryApplyButton &&
-        inventoryStockError &&
-        inventoryStockDataElement
-    ) {
-        try {
-            const inventoryProductStockData =
-                JSON.parse(
-                    inventoryStockDataElement.textContent
-                );
 
-            const clearInventoryStockError = () => {
-                inventoryStockError.textContent = "";
-                inventoryStockError.hidden = true;
+        /*
+         * --------------------------------------------------------
+         * Adjustment type changed.
+         * --------------------------------------------------------
+         */
 
-                inventoryProjectedStockField.classList.remove(
-                    "form-input-error"
-                );
-            };
+        inventoryAdjustmentTypeField.addEventListener(
+            "change",
+            updateInventoryStockPreview
+        );
 
-            const showInventoryStockError = (message) => {
-                inventoryStockError.textContent = message;
-                inventoryStockError.hidden = false;
 
-                inventoryProjectedStockField.classList.add(
-                    "form-input-error"
-                );
-            };
+        /*
+         * --------------------------------------------------------
+         * Quantity changed.
+         * --------------------------------------------------------
+         */
 
-            const updateInventoryStockPreview = () => {
-                const productId =
-                    inventoryProductField.value;
+        inventoryQuantityField.addEventListener(
+            "input",
+            updateInventoryStockPreview
+        );
 
-                const adjustmentType =
-                    inventoryAdjustmentTypeField.value;
 
-                const quantity =
-                    Number(
-                        inventoryQuantityField.value
-                    );
+        /*
+         * --------------------------------------------------------
+         * Prevent invalid submission.
+         *
+         * The form may use novalidate, so we explicitly
+         * validate before allowing submission.
+         * --------------------------------------------------------
+         */
 
-                const product =
-                    inventoryProductStockData[productId];
+        const inventoryForm =
+            inventoryQuantityField.closest("form");
 
-                clearInventoryStockError();
+        if (inventoryForm) {
+            inventoryForm.addEventListener(
+                "submit",
+                (event) => {
+                    if (!validateInventoryQuantity()) {
+                        event.preventDefault();
 
-                /*
-                * No product selected.
-                */
-                if (!product) {
-                    inventoryCurrentStockField.value = "—";
-                    inventoryProjectedStockField.value = "—";
-                    inventoryApplyButton.disabled = true;
-                    return;
+                        inventoryApplyButton.disabled = true;
+
+                        inventoryQuantityField.focus();
+
+                        return;
+                    }
+
+                    updateInventoryStockPreview();
+
+                    if (
+                        inventoryApplyButton.disabled
+                    ) {
+                        event.preventDefault();
+                    }
                 }
-
-                const currentStock =
-                    Number(product.stock);
-
-                const unit =
-                    product.unit || "";
-
-                /*
-                * Show current stock.
-                */
-                inventoryCurrentStockField.value =
-                    `${currentStock.toLocaleString(
-                        undefined,
-                        {
-                            maximumFractionDigits: 3,
-                        }
-                    )} ${unit}`;
-
-                /*
-                * Invalid quantity / adjustment.
-                */
-                if (
-                    !Number.isFinite(quantity) ||
-                    quantity <= 0 ||
-                    !adjustmentType
-                ) {
-                    inventoryProjectedStockField.value = "—";
-                    inventoryApplyButton.disabled = true;
-                    return;
-                }
-
-                let projectedStock =
-                    currentStock;
-
-                /*
-                * Calculate projected stock.
-                */
-                if (
-                    adjustmentType === "INCREASE"
-                ) {
-                    projectedStock =
-                        currentStock + quantity;
-                } else if (
-                    adjustmentType === "DECREASE"
-                ) {
-                    projectedStock =
-                        currentStock - quantity;
-                } else {
-                    inventoryProjectedStockField.value = "—";
-                    inventoryApplyButton.disabled = true;
-                    return;
-                }
-
-                /*
-                * Show projected stock.
-                */
-                inventoryProjectedStockField.value =
-                    `${projectedStock.toLocaleString(
-                        undefined,
-                        {
-                            maximumFractionDigits: 3,
-                        }
-                    )} ${unit}`;
-
-                /*
-                * Prevent negative projected stock.
-                */
-                if (projectedStock < 0) {
-                    showInventoryStockError(
-                        `Insufficient stock. Available: ` +
-                        `${currentStock.toLocaleString(
-                            undefined,
-                            {
-                                maximumFractionDigits: 3,
-                            }
-                        )} ${unit}.`
-                    );
-
-                    inventoryApplyButton.disabled = true;
-                    return;
-                }
-
-                /*
-                * Stock is valid.
-                */
-                inventoryApplyButton.disabled = false;
-            };
-
-            /*
-            * Product changed.
-            */
-            inventoryProductField.addEventListener(
-                "change",
-                updateInventoryStockPreview
-            );
-
-            /*
-            * Adjustment type changed.
-            */
-            inventoryAdjustmentTypeField.addEventListener(
-                "change",
-                updateInventoryStockPreview
-            );
-
-            /*
-            * Quantity changed.
-            */
-            inventoryQuantityField.addEventListener(
-                "input",
-                updateInventoryStockPreview
-            );
-
-            /*
-            * Initial state.
-            */
-            inventoryApplyButton.disabled = true;
-
-            updateInventoryStockPreview();
-
-        } catch (error) {
-            console.error(
-                "Unable to initialize inventory stock preview:",
-                error
             );
         }
+
+
+        /*
+         * --------------------------------------------------------
+         * Initial state.
+         * --------------------------------------------------------
+         */
+
+        inventoryApplyButton.disabled = true;
+
+        configureInventoryQuantityInput();
+
+        updateInventoryStockPreview();
+
+
+    } catch (error) {
+        console.error(
+            "Unable to initialize inventory stock preview:",
+            error
+        );
     }
-        
+}
 
     /*
      * ============================================================
@@ -979,30 +1260,61 @@ document.addEventListener("DOMContentLoaded", () => {
         "ml",
     ]);
 
+    const INTEGER_UNITS = new Set([
+        "pc",
+        "pcs",
+        "piece",
+        "pieces",
+        "box",
+        "boxes",
+        "pack",
+        "packs",
+        "bag",
+        "bags",
+        "bottle",
+        "bottles",
+        "can",
+        "cans",
+    ]);
+
     const QUANTITY_DECIMAL_PLACES = 3;
     const MONEY_DECIMAL_PLACES = 2;
 
-    const showStockError = (message) => {
+    const showQuantityError = (message) => {
         let errorElement =
-            document.querySelector("#sale-stock-error");
+            document.querySelector(
+                "#sale-quantity-error"
+            );
 
         if (!errorElement) {
-            errorElement = document.createElement("div");
-            errorElement.id = "sale-stock-error";
-            errorElement.className = "form-error";
+            errorElement =
+                document.createElement("div");
+
+            errorElement.id =
+                "sale-quantity-error";
+
+            errorElement.className =
+                "form-error";
 
             quantityField
                 .closest(".form-group")
-                ?.appendChild(errorElement);
+                ?.appendChild(
+                    errorElement
+                );
         }
 
-        errorElement.textContent = message;
+        errorElement.textContent =
+            message;
+
         errorElement.hidden = false;
     };
 
-    const clearStockError = () => {
+
+    const clearQuantityError = () => {
         const errorElement =
-            document.querySelector("#sale-stock-error");
+            document.querySelector(
+                "#sale-quantity-error"
+            );
 
         if (errorElement) {
             errorElement.textContent = "";
@@ -1025,6 +1337,16 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     };
 
+
+    const isIntegerUnit = (unit) => {
+        if (!unit) {
+            return false;
+        }
+
+        return INTEGER_UNITS.has(
+            unit.trim().toLowerCase()
+        );
+    };
 
     const roundQuantity = (value) => {
         return (
@@ -1146,6 +1468,33 @@ document.addEventListener("DOMContentLoaded", () => {
         addSaleItemButton.disabled = false;
     };
 
+    const showStockError = (message) => {
+        let errorElement =
+            document.querySelector("#sale-stock-error");
+
+        if (!errorElement) {
+            errorElement = document.createElement("div");
+            errorElement.id = "sale-stock-error";
+            errorElement.className = "form-error";
+
+            quantityField
+                .closest(".form-group")
+                ?.appendChild(errorElement);
+        }
+
+        errorElement.textContent = message;
+        errorElement.hidden = false;
+    };
+
+    const clearStockError = () => {
+        const errorElement =
+            document.querySelector("#sale-stock-error");
+
+        if (errorElement) {
+            errorElement.textContent = "";
+            errorElement.hidden = true;
+        }
+    };
 
     const validateQuantityAgainstStock = () => {
         if (!selectedProduct) {
@@ -1154,16 +1503,67 @@ document.addEventListener("DOMContentLoaded", () => {
             return false;
         }
 
-        const quantity = Number(quantityField.value);
-        const availableStock = getAvailableStock();
+        const quantityValue =
+            quantityField.value.trim();
+
+        const quantity =
+            Number(quantityValue);
+
+        const availableStock =
+            getAvailableStock();
+
+        const unit =
+            getSelectedUnit();
 
         quantityField.setCustomValidity("");
         clearStockError();
 
+        if (!quantityValue) {
+            disableAddButton();
+            return false;
+        }
+
+        if (!Number.isFinite(quantity)) {
+            const message =
+                saleItemForm.dataset.quantityInvalid;
+
+            quantityField.setCustomValidity(message);
+            showStockError(message);
+
+            disableAddButton();
+            return false;
+        }
+
+        if (quantity <= 0) {
+            const message =
+                saleItemForm.dataset.quantityPositive;
+
+            quantityField.setCustomValidity(message);
+            showStockError(message);
+
+            disableAddButton();
+            return false;
+        }
+
+        /*
+        * Count-based units MUST be whole numbers.
+        *
+        * Example:
+        * 1      -> valid
+        * 2      -> valid
+        * 1.5    -> invalid
+        * 2.25   -> invalid
+        */
         if (
-            !Number.isFinite(quantity) ||
-            quantity <= 0
+            isIntegerUnit(unit) &&
+            !Number.isInteger(quantity)
         ) {
+            const message =
+                saleItemForm.dataset.quantityWhole;
+
+            quantityField.setCustomValidity(message);
+            showStockError(message);
+
             disableAddButton();
             return false;
         }
@@ -1192,74 +1592,13 @@ document.addEventListener("DOMContentLoaded", () => {
             return false;
         }
 
+        quantityField.setCustomValidity("");
         clearStockError();
-        enableAddButton();
-        return true;
-    };
-
-
-    const validateAmountBasedSale = () => {
-        if (!selectedProduct) {
-            disableAddButton();
-            return false;
-        }
-
-        const amount =
-            Number(amountField.value);
-
-        const quantity =
-            Number(quantityField.value);
-
-        const availableStock =
-            getAvailableStock();
-
-        clearFieldErrors();
-
-        if (
-            !Number.isFinite(amount) ||
-            amount <= 0
-        ) {
-            disableAddButton();
-            return false;
-        }
-
-        if (
-            !Number.isFinite(quantity) ||
-            quantity <= 0
-        ) {
-            disableAddButton();
-            return false;
-        }
-
-        if (
-            !Number.isFinite(
-                availableStock
-            )
-        ) {
-            amountField.setCustomValidity(
-                "Unable to determine available stock."
-            );
-
-            disableAddButton();
-            return false;
-        }
-
-        if (
-            quantity > availableStock
-        ) {
-            amountField.setCustomValidity(
-                "The requested amount exceeds available stock."
-            );
-
-            disableAddButton();
-            return false;
-        }
 
         enableAddButton();
+
         return true;
     };
-
-
     /*
      * ============================================================
      * Value-based synchronization
@@ -1438,6 +1777,15 @@ document.addEventListener("DOMContentLoaded", () => {
             isValueBasedUnit(
                 product.unit
             );
+        if (isIntegerUnit(product.unit)) {
+            quantityField.step = "1";
+            quantityField.min = "1";
+            quantityField.inputMode = "numeric";
+        } else {
+            quantityField.step = "0.001";
+            quantityField.min = "0.001";
+            quantityField.inputMode = "decimal";
+        }
 
 
         /*
@@ -1687,6 +2035,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            /*
+            * Measurement-based product
+            */
             if (
                 isValueBasedUnit(
                     getSelectedUnit()
@@ -1696,6 +2047,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            /*
+            * Count-based product
+            *
+            * Do NOT modify the user's input.
+            *
+            * If they enter 1.5 pcs,
+            * keep 1.5 visible and show
+            * the validation error.
+            */
             validateQuantityAgainstStock();
         }
     );
@@ -1736,6 +2096,9 @@ document.addEventListener("DOMContentLoaded", () => {
     saleItemForm.addEventListener(
         "submit",
         (event) => {
+            /*
+            * Product must be selected.
+            */
             if (!selectedProduct) {
                 event.preventDefault();
 
@@ -1751,9 +2114,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-             * Value-based product
-             */
-
+            * Value-based product
+            */
             if (valueBasedProduct) {
                 const valid =
                     validateAmountBasedSale();
@@ -1761,9 +2123,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!valid) {
                     event.preventDefault();
 
-                    if (
-                        !amountField.checkValidity()
-                    ) {
+                    if (!amountField.checkValidity()) {
                         amountField.reportValidity();
                     } else {
                         quantityField.reportValidity();
@@ -1775,9 +2135,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-             * Count-based product
-             */
-
+            * Count-based product
+            */
             else {
                 const valid =
                     validateQuantityAgainstStock();
@@ -1785,6 +2144,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!valid) {
                     event.preventDefault();
 
+                    /*
+                    * The validation function has already
+                    * assigned the translated error message
+                    * with setCustomValidity().
+                    */
                     quantityField.reportValidity();
 
                     return;
@@ -1793,12 +2157,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-             * Final browser validation
-             */
-
-            if (
-                !saleItemForm.checkValidity()
-            ) {
+            * Final browser validation.
+            */
+            if (!saleItemForm.checkValidity()) {
                 event.preventDefault();
 
                 if (valueBasedProduct) {
@@ -1812,11 +2173,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-             * Prevent duplicate submissions.
-             */
-
-            addSaleItemButton.disabled =
-                true;
+            * Prevent duplicate submissions.
+            */
+            addSaleItemButton.disabled = true;
 
             addSaleItemButton.textContent =
                 "Adding...";
