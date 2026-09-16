@@ -1,11 +1,13 @@
 from datetime import timedelta
-from decimal import Decimal
 
-from django.db.models import DecimalField, ExpressionWrapper, F, Sum
-from django.db.models.functions import TruncDay
+from django.db.models import F, Sum
 from django.shortcuts import render
 from django.utils import timezone
 
+from apps.analytics.services import (
+    get_executive_kpis,
+    get_sales_trend,
+)
 from apps.products.models import Product
 from apps.sales.models import Sale, SaleItem
 
@@ -14,54 +16,14 @@ def home(request):
     today = timezone.localdate()
 
     # ---------------------------------------------------------
-    # Completed sales only
+    # Executive KPIs
     # ---------------------------------------------------------
 
-    completed_sales = Sale.objects.filter(
-        status=Sale.Status.COMPLETED,
+    kpis = get_executive_kpis(
+        start_date=today,
+        end_date=today,
     )
-
-    # ---------------------------------------------------------
-    # Today's KPIs
-    # ---------------------------------------------------------
-
-    today_sales = completed_sales.filter(
-        completed_at__date=today,
-    )
-
-    revenue = (
-        today_sales.aggregate(
-            total=Sum("total_amount")
-        )["total"]
-        or Decimal("0.00")
-    )
-
-    sales_count = today_sales.count()
-
-    # ---------------------------------------------------------
-    # Today's COGS
-    # ---------------------------------------------------------
-
-    today_sale_items = SaleItem.objects.filter(
-        sale__in=today_sales,
-    )
-
-    cogs_expression = ExpressionWrapper(
-        F("quantity") * F("unit_cost"),
-        output_field=DecimalField(
-            max_digits=18,
-            decimal_places=2,
-        ),
-    )
-
-    cogs = (
-        today_sale_items.aggregate(
-            total=Sum(cogs_expression)
-        )["total"]
-        or Decimal("0.00")
-    )
-
-    gross_profit = revenue - cogs
+    print("DASHBOARD KPIS:", kpis)
 
     # ---------------------------------------------------------
     # Low stock
@@ -84,7 +46,6 @@ def home(request):
     )
 
     low_stock_count = low_stock_products.count()
-
     low_stock_products_display = low_stock_products[:5]
 
     # ---------------------------------------------------------
@@ -92,7 +53,10 @@ def home(request):
     # ---------------------------------------------------------
 
     recent_sales = (
-        completed_sales
+        Sale.objects
+        .filter(
+            status=Sale.Status.COMPLETED,
+        )
         .select_related("customer")
         .order_by("-completed_at")[:5]
     )
@@ -101,8 +65,6 @@ def home(request):
     # Top products
     #
     # Ranked by quantity sold.
-    # Cancelled sales are excluded because we filter by
-    # COMPLETED status.
     # ---------------------------------------------------------
 
     top_products = (
@@ -131,25 +93,14 @@ def home(request):
 
     start_date = today - timedelta(days=6)
 
-    revenue_trend = (
-        completed_sales
-        .filter(
-            completed_at__date__gte=start_date,
-            completed_at__date__lte=today,
-        )
-        .annotate(
-            day=TruncDay("completed_at"),
-        )
-        .values("day")
-        .annotate(
-            revenue=Sum("total_amount"),
-        )
-        .order_by("day")
+    sales_trend = get_sales_trend(
+        start_date=start_date,
+        end_date=today,
     )
 
-    revenue_by_day = {
-        item["day"].date(): item["revenue"]
-        for item in revenue_trend
+    trend_by_date = {
+        item["date"]: item
+        for item in sales_trend
     }
 
     chart_data = []
@@ -157,27 +108,35 @@ def home(request):
     for offset in range(7):
         date = start_date + timedelta(days=offset)
 
+        item = trend_by_date.get(date)
+
         chart_data.append(
             {
                 "date": date.isoformat(),
                 "label": date.strftime("%a"),
                 "revenue": float(
-                    revenue_by_day.get(
-                        date,
-                        Decimal("0.00"),
-                    )
+                    item["revenue"]
+                    if item
+                    else 0
                 ),
             }
         )
 
+    # ---------------------------------------------------------
+    # Dashboard context
+    # ---------------------------------------------------------
+
     context = {
         "today": today,
 
-        # KPIs
-        "revenue": revenue,
-        "sales_count": sales_count,
-        "cogs": cogs,
-        "gross_profit": gross_profit,
+        # Executive KPIs
+        "revenue": kpis["revenue"],
+        "cogs": kpis["cogs"],
+        "gross_profit": kpis["gross_profit"],
+        "gross_margin": kpis["gross_margin"],
+        "sales_count": kpis["transaction_count"],
+        "units_sold": kpis["units_sold"],
+        "average_order_value": kpis["average_order_value"],
 
         # Inventory
         "low_stock_count": low_stock_count,
