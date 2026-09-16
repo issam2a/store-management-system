@@ -233,7 +233,8 @@ def purchase_item_create(request, purchase_id):
         )
 
         if form.is_valid():
-
+            print("PURCHASE FORM CLEANED DATA:")
+            print(form.cleaned_data)
             try:
                 add_purchase_item(
                     purchase_id=purchase.id,

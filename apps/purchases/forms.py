@@ -5,6 +5,7 @@ from apps.suppliers.models import Supplier
 from django.utils.translation import gettext_lazy as _
 from .models import Purchase, PurchaseItem
 from apps.products.quantity import validate_quantity_for_unit
+from decimal import Decimal , ROUND_HALF_UP
 
 class PurchaseForm(forms.ModelForm):
     class Meta:
@@ -41,13 +42,132 @@ class PurchaseForm(forms.ModelForm):
 
         if not supplier.is_active:
             raise forms.ValidationError(
-                "Supplier must be active."
+                _("Supplier must be active.")
             )
 
         return supplier
 
 
+
 class PurchaseItemForm(forms.ModelForm):
+    package_quantity = forms.DecimalField(
+        label=_("Package Quantity"),
+        min_value=Decimal("0.001"),
+        max_digits=14,
+        decimal_places=3,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-input",
+                "step": "0.001",
+                "min": "0.001",
+            }
+        ),
+    )
+
+    units_per_package = forms.DecimalField(
+        label=_("Units Per Package"),
+        min_value=Decimal("0.001"),
+        max_digits=14,
+        decimal_places=3,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-input",
+                "step": "0.001",
+                "min": "0.001",
+            }
+        ),
+    )
+
+    package_cost = forms.DecimalField(
+        label=_("Package Cost"),
+        min_value=Decimal("0"),
+        max_digits=14,
+        decimal_places=2,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-input",
+                "step": "0.01",
+                "min": "0",
+            }
+        ),
+    )
+
+    class Meta:
+        model = PurchaseItem
+        fields = [
+            "product",
+            "quantity",
+            "unit_cost",
+        ]
+        widgets = {
+            "product": forms.Select(
+                attrs={"class": "form-input"}
+            ),
+            "quantity": forms.HiddenInput(),
+            "unit_cost": forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["quantity"].required = False
+        self.fields["unit_cost"].required = False
+
+        self.fields["product"].queryset = (
+            Product.objects
+            .filter(is_active=True)
+            .select_related("unit", "category")
+            .order_by("name")
+        )
+
+    def clean_product(self):
+        product = self.cleaned_data["product"]
+
+        if not product.is_active:
+            raise forms.ValidationError(
+                _("Product must be active.")
+            )
+
+        return product
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        package_quantity = cleaned_data.get("package_quantity")
+        units_per_package = cleaned_data.get("units_per_package")
+        package_cost = cleaned_data.get("package_cost")
+        product = cleaned_data.get("product")
+
+        if (
+            package_quantity is None
+            or units_per_package is None
+            or package_cost is None
+            or product is None
+        ):
+            return cleaned_data
+
+        quantity = (
+            package_quantity * units_per_package
+        )
+
+        unit_cost = (
+            package_cost / units_per_package
+        ).quantize(
+            Decimal("0.000001"),
+            rounding=ROUND_HALF_UP,
+        )
+
+        validate_quantity_for_unit(
+            quantity,
+            product.unit.symbol,
+        )
+
+        cleaned_data["quantity"] = quantity
+        cleaned_data["unit_cost"] = unit_cost
+
+        return cleaned_data
+
+        return cleaned_data
     class Meta:
         model = PurchaseItem
         fields = [
@@ -62,24 +182,15 @@ class PurchaseItemForm(forms.ModelForm):
                     "class": "form-input",
                 }
             ),
-            "quantity": forms.NumberInput(
-                attrs={
-                    "class": "form-input",
-                    "step": "0.001",
-                    "min": "0.001",
-                }
-            ),
-            "unit_cost": forms.NumberInput(
-                attrs={
-                    "class": "form-input",
-                    "step": "0.01",
-                    "min": "0",
-                }
-            ),
+            "quantity": forms.HiddenInput(),
+            "unit_cost": forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.fields["quantity"].required = False
+        self.fields["unit_cost"].required = False
 
         self.fields["product"].queryset = (
             Product.objects
@@ -93,34 +204,13 @@ class PurchaseItemForm(forms.ModelForm):
 
         if not product.is_active:
             raise forms.ValidationError(
-                "Product must be active."
+                _("Product must be active.")
             )
 
         return product
 
-    def clean_quantity(self):
-        quantity = self.cleaned_data["quantity"]
 
-        product = self.cleaned_data.get("product")
-
-        if not product:
-            return quantity
-
-        validate_quantity_for_unit(
-            quantity,
-            product.unit.symbol,
-        )
-
-        return quantity
-    def clean_unit_cost(self):
-        unit_cost = self.cleaned_data["unit_cost"]
-
-        if unit_cost < 0:
-            raise forms.ValidationError(
-                "Unit cost cannot be negative."
-            )
-
-        return unit_cost
+    
 
 PurchaseItemFormSet = forms.inlineformset_factory(
     Purchase,

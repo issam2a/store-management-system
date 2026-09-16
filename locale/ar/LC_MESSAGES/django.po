@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-15 20:24+0300\n"
+"POT-Creation-Date: 2026-09-16 21:32+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -38,7 +38,7 @@ msgid "Update customer information."
 msgstr "تحديث معلومات العميل"
 
 #: .\apps\customers\views.py:153 .\apps\products\views.py:159
-#: .\apps\purchases\views.py:357 .\apps\suppliers\views.py:167
+#: .\apps\purchases\views.py:358 .\apps\suppliers\views.py:167
 #: .\dashboard\templates\sales\sale_item_edit.html:91
 msgid "Save Changes"
 msgstr "حفظ التغييرات"
@@ -55,7 +55,7 @@ msgstr "تم تعطيل العميل بنجاح."
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:63
 #: .\dashboard\templates\inventory\inventory_list.html:135
 #: .\dashboard\templates\purchases\purchase_detail.html:251
-#: .\dashboard\templates\purchases\purchase_item_form.html:52
+#: .\dashboard\templates\purchases\purchase_item_form.html:68
 #: .\dashboard\templates\sales\sale_detail.html:178
 #: .\dashboard\templates\sales\sale_detail.html:325
 #: .\dashboard\templates\sales\sale_detail.html:619
@@ -72,7 +72,6 @@ msgstr "تعديل"
 #: .\apps\sales\forms.py:149
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:65
 #: .\dashboard\templates\purchases\purchase_detail.html:252
-#: .\dashboard\templates\purchases\purchase_item_form.html:72
 #: .\dashboard\templates\sales\sale_detail.html:226
 #: .\dashboard\templates\sales\sale_detail.html:329
 #: .\dashboard\templates\sales\sale_detail.html:623
@@ -85,8 +84,8 @@ msgstr "كمية"
 msgid "Reason"
 msgstr "سبب"
 
-#: .\apps\inventory\forms.py:66
-
+#: .\apps\inventory\forms.py:66 .\apps\purchases\forms.py:128
+#: .\apps\purchases\forms.py:207
 msgid "Product must be active."
 msgstr "يجب أن يكون المنتج نشطاً. "
 
@@ -105,20 +104,17 @@ msgid "Decrease"
 msgstr "تخفيض"
 
 #: .\apps\inventory\views.py:93
-
 msgid "Inventory adjustment applied successfully."
 msgstr " تم تطبيق تعديل المخزون بنجاح.."
 
 #: .\apps\inventory\views.py:120
 #: .\dashboard\templates\inventory\inventory_adjustment_form.html:5
 #: .\dashboard\templates\inventory\inventory_adjustment_form.html:18
-
 msgid "Inventory Adjustment"
 msgstr "تسوية المخزون"
 
 #: .\apps\inventory\views.py:121
 #: .\dashboard\templates\inventory\inventory_adjustment_form.html:182
-
 msgid "Apply Adjustment"
 msgstr " تطبيق التعديل"
 
@@ -185,7 +181,6 @@ msgstr "يجب أن تكون الكمية أكبر من صفر."
 
 #: .\apps\products\quantity.py:52
 #: .\dashboard\templates\sales\sale_detail.html:132
-
 msgid "Quantity must be a whole number for this unit."
 msgstr "يجب أن تكون الكمية عدداً صحيحاً لهذه الوحدة.."
 
@@ -217,19 +212,38 @@ msgstr "تم تفعيل المنتج بنجاح."
 msgid "Product deactivated successfully."
 msgstr "تم إلغاء تفعيل المنتج بنجاح."
 
-#: .\apps\purchases\forms.py:145
+#: .\apps\purchases\forms.py:45
+
+msgid "Supplier must be active."
+msgstr "يجب أن يكون المورد نشطاً "
+
+#: .\apps\purchases\forms.py:54
+
+msgid "Package Quantity"
+msgstr "الكمية"
+
+#: .\apps\purchases\forms.py:68
+msgid "Units Per Package"
+msgstr "عدد الوحدات في العبوة"
+
+#: .\apps\purchases\forms.py:82
+
+msgid "Package Cost"
+msgstr "السعر.."
+
+#: .\apps\purchases\forms.py:235
 #: .\dashboard\templates\products\product_form.html:48
 msgid "Product Name"
 msgstr "اسم المنتج"
 
-#: .\apps\purchases\forms.py:146
+#: .\apps\purchases\forms.py:236
 #: .\dashboard\templates\inventory\inventory_list.html:136
 #: .\dashboard\templates\products\product_form.html:64
 #: .\dashboard\templates\products\product_list.html:144
 msgid "Category"
 msgstr "الفئة"
 
-#: .\apps\purchases\forms.py:147
+#: .\apps\purchases\forms.py:237
 #: .\dashboard\templates\inventory\inventory_list.html:137
 #: .\dashboard\templates\products\product_form.html:81
 #: .\dashboard\templates\products\product_list.html:146
@@ -240,41 +254,39 @@ msgstr "الفئة"
 msgid "Unit"
 msgstr "الوحدة"
 
-#: .\apps\purchases\forms.py:148
+#: .\apps\purchases\forms.py:238
 #: .\dashboard\templates\products\product_form.html:115
 msgid "Selling Price"
 msgstr "سعر المبيع"
 
-#: .\apps\purchases\forms.py:149
+#: .\apps\purchases\forms.py:239
 #: .\dashboard\templates\inventory\inventory_list.html:139
 #: .\dashboard\templates\products\product_form.html:132
 msgid "Minimum Stock"
 msgstr "الحد الأدنى للمخزون"
 
-#: .\apps\purchases\forms.py:205
+#: .\apps\purchases\forms.py:295
 #, fuzzy
 #| msgid "Payment method is required."
 msgid "Product name is required."
 msgstr "طريقة الدفع مطلوبة"
 
-#: .\apps\purchases\forms.py:215
-
+#: .\apps\purchases\forms.py:305
 msgid "Selling price cannot be negative."
 msgstr "لا يمكن أن يكون سعر البيع سالباً.."
 
-#: .\apps\purchases\forms.py:225
-
+#: .\apps\purchases\forms.py:315
 msgid "Minimum stock cannot be negative."
 msgstr "لا يمكن أن تكون قيمة الحد الأدنى للمخزون سالبة."
 
-#: .\apps\purchases\forms.py:232 .\apps\sales\forms.py:221
+#: .\apps\purchases\forms.py:322 .\apps\sales\forms.py:221
 #: .\dashboard\templates\purchases\purchase_cancel.html:88
 #: .\dashboard\templates\purchases\purchase_detail.html:175
 #: .\dashboard\templates\sales\sale_detail.html:758
 msgid "Cancellation Reason"
 msgstr "سبب الإلغاء"
 
-#: .\apps\purchases\forms.py:247
+#: .\apps\purchases\forms.py:337
 msgid "Cancellation reason is required."
 msgstr "سبب الإلغاء مطلوب."
 
@@ -337,51 +349,46 @@ msgstr "تم إنشاء المنتج بنجاح."
 msgid "Items can only be added to draft purchases."
 msgstr "لا يمكن إضافة العناصر إلا إلى مسودات عمليات الشراء."
 
-#: .\apps\purchases\views.py:256
-
+#: .\apps\purchases\views.py:257
 msgid "Purchase item added successfully."
 msgstr "تمت إضافة عنصر الشراء بنجاح."
 
-#: .\apps\purchases\views.py:278
+#: .\apps\purchases\views.py:279
 msgid "Add Purchase Item"
 msgstr "إضافة عنصر شراء"
 
-#: .\apps\purchases\views.py:279
+#: .\apps\purchases\views.py:280
 #: .\dashboard\templates\purchases\purchase_detail.html:238
 #: .\dashboard\templates\sales\sale_item_create.html:91
 msgid "Add Item"
 msgstr "إضافة عنصر"
 
-#: .\apps\purchases\views.py:304
-
+#: .\apps\purchases\views.py:305
 msgid "Items can only be edited in draft purchases."
 msgstr "لا يمكن تعديل العناصر إلا في مسودات عمليات الشراء."
 
-#: .\apps\purchases\views.py:339
-
+#: .\apps\purchases\views.py:340
 msgid "Purchase item updated successfully."
 msgstr "تم تحديث عنصر الشراء بنجاح."
 
-#: .\apps\purchases\views.py:356
+#: .\apps\purchases\views.py:357
 msgid "Edit Purchase Item"
 msgstr "تعديل عنصر الشراء"
 
-#: .\apps\purchases\views.py:432
-
+#: .\apps\purchases\views.py:433
 msgid "Purchase item deleted successfully."
 msgstr "تم حذف عنصر الشراء بنجاح."
 
-#: .\apps\purchases\views.py:469
+#: .\apps\purchases\views.py:470
 msgid "Purchase completed successfully."
 msgstr "تم إتمام عملية الشراء بنجاح."
 
-#: .\apps\purchases\views.py:503
-
+#: .\apps\purchases\views.py:504
+#, python-format
 msgid "Purchase %(reference)s deleted successfully."
 msgstr "تم حذف عملية الشراء %(reference)s بنجاح."
 
-#: .\apps\purchases\views.py:558
-
+#: .\apps\purchases\views.py:559
 msgid "Purchase cancelled successfully."
 msgstr "تم إلغاء عملية الشراء بنجاح."
 
@@ -431,7 +438,6 @@ msgid "Select a product before entering a quantity."
 msgstr "اختر منتجاً قبل إدخال الكمية."
 
 #: .\apps\sales\forms.py:136 .\dashboard\templates\sales\sale_detail.html:134
-
 msgid "Amount must be greater than zero."
 msgstr "يجب أن تكون القيمة أكبر من صفر."
 
@@ -571,7 +577,7 @@ msgstr "المبيعات"
 #: .\dashboard\templates\purchases\purchase_cancel.html:13
 #: .\dashboard\templates\purchases\purchase_detail.html:16
 #: .\dashboard\templates\purchases\purchase_form.html:14
-#: .\dashboard\templates\purchases\purchase_item_form.html:14
+#: .\dashboard\templates\purchases\purchase_item_form.html:15
 #: .\dashboard\templates\purchases\purchase_list.html:5
 #: .\dashboard\templates\purchases\purchase_list.html:18
 #: .\dashboard\templates\purchases\purchase_product_form.html:15
@@ -817,7 +823,7 @@ msgstr "اسم العميل"
 #: .\dashboard\templates\products\product_form.html:157
 #: .\dashboard\templates\products\unit_form.html:81
 #: .\dashboard\templates\purchases\purchase_form.html:109
-#: .\dashboard\templates\purchases\purchase_item_form.html:114
+#: .\dashboard\templates\purchases\purchase_item_form.html:149
 #: .\dashboard\templates\purchases\purchase_product_form.html:153
 #: .\dashboard\templates\sales\sale_create.html:99
 #: .\dashboard\templates\sales\sale_item_create.html:87
@@ -1084,7 +1090,6 @@ msgstr "قم بتعديل المخزون الفعلي عندما تختلف ال
 
 #: .\dashboard\templates\inventory\inventory_adjustment_form.html:110
 #: .\dashboard\templates\inventory\inventory_list.html:138
-
 msgid "Current Stock"
 msgstr " المخزون الحالي"
 
@@ -1095,12 +1100,10 @@ msgstr "المخزون المتوقع"
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:5
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:17
 #: .\dashboard\templates\inventory\inventory_list.html:28
-
 msgid "Adjustment History"
 msgstr " سجل التعديلات"
 
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:21
-
 msgid "Review historical inventory adjustments and their audit information."
 msgstr "مراجعة تعديلات المخزون التاريخية ومعلومات التدقيق الخاصة بها"
 
@@ -1157,7 +1160,6 @@ msgid "Applied At"
 msgstr "تم التعديل في"
 
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:68
-
 msgid "Applied By"
 msgstr "تم التعديل بواسطة"
 
@@ -1170,12 +1172,10 @@ msgid "Monitor current stock levels and make inventory adjustments."
 msgstr "مراقبة مستويات المخزون الحالية وإجراء تعديلات على المخزون."
 
 #: .\dashboard\templates\inventory\inventory_list.html:52
-
 msgid "Search Product or Category"
 msgstr "البحث عن منتج أو فئة"
 
 #: .\dashboard\templates\inventory\inventory_list.html:63
-
 msgid "All stock statuses"
 msgstr "جميع حالات المخزون "
 
@@ -1186,7 +1186,6 @@ msgstr "جبد"
 
 #: .\dashboard\templates\inventory\inventory_list.html:84
 #: .\dashboard\templates\inventory\inventory_list.html:175
-
 msgid "Out of Stock"
 msgstr "إنتهى من المخزن "
 
@@ -1468,7 +1467,6 @@ msgstr "مواد"
 # Units
 # ============================================================
 #: .\dashboard\templates\purchases\purchase_detail.html:254
-#: .\dashboard\templates\purchases\purchase_item_form.html:92
 msgid "Unit Cost"
 msgstr "تكلفة الوحدة"
 
@@ -1501,7 +1499,7 @@ msgstr "أنشئ مسودة أمر شراء جديدة من المورد."
 msgid "+ New Supplier"
 msgstr "المورد"
 
-#: .\dashboard\templates\purchases\purchase_item_form.html:22
+#: .\dashboard\templates\purchases\purchase_item_form.html:23
 msgid "Add an item to purchase"
 msgstr "أضف عنصراً للشراء"
 
@@ -1571,7 +1569,6 @@ msgid ""
 msgstr ""
 
 #: .\dashboard\templates\purchases\purchase_product_form.html:23
-
 msgid "Create a new product for this purchase."
 msgstr "أنشئ منتجاً جديداً لعملية الشراء هذه."
 
@@ -1622,7 +1619,6 @@ msgid "Enter a valid amount."
 msgstr "أدخل مبلغاً صالحاً."
 
 #: .\dashboard\templates\sales\sale_detail.html:136
-
 msgid "Enter a quantity."
 msgstr " أدخل الكمية "
 
@@ -1646,7 +1642,6 @@ msgid "Price"
 msgstr "السعر"
 
 #: .\dashboard\templates\sales\sale_detail.html:190
-
 msgid "Action"
 msgstr "الإجراء"
 

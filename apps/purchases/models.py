@@ -108,7 +108,7 @@ class PurchaseItem(models.Model):
 
     unit_cost = models.DecimalField(
         max_digits=14,
-        decimal_places=2,
+        decimal_places=6,
         validators=[MinValueValidator(0)],
     )
 
