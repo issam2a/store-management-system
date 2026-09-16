@@ -757,12 +757,11 @@ if (
 
                             maintainAspectRatio: false,
 
-
                             /*
-                             * ==================================================
-                             * Entrance animation
-                             * ==================================================
-                             */
+                            * ==================================================
+                            * Entrance animation
+                            * ==================================================
+                            */
 
                             animation: {
                                 duration: 2200,
@@ -794,12 +793,11 @@ if (
                                 },
                             },
 
-
                             /*
-                             * ==================================================
-                             * Interaction
-                             * ==================================================
-                             */
+                            * ==================================================
+                            * Interaction
+                            * ==================================================
+                            */
 
                             interaction: {
                                 intersect: false,
@@ -807,12 +805,11 @@ if (
                                 mode: "index",
                             },
 
-
                             /*
-                             * ==================================================
-                             * Plugins
-                             * ==================================================
-                             */
+                            * ==================================================
+                            * Plugins
+                            * ==================================================
+                            */
 
                             plugins: {
                                 legend: {
@@ -841,35 +838,61 @@ if (
                                         "#C6F235",
 
                                     callbacks: {
-                                        label: (
-                                            context
-                                        ) => {
+                                        title: (items) => {
+                                            if (!items.length) {
+                                                return "";
+                                            }
+
+                                            return items[0].label;
+                                        },
+
+                                        label: (context) => {
                                             const value =
-                                                context
-                                                    .parsed
-                                                    .y ?? 0;
+                                                context.parsed.y ?? 0;
 
                                             return `Revenue: ${value.toLocaleString(
                                                 undefined,
                                                 {
-                                                    minimumFractionDigits:
-                                                        2,
+                                                    minimumFractionDigits: 2,
 
-                                                    maximumFractionDigits:
-                                                        2,
+                                                    maximumFractionDigits: 2,
                                                 }
                                             )}`;
+                                        },
+
+                                        afterLabel: (context) => {
+                                            const index =
+                                                context.dataIndex;
+
+                                            const item =
+                                                chartData[index];
+
+                                            if (!item) {
+                                                return "";
+                                            }
+
+                                            return [
+                                                `Sales: ${item.transactions.toLocaleString()}`,
+
+                                                `Units sold: ${Number(
+                                                    item.units_sold
+                                                ).toLocaleString(
+                                                    undefined,
+                                                    {
+                                                        maximumFractionDigits: 3,
+                                                    }
+                                                )}`,
+                                            ];
                                         },
                                     },
                                 },
                             },
 
-
                             /*
-                             * ==================================================
-                             * Scales
-                             * ==================================================
-                             */
+                            * ==================================================
+                            * Scales
+                            * ==================================================
+                            */
 
                             scales: {
                                 x: {
@@ -880,6 +903,10 @@ if (
                                     ticks: {
                                         color:
                                             "#7E8B7B",
+
+                                        maxRotation: 0,
+
+                                        autoSkip: false,
                                     },
                                 },
 
@@ -909,10 +936,10 @@ if (
 
 
             /*
-             * ============================================================
-             * Moving revenue glow
-             * ============================================================
-             */
+            * ============================================================
+            * Moving revenue glow
+            * ============================================================
+            */
 
             function animateRevenueGlow() {
                 const chart =
@@ -947,28 +974,28 @@ if (
 
 
                     /*
-                     * Smooth ease-in-out.
-                     */
+                    * Smooth ease-in-out.
+                    */
 
                     const eased =
                         progress < 0.5
                             ? 2 *
-                              progress *
-                              progress
+                            progress *
+                            progress
                             : 1 -
-                              Math.pow(
-                                  -2 *
-                                      progress +
-                                      2,
-                                  2
-                              ) /
-                                  2;
+                            Math.pow(
+                                -2 *
+                                    progress +
+                                    2,
+                                2
+                            ) /
+                                2;
 
 
                     /*
-                     * Find the current position
-                     * along the chart.
-                     */
+                    * Find the current position
+                    * along the chart.
+                    */
 
                     const index =
                         eased *
@@ -1005,8 +1032,8 @@ if (
 
 
                     /*
-                     * Redraw chart.
-                     */
+                    * Redraw chart.
+                    */
 
                     chart.draw();
 
@@ -1016,10 +1043,10 @@ if (
 
 
                     /*
-                     * --------------------------------------------------------
-                     * Soft outer glow
-                     * --------------------------------------------------------
-                     */
+                    * --------------------------------------------------------
+                    * Soft outer glow
+                    * --------------------------------------------------------
+                    */
 
                     context.save();
 
@@ -1065,10 +1092,10 @@ if (
 
 
                     /*
-                     * --------------------------------------------------------
-                     * Bright center
-                     * --------------------------------------------------------
-                     */
+                    * --------------------------------------------------------
+                    * Bright center
+                    * --------------------------------------------------------
+                    */
 
                     context.fillStyle =
                         "#C6F235";
@@ -1107,9 +1134,9 @@ if (
 
 
             /*
-             * Wait for the main chart animation
-             * before starting the moving glow.
-             */
+            * Wait for the main chart animation
+            * before starting the moving glow.
+            */
 
             setTimeout(
                 animateRevenueGlow,
