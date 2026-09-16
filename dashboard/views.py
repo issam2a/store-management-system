@@ -88,8 +88,8 @@ def home(request):
     )
 
     # ---------------------------------------------------------
-    # Revenue trend — last 7 days
-    # ---------------------------------------------------------
+# Revenue trend — last 7 days
+# ---------------------------------------------------------
 
     start_date = today - timedelta(days=6)
 
@@ -116,6 +116,16 @@ def home(request):
                 "label": date.strftime("%a"),
                 "revenue": float(
                     item["revenue"]
+                    if item
+                    else 0
+                ),
+                "transactions": int(
+                    item["transaction_count"]
+                    if item
+                    else 0
+                ),
+                "units_sold": float(
+                    item["units_sold"]
                     if item
                     else 0
                 ),
