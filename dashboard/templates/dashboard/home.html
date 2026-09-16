@@ -635,76 +635,81 @@
 
         <article class="dashboard-card">
 
-            <div class="card-header">
+    <div class="card-header">
 
-                <div>
+        <div>
 
-                    <span class="card-eyebrow">
-                        {% trans "Products" %}
+            <span class="card-eyebrow">
+                {% trans "Products" %}
+            </span>
+
+            <h2>
+                {% trans "Top Products" %}
+            </h2>
+
+        </div>
+
+        <a
+            href="#"
+            class="card-link"
+        >
+            {% trans "View all" %}
+            <span aria-hidden="true">→</span>
+        </a>
+
+    </div>
+
+
+    <div class="product-ranking">
+
+        {% for product in top_products %}
+
+            <div class="product-ranking-item">
+
+                <!-- Ranking -->
+                <div class="product-ranking-number">
+                    {{ forloop.counter }}
+                </div>
+
+
+                <!-- Product information -->
+                <div class="product-ranking-info">
+
+                    <strong>
+                        {{ product.product__name }}
+                    </strong>
+
+                    <span>
+                        {{ product.quantity_sold|floatformat:-3 }}
+                        {{ product.product__unit__symbol }}
+                        {% trans "sold" %}
                     </span>
-
-                    <h2>
-                        {% trans "Top Products" %}
-                    </h2>
 
                 </div>
 
-                <a
-                    href="#"
-                    class="card-link"
-                >
-                    {% trans "View all" %}
-                    <span aria-hidden="true">→</span>
-                </a>
+
+                <!-- Revenue -->
+                <div class="product-ranking-revenue">
+
+                    {{ product.gross_sales_value|floatformat:2 }}
+
+                </div>
 
             </div>
 
+        {% empty %}
 
-            <div class="product-ranking">
+            <div class="ranking-empty-state">
 
-                {% for product in top_products %}
-
-                    <div class="product-ranking-item">
-
-                        <div class="product-ranking-number">
-                            {{ forloop.counter }}
-                        </div>
-
-                        <div class="product-ranking-info">
-
-                            <strong>
-                                {{ product.product__name }}
-                            </strong>
-
-                            <span>
-                                {{ product.quantity_sold|floatformat:-3 }}
-                                {{ product.product__unit__symbol }}
-                                {% trans "sold" %}
-                            </span>
-
-                        </div>
-
-                        <div class="product-ranking-revenue">
-
-                            {{ product.revenue|floatformat:2 }}
-
-                        </div>
-
-                    </div>
-
-                {% empty %}
-
-                    <div class="ranking-empty-state">
-
-                        {% trans "Sales data will appear here." %}
-
-                    </div>
-
-                {% endfor %}
+                {% trans "Sales data will appear here." %}
 
             </div>
 
-        </article>
+        {% endfor %}
+
+    </div>
+
+</article>
 
     </section>
 

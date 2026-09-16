@@ -7,6 +7,7 @@ from django.utils import timezone
 from apps.analytics.services import (
     get_executive_kpis,
     get_sales_trend,
+    get_top_selling_products,
 )
 from apps.products.models import Product
 from apps.sales.models import Sale, SaleItem
@@ -67,24 +68,9 @@ def home(request):
     # Ranked by quantity sold.
     # ---------------------------------------------------------
 
-    top_products = (
-        SaleItem.objects
-        .filter(
-            sale__status=Sale.Status.COMPLETED,
-        )
-        .values(
-            "product_id",
-            "product__name",
-            "product__unit__symbol",
-        )
-        .annotate(
-            quantity_sold=Sum("quantity"),
-            revenue=Sum("line_total"),
-        )
-        .order_by(
-            "-quantity_sold",
-            "product__name",
-        )[:5]
+    top_products = get_top_selling_products(
+        start_date=today,
+        end_date=today,
     )
 
     # ---------------------------------------------------------
