@@ -47,165 +47,297 @@
     </section>
 
 
-    <!-- =====================================================
-         KPI CARDS
-    ====================================================== -->
+ <!-- =====================================================
+     KPI CARDS
+====================================================== -->
 
-    <section
-        class="kpi-grid"
-        aria-label="{% trans 'Key performance indicators' %}"
-    >
+<section
+    class="kpi-grid"
+    aria-label="{% trans 'Key performance indicators' %}"
+>
 
-        <!-- Revenue -->
+    <!-- Revenue -->
+    <article class="kpi-card kpi-card-primary">
 
-        <article class="kpi-card kpi-card-primary">
+        <div class="kpi-card-top">
 
-            <div class="kpi-card-top">
+            <span class="kpi-label">
+                {% trans "Revenue" %}
+            </span>
 
-                <span class="kpi-label">
-                    {% trans "Revenue" %}
-                </span>
+            <span class="kpi-icon" aria-hidden="true">
+                ↗
+            </span>
 
-                <span class="kpi-icon" aria-hidden="true">
-                    ↗
-                </span>
+        </div>
 
-            </div>
+        <div
+            class="kpi-value"
+            data-count="{{ revenue }}"
+            data-decimals="2"
+        >
+            {{ revenue|floatformat:2 }}
+        </div>
 
-            <div
-                class="kpi-value"
-                data-count="{{ revenue }}"
-                data-decimals="2"
-            >
-                {{revenue}}
-            </div>
+        <div class="kpi-footer">
 
-            <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Today" %}
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- Sales -->
+    <article class="kpi-card">
+
+        <div class="kpi-card-top">
+
+            <span class="kpi-label">
+                {% trans "Sales" %}
+            </span>
+
+            <span class="kpi-icon" aria-hidden="true">
+                ◫
+            </span>
+
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ sales_count }}"
+            data-decimals="0"
+        >
+            0
+        </div>
+
+        <div class="kpi-footer">
+
+            <span class="kpi-status">
+                {% trans "Completed sales" %}
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- Gross Profit -->
+    <article class="kpi-card">
+
+        <div class="kpi-card-top">
+
+            <span class="kpi-label">
+                {% trans "Gross Profit" %}
+            </span>
+
+            <span class="kpi-icon" aria-hidden="true">
+                ↑
+            </span>
+
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ gross_profit }}"
+            data-decimals="2"
+        >
+            {{ gross_profit|floatformat:2 }}
+        </div>
+
+        <div class="kpi-footer">
+
+            <span class="kpi-status">
+                {% trans "Revenue minus COGS" %}
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- Gross Margin -->
+    <article class="kpi-card">
+
+        <div class="kpi-card-top">
+
+            <span class="kpi-label">
+                {% trans "Gross Margin" %}
+            </span>
+
+            <span class="kpi-icon" aria-hidden="true">
+                %
+            </span>
+
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ gross_margin|default_if_none:'0' }}"
+            data-decimals="2"
+        >
+            {{ gross_margin|default_if_none:'0'|floatformat:2 }}
+        </div>
+
+        <div class="kpi-footer">
+
+            <span class="kpi-status">
+                {% trans "Gross profit margin" %}
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- COGS -->
+    <article class="kpi-card">
+
+        <div class="kpi-card-top">
+
+            <span class="kpi-label">
+                {% trans "COGS" %}
+            </span>
+
+            <span class="kpi-icon" aria-hidden="true">
+                ↓
+            </span>
+
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ cogs }}"
+            data-decimals="2"
+        >
+            {{ cogs|floatformat:2 }}
+        </div>
+
+        <div class="kpi-footer">
+
+            <span class="kpi-status">
+                {% trans "Cost of goods sold" %}
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- Units Sold -->
+    <article class="kpi-card">
+
+        <div class="kpi-card-top">
+
+            <span class="kpi-label">
+                {% trans "Units Sold" %}
+            </span>
+
+            <span class="kpi-icon" aria-hidden="true">
+                □
+            </span>
+
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ units_sold }}"
+            data-decimals="3"
+        >
+            {{ units_sold|floatformat:-3 }}
+        </div>
+
+        <div class="kpi-footer">
+
+            <span class="kpi-status">
+                {% trans "Today" %}
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- Average Order Value -->
+    <article class="kpi-card">
+
+        <div class="kpi-card-top">
+
+            <span class="kpi-label">
+                {% trans "Average Order Value" %}
+            </span>
+
+            <span class="kpi-icon" aria-hidden="true">
+                ⌀
+            </span>
+
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ average_order_value }}"
+            data-decimals="2"
+        >
+            {{ average_order_value|floatformat:2 }}
+        </div>
+
+        <div class="kpi-footer">
+
+            <span class="kpi-status">
+                {% trans "Revenue per sale" %}
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <!-- Low Stock -->
+    <article class="kpi-card kpi-card-warning">
+
+        <div class="kpi-card-top">
+
+            <span class="kpi-label">
+                {% trans "Low Stock" %}
+            </span>
+
+            <span class="kpi-icon" aria-hidden="true">
+                !
+            </span>
+
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ low_stock_count }}"
+            data-decimals="0"
+        >
+            0
+        </div>
+
+        <div class="kpi-footer">
+
+            {% if low_stock_count > 0 %}
 
                 <span class="kpi-status">
-                    {% trans "Today" %}
+                    {% trans "Needs attention" %}
                 </span>
 
-            </div>
-
-        </article>
-
-
-        <!-- Sales -->
-
-        <article class="kpi-card">
-
-            <div class="kpi-card-top">
-
-                <span class="kpi-label">
-                    {% trans "Sales" %}
-                </span>
-
-                <span class="kpi-icon" aria-hidden="true">
-                    ◫
-                </span>
-
-            </div>
-
-            <div
-                class="kpi-value"
-                data-count="{{ sales_count }}"
-                data-decimals="0"
-            >
-                0
-            </div>
-
-            <div class="kpi-footer">
+            {% else %}
 
                 <span class="kpi-status">
-                    {% trans "Completed sales" %}
+                    {% trans "Inventory looks healthy" %}
                 </span>
 
-            </div>
+            {% endif %}
 
-        </article>
+        </div>
 
+    </article>
 
-        <!-- Gross Profit -->
-
-        <article class="kpi-card">
-
-            <div class="kpi-card-top">
-
-                <span class="kpi-label">
-                    {% trans "Gross Profit" %}
-                </span>
-
-                <span class="kpi-icon" aria-hidden="true">
-                    ◒
-                </span>
-
-            </div>
-
-            <div
-                class="kpi-value"
-                data-count="{{ gross_profit }}"
-                data-decimals="2"
-            >
-                {{ gross_profit|floatformat:2 }}
-            </div>
-
-            <div class="kpi-footer">
-
-                <span class="kpi-status">
-                    {% trans "Revenue minus COGS" %}
-                </span>
-
-            </div>
-
-        </article>
-
-
-        <!-- Low Stock -->
-
-        <article class="kpi-card kpi-card-warning">
-
-            <div class="kpi-card-top">
-
-                <span class="kpi-label">
-                    {% trans "Low Stock" %}
-                </span>
-
-                <span class="kpi-icon" aria-hidden="true">
-                    !
-                </span>
-
-            </div>
-
-            <div
-                class="kpi-value"
-                data-count="{{ low_stock_count }}"
-                data-decimals="0"
-            >
-                0
-            </div>
-
-            <div class="kpi-footer">
-
-                {% if low_stock_count > 0 %}
-
-                    <span class="kpi-status">
-                        {% trans "Needs attention" %}
-                    </span>
-
-                {% else %}
-
-                    <span class="kpi-status">
-                        {% trans "Inventory looks healthy" %}
-                    </span>
-
-                {% endif %}
-
-            </div>
-
-        </article>
-
-    </section>
+</section>
 
 
     <!-- =====================================================
