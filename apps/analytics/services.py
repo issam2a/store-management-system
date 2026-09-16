@@ -66,6 +66,90 @@ def _date_range_bounds(start_date, end_date, store_timezone):
 
     return start_dt, end_dt
 
+def _get_profitability_sale_items(
+    start_date=None,
+    end_date=None,
+):
+    """
+    Return completed sale items with sale-level discount allocated
+    proportionally across their line totals.
+
+    V1 allocation rule:
+        item_discount =
+            sale.discount_amount
+            * item.line_total
+            / sale.subtotal_amount
+
+    This allows product/category profitability to reconcile with
+    the final sale revenue after discounts.
+    """
+
+    store_timezone = django_timezone.get_default_timezone()
+
+    start_dt, end_dt = _date_range_bounds(
+        start_date,
+        end_date,
+        store_timezone,
+    )
+
+    items = (
+        SaleItem.objects
+        .filter(
+            sale__status=Sale.Status.COMPLETED,
+            sale__completed_at__gte=start_dt,
+            sale__completed_at__lt=end_dt,
+        )
+        .select_related(
+            "sale",
+            "product",
+            "product__category",
+        )
+        .order_by(
+            "sale_id",
+            "id",
+        )
+    )
+
+    for item in items:
+        sale = item.sale
+
+        line_total = item.line_total or Decimal("0.00")
+        unit_cost = item.unit_cost or Decimal("0.00")
+        quantity = item.quantity or Decimal("0.000")
+
+        subtotal = sale.subtotal_amount or Decimal("0.00")
+        discount = sale.discount_amount or Decimal("0.00")
+
+        if subtotal > Decimal("0.00") and discount > Decimal("0.00"):
+            item_discount = (
+                discount * line_total / subtotal
+            )
+        else:
+            item_discount = Decimal("0.00")
+
+        net_revenue = line_total - item_discount
+        cogs = quantity * unit_cost
+        gross_profit = net_revenue - cogs
+
+        yield {
+            "sale_id": sale.id,
+            "sale_item_id": item.id,
+            "product_id": item.product_id,
+            "product_name": item.product.name,
+            "category_id": item.product.category_id,
+            "category_name": (
+                item.product.category.name
+                if item.product.category_id
+                else None
+            ),
+            "quantity": quantity,
+            "gross_sales_value": line_total,
+            "allocated_discount": item_discount,
+            "revenue": net_revenue,
+            "cogs": cogs,
+            "gross_profit": gross_profit,
+        }
+
 
 def get_profitability_summary(start_date=None, end_date=None):
     """
@@ -146,6 +230,96 @@ def get_profitability_summary(start_date=None, end_date=None):
         "cogs": cogs,
         "gross_profit": gross_profit,
         "gross_margin": gross_margin,
+    }
+
+
+def get_executive_kpis(start_date=None, end_date=None):
+    """
+    Return executive-level KPIs for completed sales.
+
+    KPIs:
+    - Revenue
+    - COGS
+    - Gross Profit
+    - Gross Margin
+    - Transaction Count
+    - Units Sold
+    - Average Order Value
+
+    Only completed sales are included.
+    Cancelled and draft sales are excluded.
+    """
+
+    profitability = get_profitability_summary(
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+    completed_sales = Sale.objects.filter(
+        status=Sale.Status.COMPLETED,
+    )
+
+    store_timezone = django_timezone.get_default_timezone()
+
+    start_at, end_at = _date_range_bounds(
+        start_date,
+        end_date,
+        store_timezone,
+    )
+
+    if start_at is not None:
+        completed_sales = completed_sales.filter(
+            completed_at__gte=start_at,
+        )
+
+    if end_at is not None:
+        completed_sales = completed_sales.filter(
+            completed_at__lt=end_at,
+        )
+
+    transaction_count = completed_sales.count()
+
+    sale_items = SaleItem.objects.filter(
+        sale__status=Sale.Status.COMPLETED,
+    )
+
+    if start_at is not None:
+        sale_items = sale_items.filter(
+            sale__completed_at__gte=start_at,
+        )
+
+    if end_at is not None:
+        sale_items = sale_items.filter(
+            sale__completed_at__lt=end_at,
+        )
+
+    units_sold = sale_items.aggregate(
+        total=Coalesce(
+            Sum("quantity"),
+            Decimal("0"),
+        )
+    )["total"]
+
+    revenue = profitability["revenue"]
+
+    if transaction_count > 0:
+        average_order_value = (
+            revenue / Decimal(transaction_count)
+        ).quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+    else:
+        average_order_value = Decimal("0.00")
+
+    return {
+        "revenue": revenue,
+        "cogs": profitability["cogs"],
+        "gross_profit": profitability["gross_profit"],
+        "gross_margin": profitability["gross_margin"],
+        "transaction_count": transaction_count,
+        "units_sold": units_sold,
+        "average_order_value": average_order_value,
     }
 
 
@@ -293,141 +467,102 @@ def get_slow_moving_products(
 
     return list(products[:limit])
 
-
 def get_product_profitability(
     start_date=None,
     end_date=None,
     limit=10,
 ):
     """
-    Return product-level gross profitability for completed sales.
+    Product profitability based on final sale revenue.
 
-    Metrics:
-        quantity_sold:
-            Total quantity sold.
+    Sale-level discounts are allocated proportionally
+    across sale items according to each item's line_total.
 
-        gross_sales_value:
-            Sum of SaleItem.line_total, representing gross
-            sales value before sale-level discounts.
-
-        cogs:
-            Total cost of goods sold based on historical
-            SaleItem.unit_cost snapshots.
-
-        gross_profit:
-            Gross sales value minus COGS.
-
-        gross_margin:
-            Gross profit divided by gross sales value,
-            expressed as a percentage.
-
-    Optional date filters are applied to the sale completion date,
-    using the store's fixed timezone and a half-open date interval.
-    See _date_range_bounds for details.
-
-    Products are ranked by gross profit descending.
+    COGS uses the historical SaleItem.unit_cost snapshot.
     """
-    store_timezone = django_timezone.get_default_timezone()
-    start_dt, end_dt = _date_range_bounds(start_date, end_date, store_timezone)
 
-    completed_items = SaleItem.objects.filter(
-        sale__status=Sale.Status.COMPLETED,
+    results = {}
+
+    for item in _get_profitability_sale_items(
+        start_date=start_date,
+        end_date=end_date,
+    ):
+        product_id = item["product_id"]
+
+        if product_id not in results:
+            results[product_id] = {
+                "product_id": product_id,
+                "product_name": item["product_name"],
+                "quantity_sold": Decimal("0.000"),
+                "gross_sales_value": Decimal("0.00"),
+                "allocated_discount": Decimal("0.00"),
+                "revenue": Decimal("0.00"),
+                "cogs": Decimal("0.00"),
+                "gross_profit": Decimal("0.00"),
+            }
+
+        result = results[product_id]
+
+        result["quantity_sold"] += item["quantity"]
+        result["gross_sales_value"] += item["gross_sales_value"]
+        result["allocated_discount"] += item["allocated_discount"]
+        result["revenue"] += item["revenue"]
+        result["cogs"] += item["cogs"]
+        result["gross_profit"] += item["gross_profit"]
+
+    rows = list(results.values())
+
+    rows.sort(
+        key=lambda row: row["gross_profit"],
+        reverse=True,
     )
 
-    if start_dt is not None:
-        completed_items = completed_items.filter(
-            sale__completed_at__gte=start_dt,
-        )
+    rows = rows[:limit]
 
-    if end_dt is not None:
-        completed_items = completed_items.filter(
-            sale__completed_at__lt=end_dt,
-        )
-
-    items_with_cost = completed_items.annotate(
-        line_cost=ExpressionWrapper(
-            F("quantity") * F("unit_cost"),
-            output_field=DecimalField(
-                max_digits=20,
-                decimal_places=5,
-            ),
-        )
-    )
-
-    products = (
-        items_with_cost
-        .values(
-            "product_id",
-            "product__name",
-        )
-        .annotate(
-            quantity_sold=Sum("quantity"),
-            gross_sales_value=Sum("line_total"),
-            cogs=Sum("line_cost"),
-        )
-        .annotate(
-            # Computed from the two aggregates above so ordering (and
-            # the [:limit] slice below) actually reflects gross
-            # profit, not gross sales value.
-            gross_profit_for_ordering=F("gross_sales_value") - F("cogs"),
-        )
-        .order_by(
-            "-gross_profit_for_ordering",
-            "product__name",
-        )
-    )
-
-    results = []
-
-    for product in products[:limit]:
-        gross_sales_value = (
-            product["gross_sales_value"]
-            or Decimal("0.00")
-        ).quantize(
-            Decimal("0.01"),
+    for row in rows:
+        row["quantity_sold"] = row["quantity_sold"].quantize(
+            Decimal("0.001"),
             rounding=ROUND_HALF_UP,
         )
 
-        cogs = (
-            product["cogs"]
-            or Decimal("0.00")
-        ).quantize(
-            Decimal("0.01"),
+        row["gross_sales_value"] = row["gross_sales_value"].quantize(
+            TWO_PLACES,
             rounding=ROUND_HALF_UP,
         )
 
-        gross_profit = (
-            gross_sales_value - cogs
-        ).quantize(
-            Decimal("0.01"),
+        row["allocated_discount"] = row["allocated_discount"].quantize(
+            TWO_PLACES,
             rounding=ROUND_HALF_UP,
         )
 
-        if gross_sales_value > Decimal("0.00"):
-            gross_margin = (
-                gross_profit
-                / gross_sales_value
+        row["revenue"] = row["revenue"].quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        row["cogs"] = row["cogs"].quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        row["gross_profit"] = row["gross_profit"].quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        if row["revenue"] > Decimal("0.00"):
+            row["gross_margin"] = (
+                row["gross_profit"]
+                / row["revenue"]
                 * Decimal("100")
             ).quantize(
-                Decimal("0.01"),
+                TWO_PLACES,
                 rounding=ROUND_HALF_UP,
             )
         else:
-            gross_margin = None
+            row["gross_margin"] = Decimal("0.00")
 
-        results.append(
-            {
-                "product_id": product["product_id"],
-                "product__name": product["product__name"],
-                "quantity_sold": product["quantity_sold"],
-                "gross_sales_value": gross_sales_value,
-                "cogs": cogs,
-                "gross_profit": gross_profit,
-                "gross_margin": gross_margin,
-            }
-        )
-
-    return results
+    return rows
 
 def get_category_profitability(
     start_date=None,
@@ -435,144 +570,105 @@ def get_category_profitability(
     limit=10,
 ):
     """
-    Return category-level gross profitability for completed sales.
+    Category profitability based on final sale revenue.
 
-    Metrics:
-        quantity_sold:
-            Total quantity sold across products in the category.
+    Sale-level discounts are allocated proportionally
+    across sale items according to each item's line_total.
 
-        gross_sales_value:
-            Sum of SaleItem.line_total, representing gross
-            sales value before sale-level discounts.
-
-        cogs:
-            Total cost of goods sold based on historical
-            SaleItem.unit_cost snapshots.
-
-        gross_profit:
-            Gross sales value minus COGS.
-
-        gross_margin:
-            Gross profit divided by gross sales value,
-            expressed as a percentage.
-
-    Optional date filters are applied to the sale completion date,
-    using the store's fixed timezone and a half-open date interval.
-
-    Categories are ranked by gross profit descending.
-
-    Categories with no completed sales are excluded.
+    COGS uses the historical SaleItem.unit_cost snapshot.
     """
 
-    store_timezone = django_timezone.get_default_timezone()
+    results = {}
 
-    start_dt, end_dt = _date_range_bounds(
-        start_date,
-        end_date,
-        store_timezone,
+    for item in _get_profitability_sale_items(
+        start_date=start_date,
+        end_date=end_date,
+    ):
+        category_id = item["category_id"]
+        category_name = item["category_name"]
+
+        key = category_id or "uncategorized"
+
+        if key not in results:
+            results[key] = {
+                "category_id": category_id,
+                "category_name": (
+                    category_name
+                    if category_name
+                    else "Uncategorized"
+                ),
+                "quantity_sold": Decimal("0.000"),
+                "gross_sales_value": Decimal("0.00"),
+                "allocated_discount": Decimal("0.00"),
+                "revenue": Decimal("0.00"),
+                "cogs": Decimal("0.00"),
+                "gross_profit": Decimal("0.00"),
+            }
+
+        result = results[key]
+
+        result["quantity_sold"] += item["quantity"]
+        result["gross_sales_value"] += item["gross_sales_value"]
+        result["allocated_discount"] += item["allocated_discount"]
+        result["revenue"] += item["revenue"]
+        result["cogs"] += item["cogs"]
+        result["gross_profit"] += item["gross_profit"]
+
+    rows = list(results.values())
+
+    rows.sort(
+        key=lambda row: row["gross_profit"],
+        reverse=True,
     )
 
-    completed_items = SaleItem.objects.filter(
-        sale__status=Sale.Status.COMPLETED,
-    )
+    rows = rows[:limit]
 
-    if start_dt is not None:
-        completed_items = completed_items.filter(
-            sale__completed_at__gte=start_dt,
-        )
-
-    if end_dt is not None:
-        completed_items = completed_items.filter(
-            sale__completed_at__lt=end_dt,
+    for row in rows:
+        row["quantity_sold"] = row["quantity_sold"].quantize(
+            Decimal("0.001"),
+            rounding=ROUND_HALF_UP,
         )
 
-    items_with_cost = completed_items.annotate(
-        line_cost=ExpressionWrapper(
-            F("quantity") * F("unit_cost"),
-            output_field=DecimalField(
-                max_digits=20,
-                decimal_places=5,
-            ),
-        )
-    )
-
-    categories = (
-        items_with_cost
-        .values(
-            "product__category_id",
-            "product__category__name",
-        )
-        .annotate(
-            quantity_sold=Sum("quantity"),
-            gross_sales_value=Sum("line_total"),
-            cogs=Sum("line_cost"),
-        )
-        .annotate(
-            gross_profit_for_ordering=(
-                F("gross_sales_value") - F("cogs")
-            ),
-        )
-        .order_by(
-            "-gross_profit_for_ordering",
-            "product__category__name",
-        )
-    )
-
-    results = []
-
-    for category in categories[:limit]:
-        gross_sales_value = (
-            category["gross_sales_value"]
-            or Decimal("0.00")
-        ).quantize(
+        row["gross_sales_value"] = row["gross_sales_value"].quantize(
             TWO_PLACES,
             rounding=ROUND_HALF_UP,
         )
 
-        cogs = (
-            category["cogs"]
-            or Decimal("0.00")
-        ).quantize(
+        row["allocated_discount"] = row["allocated_discount"].quantize(
             TWO_PLACES,
             rounding=ROUND_HALF_UP,
         )
 
-        gross_profit = (
-            gross_sales_value - cogs
-        ).quantize(
+        row["revenue"] = row["revenue"].quantize(
             TWO_PLACES,
             rounding=ROUND_HALF_UP,
         )
 
-        if gross_sales_value > Decimal("0.00"):
-            gross_margin = (
-                gross_profit
-                / gross_sales_value
+        row["cogs"] = row["cogs"].quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        row["gross_profit"] = row["gross_profit"].quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        if row["revenue"] > Decimal("0.00"):
+            row["gross_margin"] = (
+                row["gross_profit"]
+                / row["revenue"]
                 * Decimal("100")
             ).quantize(
                 TWO_PLACES,
                 rounding=ROUND_HALF_UP,
             )
         else:
-            gross_margin = None
+            row["gross_margin"] = Decimal("0.00")
 
-        results.append(
-            {
-                "product__category_id": (
-                    category["product__category_id"]
-                ),
-                "product__category__name": (
-                    category["product__category__name"]
-                ),
-                "quantity_sold": category["quantity_sold"],
-                "gross_sales_value": gross_sales_value,
-                "cogs": cogs,
-                "gross_profit": gross_profit,
-                "gross_margin": gross_margin,
-            }
-        )
+    return rows
 
-    return results
+
 
 def get_inventory_performance(
     start_date=None,
