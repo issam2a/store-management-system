@@ -11,6 +11,8 @@ from .services import (
     get_product_profitability,
     get_category_profitability,
     get_profitability_trend,
+    get_sales_by_day_of_week,
+    get_sales_by_hour,
 )
 
 
@@ -175,6 +177,45 @@ def analytics_dashboard(request):
             ),
         })
 
+
+    # ------------------------------------------------------------
+    # day of week
+    #-------------------------------------------------------------
+
+    sales_by_day_of_week = get_sales_by_day_of_week(
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+
+    # ------------------------------------------------------------
+    # sale by hour 
+    #-------------------------------------------------------------
+    sales_by_hour = get_sales_by_hour(
+        start_date=start_date,
+        end_date=end_date,
+    )
+
+    day_of_week_chart_data = [
+        {
+            "label": item["day_name"],
+            "transactions": item["transaction_count"],
+            "revenue": float(item["revenue"]),
+            "average_order_value": float(item["average_order_value"]),
+        }
+        for item in sales_by_day_of_week
+    ]
+
+    hourly_sales_chart_data = [
+        {
+            "hour": item["hour"],
+            "label": f"{item['hour']:02d}:00",
+            "transactions": item["transaction_count"],
+            "revenue": float(item["revenue"]),
+            "average_order_value": float(item["average_order_value"]),
+        }
+        for item in sales_by_hour
+    ]
     context = {
         "today": today,
         "start_date": start_date,
@@ -194,6 +235,9 @@ def analytics_dashboard(request):
         "profitability_chart_data": profitability_chart_data,
         "category_profitability": category_profitability,
         "category_chart_data": category_chart_data,
+
+        "day_of_week_chart_data": day_of_week_chart_data,
+        "hourly_sales_chart_data": hourly_sales_chart_data,
     }
 
     return render(

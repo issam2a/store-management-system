@@ -2732,6 +2732,103 @@ document.addEventListener("DOMContentLoaded", () => {
             },
         },
     });
+    const dayOfWeekDataElement = document.getElementById(
+        "day-of-week-chart-data"
+    );
+
+    const salesByDayChartCanvas = document.getElementById(
+        "salesByDayChart"
+    );
+
+    if (dayOfWeekDataElement && salesByDayChartCanvas) {
+        const data = JSON.parse(dayOfWeekDataElement.textContent);
+
+        new Chart(salesByDayChartCanvas, {
+            type: "bar",
+            data: {
+                labels: data.map(item => item.label),
+                datasets: [
+                    {
+                        label: "Revenue",
+                        data: data.map(item => item.revenue),
+                        backgroundColor: "rgba(96, 153, 102, 0.65)",
+                        borderColor: "#609966",
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: "index",
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    }
+
+
+    const hourlySalesDataElement = document.getElementById(
+        "hourly-sales-chart-data"
+    );
+
+    const salesByHourChartCanvas = document.getElementById(
+        "salesByHourChart"
+    );
+
+    if (hourlySalesDataElement && salesByHourChartCanvas) {
+        const data = JSON.parse(hourlySalesDataElement.textContent);
+
+        new Chart(salesByHourChartCanvas, {
+            type: "line",
+            data: {
+                labels: data.map(item => item.label),
+                datasets: [
+                    {
+                        label: "Revenue",
+                        data: data.map(item => item.revenue),
+                        borderColor: "#9DC08B",
+                        backgroundColor: "rgba(157, 192, 139, 0.08)",
+                        borderWidth: 2,
+                        tension: 0.35,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: "index",
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    }
+
 });
 
 document.addEventListener("DOMContentLoaded", () => {

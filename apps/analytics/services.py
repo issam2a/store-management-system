@@ -1,6 +1,6 @@
 from datetime import datetime, time, timedelta
 from decimal import Decimal, ROUND_HALF_UP
-
+from django.db.models.functions import ExtractHour
 from django.db.models import (
     Avg,
     Count,
@@ -1589,3 +1589,132 @@ def get_historical_price_analysis(
         )
 
     return results[:limit]
+
+def get_sales_by_day_of_week(start_date=None, end_date=None):
+    """
+    Analyze completed sales by day of week.
+
+    Returns:
+    - day_of_week: Django/Python weekday number (0=Monday ... 6=Sunday)
+    - day_name: English day name
+    - transaction_count
+    - revenue
+    - average_order_value
+    """
+    start_dt, end_dt = _date_range_bounds(
+        start_date,
+        end_date,
+        django_timezone.get_default_timezone(),
+    )
+
+    sales = Sale.objects.filter(
+        status=Sale.Status.COMPLETED,
+        completed_at__gte=start_dt,
+        completed_at__lt=end_dt,
+    )
+
+    sales_by_day = {}
+
+    for sale in sales.only("completed_at", "total_amount"):
+        local_datetime = django_timezone.localtime(sale.completed_at)
+
+        weekday = local_datetime.weekday()
+
+        if weekday not in sales_by_day:
+            sales_by_day[weekday] = {
+                "day_of_week": weekday,
+                "day_name": local_datetime.strftime("%A"),
+                "transaction_count": 0,
+                "revenue": Decimal("0.00"),
+            }
+
+        sales_by_day[weekday]["transaction_count"] += 1
+        sales_by_day[weekday]["revenue"] += sale.total_amount
+
+    results = []
+
+    for weekday in range(7):
+        item = sales_by_day.get(
+            weekday,
+            {
+                "day_of_week": weekday,
+                "day_name": (
+                    datetime(2024, 1, 1) + timedelta(days=weekday)
+                ).strftime("%A"),
+                "transaction_count": 0,
+                "revenue": Decimal("0.00"),
+            },
+        )
+
+        if item["transaction_count"]:
+            item["average_order_value"] = (
+                item["revenue"] / item["transaction_count"]
+            ).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+        else:
+            item["average_order_value"] = Decimal("0.00")
+
+        item["revenue"] = item["revenue"].quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        results.append(item)
+
+    return results
+
+
+def get_sales_by_hour(start_date=None, end_date=None):
+    """
+    Analyze completed sales by local hour of day.
+
+    Returns all 24 hours, including hours with zero sales.
+    """
+
+    start_dt, end_dt = _date_range_bounds(
+        start_date,
+        end_date,
+        django_timezone.get_default_timezone(),
+    )
+
+    sales = Sale.objects.filter(
+        status=Sale.Status.COMPLETED,
+        completed_at__gte=start_dt,
+        completed_at__lt=end_dt,
+    )
+
+    sales_by_hour = {
+        hour: {
+            "hour": hour,
+            "transaction_count": 0,
+            "revenue": Decimal("0.00"),
+        }
+        for hour in range(24)
+    }
+
+    for sale in sales.only("completed_at", "total_amount"):
+        local_datetime = django_timezone.localtime(sale.completed_at)
+        hour = local_datetime.hour
+
+        sales_by_hour[hour]["transaction_count"] += 1
+        sales_by_hour[hour]["revenue"] += sale.total_amount
+
+    results = []
+
+    for hour in range(24):
+        item = sales_by_hour[hour]
+
+        if item["transaction_count"]:
+            item["average_order_value"] = (
+                item["revenue"] / item["transaction_count"]
+            ).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+        else:
+            item["average_order_value"] = Decimal("0.00")
+
+        item["revenue"] = item["revenue"].quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        results.append(item)
+
+    return results

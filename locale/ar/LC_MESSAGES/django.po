@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-16 21:32+0300\n"
+"POT-Creation-Date: 2026-09-18 01:21+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -52,6 +52,9 @@ msgid "Customer deactivated successfully."
 msgstr "تم تعطيل العميل بنجاح."
 
 #: .\apps\inventory\forms.py:20 .\apps\sales\forms.py:66
+#: .\dashboard\templates\analytics\dashboard.html:512
+#: .\dashboard\templates\analytics\dashboard.html:593
+#: .\dashboard\templates\analytics\dashboard.html:697
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:63
 #: .\dashboard\templates\inventory\inventory_list.html:135
 #: .\dashboard\templates\purchases\purchase_detail.html:251
@@ -121,7 +124,7 @@ msgstr " تطبيق التعديل"
 #: .\apps\payments\forms.py:7 .\apps\payments\forms.py:76
 #: .\apps\payments\forms.py:131 .\apps\sales\forms.py:97
 #: .\dashboard\templates\customers\customer_detail.html:214
-#: .\dashboard\templates\dashboard\home.html:427
+#: .\dashboard\templates\dashboard\home.html:559
 #: .\dashboard\templates\sales\sale_detail.html:251
 #: .\dashboard\templates\suppliers\supplier_detail.html:180
 msgid "Amount"
@@ -213,12 +216,10 @@ msgid "Product deactivated successfully."
 msgstr "تم إلغاء تفعيل المنتج بنجاح."
 
 #: .\apps\purchases\forms.py:45
-
 msgid "Supplier must be active."
 msgstr "يجب أن يكون المورد نشطاً "
 
 #: .\apps\purchases\forms.py:54
-
 msgid "Package Quantity"
 msgstr "الكمية"
 
@@ -227,7 +228,6 @@ msgid "Units Per Package"
 msgstr "عدد الوحدات في العبوة"
 
 #: .\apps\purchases\forms.py:82
-
 msgid "Package Cost"
 msgstr "السعر.."
 
@@ -305,7 +305,7 @@ msgstr "دين"
 msgid "Draft"
 msgstr "مسودة"
 
-#: .\apps\purchases\models.py:13 .\dashboard\templates\dashboard\home.html:468
+#: .\apps\purchases\models.py:13 .\dashboard\templates\dashboard\home.html:600
 #: .\dashboard\templates\purchases\purchase_list.html:84
 #: .\dashboard\templates\sales\sale_detail.html:40
 #: .\dashboard\templates\sales\sale_list.html:82
@@ -395,7 +395,7 @@ msgstr "تم إلغاء عملية الشراء بنجاح."
 #: .\apps\sales\forms.py:21
 #: .\dashboard\templates\customers\customer_detail.html:11
 #: .\dashboard\templates\customers\customer_payment_create.html:33
-#: .\dashboard\templates\dashboard\home.html:423
+#: .\dashboard\templates\dashboard\home.html:555
 #: .\dashboard\templates\sales\sale_create.html:50
 #: .\dashboard\templates\sales\sale_detail.html:73
 #: .\dashboard\templates\sales\sale_detail.html:552
@@ -488,6 +488,289 @@ msgstr "تم تفعيل المورد بنجاح"
 msgid "Supplier deactivated successfully."
 msgstr "تم إلغاء تفعيل المورد بنجاح."
 
+#: .\dashboard\templates\analytics\dashboard.html:5
+#: .\dashboard\templates\analytics\dashboard.html:14
+#: .\dashboard\templates\components\sidebar.html:133
+msgid "Analytics"
+msgstr "التحليلات"
+
+#: .\dashboard\templates\analytics\dashboard.html:12
+#: .\dashboard\templates\components\sidebar.html:123
+msgid "Insights"
+msgstr "الرؤى"
+
+#: .\dashboard\templates\analytics\dashboard.html:17
+
+msgid "Understand your store's performance, trends, and profitability."
+msgstr "افهم أداء متجرك والاتجاهات ومعدلات الربحية."
+
+#: .\dashboard\templates\analytics\dashboard.html:26
+
+msgid "Analytics Period"
+msgstr "فترة التحليلات"
+
+#: .\dashboard\templates\analytics\dashboard.html:28
+msgid "What happened in the selected period?"
+msgstr "ماذا حدث في الفترة المحددة؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:43
+#: .\dashboard\templates\dashboard\home.html:40
+#: .\dashboard\templates\dashboard\home.html:85
+#: .\dashboard\templates\dashboard\home.html:255
+msgid "Today"
+msgstr "اليوم"
+
+#: .\dashboard\templates\analytics\dashboard.html:52
+msgid "7 Days"
+msgstr "7 أيام"
+
+#: .\dashboard\templates\analytics\dashboard.html:61
+msgid "30 Days"
+msgstr "30 يوماً"
+
+#: .\dashboard\templates\analytics\dashboard.html:72
+
+msgid "Start date"
+msgstr "تاريخ البدء"
+
+#: .\dashboard\templates\analytics\dashboard.html:81
+msgid "End date"
+msgstr "تاريخ الانتهاء"
+
+#: .\dashboard\templates\analytics\dashboard.html:90
+
+msgid "Apply"
+msgstr "تم"
+
+#: .\dashboard\templates\analytics\dashboard.html:107
+
+msgid "Executive Performance"
+msgstr "الأداء التنفيذي"
+
+#: .\dashboard\templates\analytics\dashboard.html:111
+msgid "How is the business performing?"
+msgstr "كيف يسير أداء العمل التجاري؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:115
+msgid "Key financial and sales indicators for the selected period."
+msgstr "المؤشرات المالية ومؤشرات المبيعات الرئيسية للفترة المحددة."
+
+#: .\dashboard\templates\analytics\dashboard.html:125
+#: .\dashboard\templates\analytics\dashboard.html:515
+#: .\dashboard\templates\analytics\dashboard.html:596
+#: .\dashboard\templates\analytics\dashboard.html:699
+#: .\dashboard\templates\dashboard\home.html:65
+msgid "Revenue"
+msgstr "الإيرادات"
+
+#: .\dashboard\templates\analytics\dashboard.html:139
+msgid "Total sales revenue"
+msgstr "إجمالي إيرادات المبيعات"
+
+#: .\dashboard\templates\analytics\dashboard.html:147
+#: .\dashboard\templates\analytics\dashboard.html:701
+#: .\dashboard\templates\dashboard\home.html:133
+msgid "Gross Profit"
+msgstr "إجمالي الربح"
+
+#: .\dashboard\templates\analytics\dashboard.html:161
+
+msgid "Revenue after COGS"
+msgstr "الإيرادات بعد تكلفة البضاعة المباعة"
+
+#: .\dashboard\templates\analytics\dashboard.html:169
+#: .\dashboard\templates\dashboard\home.html:167
+
+msgid "Gross Margin"
+msgstr "هامش الربح الإجمالي"
+
+#: .\dashboard\templates\analytics\dashboard.html:184
+#: .\dashboard\templates\dashboard\home.html:187
+
+msgid "Gross profit margin"
+msgstr " هامش إجمالي الربح"  
+
+#: .\dashboard\templates\analytics\dashboard.html:192
+#: .\dashboard\templates\analytics\dashboard.html:700
+#: .\dashboard\templates\dashboard\home.html:201
+msgid "COGS"
+msgstr " تكلفة البضاعة المباعة"
+
+#: .\dashboard\templates\analytics\dashboard.html:206
+#: .\dashboard\templates\dashboard\home.html:221
+msgid "Cost of goods sold"
+msgstr "تكلفة البضاعة المباعة."
+
+#: .\dashboard\templates\analytics\dashboard.html:214
+
+msgid "Transactions"
+msgstr "المعاملات"
+
+#: .\dashboard\templates\analytics\dashboard.html:228
+#: .\dashboard\templates\dashboard\home.html:119
+msgid "Completed sales"
+msgstr "المبيعات المكتملة"
+
+# ============================================================
+# Units
+# ============================================================
+#: .\dashboard\templates\analytics\dashboard.html:236
+#: .\dashboard\templates\analytics\dashboard.html:513
+#: .\dashboard\templates\analytics\dashboard.html:594
+#: .\dashboard\templates\analytics\dashboard.html:698
+#: .\dashboard\templates\dashboard\home.html:235
+
+msgid "Units Sold"
+msgstr "الوحدات المباعة"
+
+#: .\dashboard\templates\analytics\dashboard.html:250
+
+msgid "Products sold"
+msgstr "المنتجات المباعة"
+
+#: .\dashboard\templates\analytics\dashboard.html:258
+#: .\dashboard\templates\dashboard\home.html:269
+msgid "Average Order Value"
+msgstr "متوسط ​​قيمة الطلب"
+
+#: .\dashboard\templates\analytics\dashboard.html:272
+msgid "Revenue per transaction"
+msgstr "الإيرادات لكل معاملة"
+
+#: .\dashboard\templates\analytics\dashboard.html:289
+
+msgid "Sales Performance"
+msgstr "أداء المبيعات"
+
+#: .\dashboard\templates\analytics\dashboard.html:293
+msgid "How are sales performing over time?"
+msgstr "كيف هو أداء المبيعات بمرور الوقت؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:297
+msgid "Track revenue, transactions, and units sold over the selected period."
+msgstr "تتبَّع الإيرادات والمعاملات والوحدات المباعة خلال الفترة المحددة."
+
+#: .\dashboard\templates\analytics\dashboard.html:335
+#: .\dashboard\templates\analytics\dashboard.html:363
+msgid "Sales Timing"
+msgstr "توقيت المبيعات"
+
+#: .\dashboard\templates\analytics\dashboard.html:339
+msgid "Which days bring the most sales?"
+msgstr "ما هي الأيام التي تحقق أعلى المبيعات؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:343
+msgid "Compare revenue and transactions across days of the week."
+msgstr "قارن بين الإيرادات والمعاملات عبر أيام الأسبوع."
+
+#: .\dashboard\templates\analytics\dashboard.html:367
+msgid "When are our peak selling hours?"
+msgstr "متى تكون ساعات الذروة للمبيعات لدينا؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:371
+msgid "Identify the hours with the highest sales activity."
+msgstr "حدد الساعات التي تشهد أعلى معدلات نشاط المبيعات."
+
+#: .\dashboard\templates\analytics\dashboard.html:398
+#: .\dashboard\templates\analytics\dashboard.html:459
+#: .\dashboard\templates\analytics\dashboard.html:659
+msgid "Profitability"
+msgstr "الربحية"
+
+#: .\dashboard\templates\analytics\dashboard.html:402
+msgid "Are our sales actually profitable?"
+msgstr "هل مبيعاتنا مربحة بالفعل؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:406
+msgid "Compare sales revenue against product costs over time."
+msgstr "قارن إيرادات المبيعات بتكاليف المنتج بمرور الوقت."
+
+#: .\dashboard\templates\analytics\dashboard.html:426
+
+msgid "Sales Mix"
+msgstr "مزيج المبيعات"
+
+#: .\dashboard\templates\analytics\dashboard.html:430
+msgid "Which categories generate the most revenue?"
+msgstr "ما هي الفئات التي تحقق أكبر قدر من الإيرادات؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:434
+
+msgid "Compare revenue generated by each product category."
+msgstr "قارن بين الإيرادات الناتجة عن كل فئة من فئات المنتجات."
+
+#: .\dashboard\templates\analytics\dashboard.html:463
+msgid "Which categories generate the most profit?"
+msgstr "ما هي الفئات التي تحقق أكبر قدر من الأرباح؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:467
+msgid "Compare the gross profit generated by each category."
+msgstr "قارن بين إجمالي الربح الذي تحققه كل فئة."
+
+#: .\dashboard\templates\analytics\dashboard.html:491
+
+msgid "Product Performance"
+msgstr "أداء المنتج"
+
+#: .\dashboard\templates\analytics\dashboard.html:495
+msgid "What products are driving sales?"
+msgstr "ما هي المنتجات التي تدفع عجلة المبيعات؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:499
+msgid "Identify the products with the highest unit sales over the selected period."
+msgstr "حدد المنتجات التي حققت أعلى مبيعات من حيث الوحدات خلال الفترة المحددة."
+
+#: .\dashboard\templates\analytics\dashboard.html:514
+#: .\dashboard\templates\analytics\dashboard.html:595
+#: .\dashboard\templates\components\sidebar.html:82
+#: .\dashboard\templates\customers\customer_detail.html:102
+#: .\dashboard\templates\dashboard\home.html:99
+#: .\dashboard\templates\sales\sale_create.html:14
+#: .\dashboard\templates\sales\sale_detail.html:13
+#: .\dashboard\templates\sales\sale_list.html:5
+#: .\dashboard\templates\sales\sale_list.html:19
+msgid "Sales"
+msgstr "المبيعات"
+
+#: .\dashboard\templates\analytics\dashboard.html:557
+#: .\dashboard\templates\analytics\dashboard.html:638
+
+msgid "No completed product sales in this period."
+msgstr "لم تكن هناك مبيعات لمنتجات تامة الصنع خلال هذه الفترة."
+
+#: .\dashboard\templates\analytics\dashboard.html:572
+
+msgid "Inventory Insight"
+msgstr "رؤى حول المخزون"
+
+#: .\dashboard\templates\analytics\dashboard.html:576
+msgid "Which products are not selling?"
+msgstr "ما هي المنتجات التي لا تُباع؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:580
+msgid "Identify products with the lowest unit sales over the selected period."
+msgstr "حدد المنتجات التي سجلت أقل مبيعات للوحدة خلال الفترة المحددة."
+
+#: .\dashboard\templates\analytics\dashboard.html:663
+msgid "Which products are actually making us money?"
+msgstr "ما هي المنتجات التي تدرّ علينا المال بالفعل؟"
+
+#: .\dashboard\templates\analytics\dashboard.html:667
+msgid "Compare revenue, cost, gross profit, and margin by product."
+msgstr "قارن بين الإيرادات والتكلفة وإجمالي الربح والهامش حسب المنتج."
+
+#: .\dashboard\templates\analytics\dashboard.html:702
+msgid "Margin"
+msgstr "هامِش الربح"
+
+#: .\dashboard\templates\analytics\dashboard.html:756
+msgid "No profitability data yet"
+msgstr "لا توجد بيانات ربحية حتى الآن"
+
+#: .\dashboard\templates\analytics\dashboard.html:760
+msgid "Complete sales with recorded product costs to see profitability."
+msgstr "أتمِم عمليات البيع مع تسجيل تكاليف المنتجات لمعرفة الربحية."
+
 # ============================================================
 # Base
 # ============================================================
@@ -526,7 +809,7 @@ msgid "Management"
 msgstr "الإدارة"
 
 #: .\dashboard\templates\components\sidebar.html:62
-#: .\dashboard\templates\dashboard\home.html:511
+#: .\dashboard\templates\dashboard\home.html:643
 #: .\dashboard\templates\products\product_form.html:14
 #: .\dashboard\templates\products\product_list.html:12
 msgid "Products"
@@ -553,7 +836,7 @@ msgid "Units"
 msgstr "الوحدات"
 
 #: .\dashboard\templates\components\sidebar.html:77
-#: .\dashboard\templates\dashboard\home.html:288
+#: .\dashboard\templates\dashboard\home.html:420
 #: .\dashboard\templates\inventory\inventory_adjustment_form.html:14
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:13
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:30
@@ -562,16 +845,6 @@ msgstr "الوحدات"
 #: .\dashboard\templates\inventory\inventory_list.html:15
 msgid "Inventory"
 msgstr "المخزون"
-
-#: .\dashboard\templates\components\sidebar.html:82
-#: .\dashboard\templates\customers\customer_detail.html:102
-#: .\dashboard\templates\dashboard\home.html:101
-#: .\dashboard\templates\sales\sale_create.html:14
-#: .\dashboard\templates\sales\sale_detail.html:13
-#: .\dashboard\templates\sales\sale_list.html:5
-#: .\dashboard\templates\sales\sale_list.html:19
-msgid "Sales"
-msgstr "المبيعات"
 
 #: .\dashboard\templates\components\sidebar.html:87
 #: .\dashboard\templates\purchases\purchase_cancel.html:13
@@ -607,17 +880,9 @@ msgstr "العملاء"
 msgid "Suppliers"
 msgstr "الموردون"
 
-#: .\dashboard\templates\components\sidebar.html:123
-msgid "Insights"
-msgstr "الرؤى"
-
 #: .\dashboard\templates\components\sidebar.html:128
 msgid "Reports"
 msgstr "التقارير"
-
-#: .\dashboard\templates\components\sidebar.html:133
-msgid "Analytics"
-msgstr "التحليلات"
 
 #: .\dashboard\templates\components\sidebar.html:144
 msgid "System"
@@ -687,7 +952,7 @@ msgstr "رقم الهاتف"
 #: .\dashboard\templates\customers\customer_detail.html:59
 #: .\dashboard\templates\customers\customer_detail.html:126
 #: .\dashboard\templates\customers\customer_list.html:140
-#: .\dashboard\templates\dashboard\home.html:431
+#: .\dashboard\templates\dashboard\home.html:563
 #: .\dashboard\templates\inventory\inventory_list.html:140
 #: .\dashboard\templates\products\category_list.html:41
 #: .\dashboard\templates\products\product_list.html:152
@@ -753,7 +1018,7 @@ msgstr "مبيعات العملاء المكتملة"
 
 #: .\dashboard\templates\customers\customer_detail.html:122
 #: .\dashboard\templates\customers\customer_detail.html:213
-#: .\dashboard\templates\dashboard\home.html:419
+#: .\dashboard\templates\dashboard\home.html:551
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:62
 #: .\dashboard\templates\purchases\purchase_cancel.html:38
 #: .\dashboard\templates\purchases\purchase_list.html:153
@@ -984,101 +1249,90 @@ msgstr "نظرة عامة على المتجر"
 msgid "Monitor your store performance at a glance."
 msgstr "راقب أداء متجرك في لمحة واحدة."
 
-#: .\dashboard\templates\dashboard\home.html:40
-#: .\dashboard\templates\dashboard\home.html:86
-msgid "Today"
-msgstr "اليوم"
-
 #: .\dashboard\templates\dashboard\home.html:56
 msgid "Key performance indicators"
 msgstr "مؤشرات الأداء الرئيسية"
 
-#: .\dashboard\templates\dashboard\home.html:66
-msgid "Revenue"
-msgstr "الإيرادات"
-
-#: .\dashboard\templates\dashboard\home.html:121
-msgid "Completed sales"
-msgstr "المبيعات المكتملة"
-
-#: .\dashboard\templates\dashboard\home.html:136
-msgid "Gross Profit"
-msgstr "إجمالي الربح"
-
-#: .\dashboard\templates\dashboard\home.html:156
+#: .\dashboard\templates\dashboard\home.html:153
 msgid "Revenue minus COGS"
 msgstr "الإيرادات ناقص تكلفة البضاعة المباعة"
 
-#: .\dashboard\templates\dashboard\home.html:171
-#: .\dashboard\templates\dashboard\home.html:292
+#: .\dashboard\templates\dashboard\home.html:289
+#, fuzzy
+#| msgid "Revenue Overview"
+msgid "Revenue per sale"
+msgstr "نظرة عامة على الإيرادات"
+
+#: .\dashboard\templates\dashboard\home.html:303
+#: .\dashboard\templates\dashboard\home.html:424
 #: .\dashboard\templates\inventory\inventory_list.html:77
 #: .\dashboard\templates\inventory\inventory_list.html:181
 msgid "Low Stock"
 msgstr "مخزون منخفض"
 
-#: .\dashboard\templates\dashboard\home.html:193
+#: .\dashboard\templates\dashboard\home.html:325
 msgid "Needs attention"
 msgstr "يحتاج إلى انتباه"
 
-#: .\dashboard\templates\dashboard\home.html:199
-#: .\dashboard\templates\dashboard\home.html:356
+#: .\dashboard\templates\dashboard\home.html:331
+#: .\dashboard\templates\dashboard\home.html:488
 msgid "Inventory looks healthy"
 msgstr "المخزون بحالة جيدة"
 
-#: .\dashboard\templates\dashboard\home.html:229
+#: .\dashboard\templates\dashboard\home.html:361
 msgid "Performance"
 msgstr "الأداء"
 
-#: .\dashboard\templates\dashboard\home.html:233
+#: .\dashboard\templates\dashboard\home.html:365
 msgid "Revenue Overview"
 msgstr "نظرة عامة على الإيرادات"
 
-#: .\dashboard\templates\dashboard\home.html:262
+#: .\dashboard\templates\dashboard\home.html:394
 msgid "No revenue data yet."
 msgstr "لا توجد بيانات الإيرادات بعد."
 
-#: .\dashboard\templates\dashboard\home.html:266
+#: .\dashboard\templates\dashboard\home.html:398
 #, fuzzy
 #| msgid "Sales data will appear here."
 msgid "Completed sales will appear here."
 msgstr "ستظهر بيانات المبيعات هنا."
 
-#: .\dashboard\templates\dashboard\home.html:360
+#: .\dashboard\templates\dashboard\home.html:492
 msgid "No products require immediate attention."
 msgstr "لا توجد منتجات تتطلب اهتمامًا فوريًا."
 
-#: .\dashboard\templates\dashboard\home.html:390
+#: .\dashboard\templates\dashboard\home.html:522
 msgid "Activity"
 msgstr "النشاط"
 
-#: .\dashboard\templates\dashboard\home.html:394
+#: .\dashboard\templates\dashboard\home.html:526
 msgid "Recent Sales"
 msgstr "آخر المبيعات"
 
-#: .\dashboard\templates\dashboard\home.html:403
-#: .\dashboard\templates\dashboard\home.html:524
+#: .\dashboard\templates\dashboard\home.html:535
+#: .\dashboard\templates\dashboard\home.html:656
 msgid "View all"
 msgstr "عرض الكل"
 
-#: .\dashboard\templates\dashboard\home.html:456
+#: .\dashboard\templates\dashboard\home.html:588
 #, fuzzy
 #| msgid "Walk-in Customer"
 msgid "Walk-in customer"
 msgstr "عميل مباشر"
 
-#: .\dashboard\templates\dashboard\home.html:482
+#: .\dashboard\templates\dashboard\home.html:614
 msgid "No completed sales yet."
 msgstr "لا توجد مبيعات مكتملة بعد."
 
-#: .\dashboard\templates\dashboard\home.html:515
+#: .\dashboard\templates\dashboard\home.html:647
 msgid "Top Products"
 msgstr "المنتجات الأكثر مبيعًا"
 
-#: .\dashboard\templates\dashboard\home.html:550
+#: .\dashboard\templates\dashboard\home.html:685
 msgid "sold"
 msgstr "تم البيع"
 
-#: .\dashboard\templates\dashboard\home.html:567
+#: .\dashboard\templates\dashboard\home.html:704
 msgid "Sales data will appear here."
 msgstr "ستظهر بيانات المبيعات هنا."
 
