@@ -9,6 +9,8 @@ from .services import (
     get_top_selling_products,
     get_slow_moving_products,
     get_product_profitability,
+    get_category_profitability,
+    get_profitability_trend,
 )
 
 
@@ -78,6 +80,39 @@ def analytics_dashboard(request):
         end_date=today,
     )
 
+    profitability_trend = get_profitability_trend(
+        start_date=start_date,
+        end_date=today,
+    )
+
+    category_profitability = get_category_profitability(
+        start_date=start_date,
+        end_date=today,
+    )
+
+
+
+    profitability_chart_data = []
+
+    for item in profitability_trend:
+        profitability_chart_data.append({
+            "date": item["date"].isoformat(),
+            "label": item["date"].strftime("%b %d"),
+            "revenue": float(item["revenue"]),
+            "cogs": float(item["cogs"]),
+            "gross_profit": float(item["gross_profit"]),
+        })
+
+
+    category_chart_data = []
+
+    for category in category_profitability:
+        category_chart_data.append({
+            "name": category["category_name"],
+            "revenue": float(category["gross_sales_value"]),
+            "gross_profit": float(category["gross_profit"]),
+            "cogs": float(category["cogs"]),
+        })
     context = {
         "today": today,
         "start_date": start_date,
@@ -86,6 +121,9 @@ def analytics_dashboard(request):
         "top_selling_products": top_selling_products,
         "slow_moving_products": slow_moving_products,
         "product_profitability": product_profitability,
+        "category_profitability": category_profitability,
+        "profitability_chart_data": profitability_chart_data,
+        "category_chart_data": category_chart_data,
     }
 
     return render(

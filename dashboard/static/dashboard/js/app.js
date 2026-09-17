@@ -1632,6 +1632,49 @@ if (
      * ============================================================
      */
 
+    const validateAmountBasedSale = () => {
+        if (!selectedProduct) {
+            disableAddButton();
+            return false;
+        }
+
+        const amount = Number(amountField.value);
+        const quantity = Number(quantityField.value);
+        const availableStock = getAvailableStock();
+
+        clearFieldErrors();
+
+        if (!Number.isFinite(amount) || amount <= 0) {
+            disableAddButton();
+            return false;
+        }
+
+        if (!Number.isFinite(quantity) || quantity <= 0) {
+            disableAddButton();
+            return false;
+        }
+
+        if (!Number.isFinite(availableStock)) {
+            amountField.setCustomValidity(
+                "Unable to determine available stock."
+            );
+            disableAddButton();
+            return false;
+        }
+
+        if (quantity > availableStock) {
+            amountField.setCustomValidity(
+                "The requested amount exceeds available stock."
+            );
+            disableAddButton();
+            return false;
+        }
+
+        enableAddButton();
+        return true;
+    };
+
+
     const syncAmountFromQuantity = () => {
         if (!selectedProduct) {
             return;
@@ -2405,5 +2448,440 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             },
         },
+    });
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById("profitabilityTrendChart");
+
+    if (!canvas) {
+        return;
+    }
+
+    const dataElement = document.getElementById("profitability-chart-data");
+
+    if (!dataElement) {
+        return;
+    }
+
+    const chartData = JSON.parse(dataElement.textContent);
+
+    if (!chartData.length) {
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    new Chart(ctx, {
+        type: "line",
+
+        data: {
+            labels: chartData.map(item => item.label),
+
+            datasets: [
+                {
+                    label: "Revenue",
+                    data: chartData.map(item => item.revenue),
+                    borderColor: "#9DC08B",
+                    backgroundColor: "rgba(157, 192, 139, 0.08)",
+                    borderWidth: 2,
+                    tension: 0.35,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                },
+                {
+                    label: "COGS",
+                    data: chartData.map(item => item.cogs),
+                    borderColor: "#D6A85F",
+                    backgroundColor: "transparent",
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    tension: 0.35,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                },
+            ],
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            interaction: {
+                intersect: false,
+                mode: "index",
+            },
+
+            plugins: {
+                legend: {
+                    display: true,
+                    position: "top",
+                },
+
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            return chartData[context[0].dataIndex].label;
+                        },
+
+                        label: function(context) {
+                            return `${context.dataset.label}: ${Number(context.raw).toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}`;
+                        },
+                    },
+                },
+            },
+
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        maxTicksLimit: 10,
+                    },
+                },
+
+                y: {
+                    beginAtZero: true,
+
+                    grid: {
+                        color: "rgba(157, 192, 139, 0.08)",
+                    },
+
+                    ticks: {
+                        callback: function(value) {
+                            return Number(value).toLocaleString();
+                        },
+                    },
+                },
+            },
+        },
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById("categoryRevenueChart");
+
+    if (!canvas) {
+        return;
+    }
+
+    const dataElement = document.getElementById("category-chart-data");
+
+    if (!dataElement) {
+        return;
+    }
+
+    const chartData = JSON.parse(dataElement.textContent);
+
+    if (!chartData.length) {
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    new Chart(ctx, {
+        type: "bar",
+
+        data: {
+            labels: chartData.map(item => item.name),
+
+            datasets: [
+                {
+                    label: "Revenue",
+                    data: chartData.map(item => item.revenue),
+                    backgroundColor: "rgba(157, 192, 139, 0.65)",
+                    borderColor: "#9DC08B",
+                    borderWidth: 1,
+                    borderRadius: 6,
+                },
+            ],
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    display: false,
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Revenue: ${Number(context.raw).toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}`;
+                        },
+                    },
+                },
+            },
+
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                },
+
+                y: {
+                    beginAtZero: true,
+
+                    grid: {
+                        color: "rgba(157, 192, 139, 0.08)",
+                    },
+
+                    ticks: {
+                        callback: function(value) {
+                            return Number(value).toLocaleString();
+                        },
+                    },
+                },
+            },
+        },
+    });
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById("categoryProfitChart");
+
+    if (!canvas) {
+        return;
+    }
+
+    const dataElement = document.getElementById("category-chart-data");
+
+    if (!dataElement) {
+        return;
+    }
+
+    const chartData = JSON.parse(dataElement.textContent);
+
+    if (!chartData.length) {
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    new Chart(ctx, {
+        type: "bar",
+
+        data: {
+            labels: chartData.map(item => item.name),
+
+            datasets: [
+                {
+                    label: "Gross Profit",
+                    data: chartData.map(item => item.gross_profit),
+                    backgroundColor: "rgba(96, 153, 102, 0.65)",
+                    borderColor: "#609966",
+                    borderWidth: 1,
+                    borderRadius: 6,
+                },
+            ],
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    display: false,
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Gross Profit: ${Number(context.raw).toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}`;
+                        },
+                    },
+                },
+            },
+
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                },
+
+                y: {
+                    beginAtZero: true,
+
+                    grid: {
+                        color: "rgba(157, 192, 139, 0.08)",
+                    },
+
+                    ticks: {
+                        callback: function(value) {
+                            return Number(value).toLocaleString();
+                        },
+                    },
+                },
+            },
+        },
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const chartCards = document.querySelectorAll(
+        ".analytics-chart-card"
+    );
+
+    if (!chartCards.length) {
+        return;
+    }
+
+    let expandedCard = null;
+    let overlay = null;
+
+    function closeExpandedChart() {
+        if (!expandedCard || !overlay) {
+            return;
+        }
+
+        const chartContainer = overlay.querySelector(".chart-container");
+
+        if (chartContainer) {
+            expandedCard.appendChild(chartContainer);
+        }
+
+        overlay.remove();
+
+        document.body.classList.remove(
+            "analytics-chart-expanded"
+        );
+
+        expandedCard.classList.remove(
+            "analytics-chart-card-expanded"
+        );
+
+        expandedCard = null;
+        overlay = null;
+
+        window.dispatchEvent(new Event("resize"));
+    }
+
+    function expandChart(card) {
+        if (expandedCard) {
+            closeExpandedChart();
+        }
+
+        const chartContainer = card.querySelector(
+            ".chart-container"
+        );
+
+        if (!chartContainer) {
+            return;
+        }
+
+        expandedCard = card;
+
+        overlay = document.createElement("div");
+
+        overlay.className = "analytics-chart-overlay";
+
+        const overlayCard = document.createElement("div");
+
+        overlayCard.className =
+            "analytics-chart-overlay-card";
+
+        const closeButton = document.createElement("button");
+
+        closeButton.type = "button";
+        closeButton.className =
+            "analytics-chart-overlay-close";
+        closeButton.setAttribute(
+            "aria-label",
+            "Close expanded chart"
+        );
+        closeButton.innerHTML = "×";
+
+        const header = card.querySelector(".card-header");
+
+        if (header) {
+            const headerClone = header.cloneNode(true);
+            overlayCard.appendChild(headerClone);
+        }
+
+        overlayCard.appendChild(closeButton);
+        overlayCard.appendChild(chartContainer);
+
+        overlay.appendChild(overlayCard);
+
+        document.body.appendChild(overlay);
+
+        document.body.classList.add(
+            "analytics-chart-expanded"
+        );
+
+        card.classList.add(
+            "analytics-chart-card-expanded"
+        );
+
+        closeButton.addEventListener(
+            "click",
+            (event) => {
+                event.stopPropagation();
+                closeExpandedChart();
+            }
+        );
+
+        overlay.addEventListener(
+            "click",
+            (event) => {
+                if (event.target === overlay) {
+                    closeExpandedChart();
+                }
+            }
+        );
+
+        window.dispatchEvent(new Event("resize"));
+    }
+
+    chartCards.forEach((card) => {
+        card.addEventListener("click", (event) => {
+            /*
+             * Ignore clicks on interactive chart elements after
+             * the chart has already been expanded.
+             */
+            if (expandedCard === card) {
+                return;
+            }
+
+            expandChart(card);
+        });
+
+        card.addEventListener("dblclick", (event) => {
+            event.preventDefault();
+
+            /*
+             * If this card is already expanded, double-click
+             * returns it to its normal position.
+             */
+            if (expandedCard === card) {
+                closeExpandedChart();
+            }
+        });
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (
+            event.key === "Escape" &&
+            expandedCard
+        ) {
+            closeExpandedChart();
+        }
     });
 });

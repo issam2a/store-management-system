@@ -2552,3 +2552,71 @@ body.sidebar-collapsed .app-main {
     }
 }
 
+.analytics-chart-grid {
+    margin-top: 24px;
+}
+
+.analytics-chart-card {
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    min-height: 420px;
+}
+
+
+.analytics-chart-card:hover {
+    transform: translateY(-2px);
+}
+.analytics-chart-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background: rgba(5, 9, 6, 0.78);
+    backdrop-filter: blur(8px);
+}
+
+.analytics-chart-overlay-card {
+    width: min(1200px, 95vw);
+    height: min(720px, 88vh);
+    background: #141C16;
+    border: 1px solid rgba(157, 192, 139, 0.18);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.analytics-chart-overlay-card .chart-container {
+    flex: 1;
+    min-height: 0;
+}
+
+.analytics-chart-overlay-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: #EDF1D6;
+    font-size: 20px;
+    cursor: pointer;
+}
+.analytics-chart-overlay-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+body.analytics-chart-expanded {
+    overflow: hidden;
+}
+
+.analytics-chart-large {
+    min-height: 420px;
+}

@@ -1202,6 +1202,131 @@ def get_sales_trend(
 
 
 
+def get_profitability_trend(start_date=None, end_date=None):
+    """
+    Return daily revenue, COGS, and gross profit for completed sales.
+
+    Revenue comes from completed Sale records.
+    COGS comes from historical SaleItem.unit_cost snapshots.
+    """
+
+    sale_start, sale_end = _date_range_bounds(
+        start_date,
+        end_date,
+        django_timezone.get_default_timezone(),
+    )
+
+    sales = Sale.objects.filter(
+        status=Sale.Status.COMPLETED,
+        completed_at__gte=sale_start,
+        completed_at__lt=sale_end,
+    )
+
+    revenue_by_day = (
+        sales
+        .annotate(day=TruncDay("completed_at", tzinfo=sale_start.tzinfo))
+        .values("day")
+        .annotate(
+            revenue=Coalesce(
+                Sum("total_amount"),
+                Decimal("0.00"),
+            ),
+        )
+        .order_by("day")
+    )
+
+    items = SaleItem.objects.filter(
+        sale__status=Sale.Status.COMPLETED,
+        sale__completed_at__gte=sale_start,
+        sale__completed_at__lt=sale_end,
+    )
+
+    cogs_expression = ExpressionWrapper(
+        F("quantity") * F("unit_cost"),
+        output_field=DecimalField(
+            max_digits=18,
+            decimal_places=6,
+        ),
+    )
+
+    cogs_by_day = (
+        items
+        .annotate(
+            day=TruncDay(
+                "sale__completed_at",
+                tzinfo=sale_start.tzinfo,
+            )
+        )
+        .values("day")
+        .annotate(
+            cogs=Coalesce(
+                Sum(cogs_expression),
+                Decimal("0.00"),
+            ),
+        )
+        .order_by("day")
+    )
+
+    revenue_lookup = {
+        row["day"].date(): row["revenue"]
+        for row in revenue_by_day
+    }
+
+    cogs_lookup = {
+        row["day"].date(): row["cogs"]
+        for row in cogs_by_day
+    }
+
+    results = []
+
+    if start_date and end_date:
+        current_date = start_date
+
+        while current_date <= end_date:
+            revenue = revenue_lookup.get(
+                current_date,
+                Decimal("0.00"),
+            )
+
+            cogs = cogs_lookup.get(
+                current_date,
+                Decimal("0.00"),
+            )
+
+            results.append({
+                "date": current_date,
+                "revenue": revenue,
+                "cogs": cogs,
+                "gross_profit": revenue - cogs,
+            })
+
+            current_date += timedelta(days=1)
+
+    else:
+        all_dates = sorted(
+            set(revenue_lookup) | set(cogs_lookup)
+        )
+
+        for date in all_dates:
+            revenue = revenue_lookup.get(
+                date,
+                Decimal("0.00"),
+            )
+
+            cogs = cogs_lookup.get(
+                date,
+                Decimal("0.00"),
+            )
+
+            results.append({
+                "date": date,
+                "revenue": revenue,
+                "cogs": cogs,
+                "gross_profit": revenue - cogs,
+            })
+
+    return results
+
 def get_historical_price_analysis(
     product_id=None,
     start_date=None,
