@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Analytics" %} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <span class="page-eyebrow">{% trans "Insights" %}</span>
+        <h1>{% trans "Analytics" %}</h1>
+        <p>{% trans "Understand your store's performance and trends." %}</p>
+    </div>
+</div>
+
+<section class="kpi-grid">
+
+    <article class="kpi-card">
+        <div class="kpi-card-top">
+            <span class="kpi-label">{% trans "Revenue" %}</span>
+        </div>
+
+        <div class="kpi-value">
+            {{ kpis.revenue|floatformat:2 }}
+        </div>
+    </article>
+
+    <article class="kpi-card">
+        <div class="kpi-card-top">
+            <span class="kpi-label">{% trans "Gross Profit" %}</span>
+        </div>
+
+        <div class="kpi-value">
+            {{ kpis.gross_profit|floatformat:2 }}
+        </div>
+    </article>
+
+    <article class="kpi-card">
+        <div class="kpi-card-top">
+            <span class="kpi-label">{% trans "Gross Margin" %}</span>
+        </div>
+
+        <div class="kpi-value">
+            {{ kpis.gross_margin|default_if_none:"0"|floatformat:2 }}%
+        </div>
+    </article>
+
+    <article class="kpi-card">
+        <div class="kpi-card-top">
+            <span class="kpi-label">{% trans "COGS" %}</span>
+        </div>
+
+        <div class="kpi-value">
+            {{ kpis.cogs|floatformat:2 }}
+        </div>
+    </article>
+
+</section>
+
+<section class="dashboard-card">
+    <div class="card-header">
+        <div>
+            <span class="card-eyebrow">{% trans "Sales Performance" %}</span>
+            <h2>{% trans "Revenue Trend" %}</h2>
+        </div>
+    </div>
+
+    {{ chart_data|json_script:"analytics-chart-data" }}
+
+    <div class="chart-container revenue-line">
+        <canvas id="analyticsRevenueChart"></canvas>
+    </div>
+</section>
+
+{% endblock %}
