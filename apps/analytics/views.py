@@ -8,6 +8,7 @@ from .services import (
     get_sales_trend,
     get_top_selling_products,
     get_slow_moving_products,
+    get_product_profitability,
 )
 
 
@@ -72,6 +73,11 @@ def analytics_dashboard(request):
         limit=5,
     )
 
+    product_profitability = get_product_profitability(
+        start_date=start_date,
+        end_date=today,
+    )
+
     context = {
         "today": today,
         "start_date": start_date,
@@ -79,6 +85,7 @@ def analytics_dashboard(request):
         "chart_data": chart_data,
         "top_selling_products": top_selling_products,
         "slow_moving_products": slow_moving_products,
+        "product_profitability": product_profitability,
     }
 
     return render(

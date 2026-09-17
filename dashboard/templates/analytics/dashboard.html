@@ -385,4 +385,77 @@
 
 </section>
 
+<section class="dashboard-card analytics-section">
+    <div class="card-header">
+        <div>
+            <span class="card-eyebrow">{% trans "Profitability" %}</span>
+            <h2>{% trans "Product Profitability" %}</h2>
+            <p class="card-description">
+                {% trans "Compare revenue, cost, gross profit, and margin by product." %}
+            </p>
+        </div>
+
+        <div class="analytics-period">
+            <span>{{ start_date|date:"M d, Y" }}</span>
+            <span aria-hidden="true">→</span>
+            <span>{{ today|date:"M d, Y" }}</span>
+        </div>
+    </div>
+
+    {% if product_profitability %}
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Product" %}</th>
+                        <th>{% trans "Units Sold" %}</th>
+                        <th>{% trans "Revenue" %}</th>
+                        <th>{% trans "COGS" %}</th>
+                        <th>{% trans "Gross Profit" %}</th>
+                        <th>{% trans "Margin" %}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for product in product_profitability %}
+                        <tr>
+                            <td>
+                                <strong>{{ product.product_name }}</strong>
+                            </td>
+
+                            <td>
+                                {{ product.quantity_sold|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                {{ product.gross_sales_value|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                {{ product.cogs|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                {{ product.gross_profit|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                {{ product.gross_margin|floatformat:2 }}%
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <span class="empty-state-icon">◌</span>
+            <h3>{% trans "No profitability data yet" %}</h3>
+            <p>
+                {% trans "Complete sales with recorded product costs to see profitability." %}
+            </p>
+        </div>
+    {% endif %}
+</section>
+
 {% endblock %}
