@@ -18,14 +18,84 @@
         </p>
     </div>
 
-    <div class="page-header-actions">
-        <button type="button" class="date-range-button">
-            <span aria-hidden="true">◷</span>
-            {% trans "Last 30 Days" %}
-        </button>
-    </div>
+   
 </div>
 
+
+<section class="dashboard-card analytics-filter-card">
+    <div class="card-header">
+        <div>
+            <h2>{% trans "Analytics Period" %}</h2>
+            <p>
+                {% trans "Choose the period used for all analytics." %}
+            </p>
+        </div>
+    </div>
+
+    <form method="get" class="analytics-filter-form">
+
+        <div class="analytics-filter-presets">
+
+            <button
+                type="submit"
+                name="range"
+                value="today"
+                class="btn {% if selected_range == 'today' %}btn-primary{% else %}btn-secondary{% endif %}"
+            >
+                {% trans "Today" %}
+            </button>
+
+            <button
+                type="submit"
+                name="range"
+                value="7"
+                class="btn {% if selected_range == '7' %}btn-primary{% else %}btn-secondary{% endif %}"
+            >
+                {% trans "7 Days" %}
+            </button>
+
+            <button
+                type="submit"
+                name="range"
+                value="30"
+                class="btn {% if selected_range == '30' %}btn-primary{% else %}btn-secondary{% endif %}"
+            >
+                {% trans "30 Days" %}
+            </button>
+
+        </div>
+
+        <div class="analytics-custom-range">
+
+            <input
+                type="date"
+                name="start_date"
+                value="{{ start_date|date:'Y-m-d' }}"
+                aria-label="{% trans 'Start date' %}"
+            >
+
+            <span>—</span>
+
+            <input
+                type="date"
+                name="end_date"
+                value="{{ end_date|date:'Y-m-d' }}"
+                aria-label="{% trans 'End date' %}"
+            >
+
+            <button
+                type="submit"
+                name="range"
+                value="custom"
+                class="btn {% if selected_range == 'custom' %}btn-primary{% else %}btn-secondary{% endif %}"
+            >
+                {% trans "Apply" %}
+            </button>
+
+        </div>
+
+    </form>
+</section>
 
 <!-- =========================================================
      EXECUTIVE KPIs

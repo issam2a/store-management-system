@@ -2620,3 +2620,54 @@ body.analytics-chart-expanded {
 .analytics-chart-large {
     min-height: 420px;
 }
+
+/* =========================================================
+   ANALYTICS DATE RANGE FILTER
+   ========================================================= */
+
+.analytics-filter-card {
+    margin-bottom: 24px;
+}
+
+.analytics-filter-form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.analytics-filter-presets {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.analytics-custom-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.analytics-custom-range input[type="date"] {
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid rgba(157, 192, 139, 0.18);
+    border-radius: 10px;
+    background: rgba(15, 21, 16, 0.7);
+    color: #EDF1D6;
+}
+
+.analytics-custom-range input[type="date"]:focus {
+    outline: none;
+    border-color: #9DC08B;
+}
+
+.analytics-custom-range span {
+    color: rgba(237, 241, 214, 0.5);
+}
+
+.analytics-filter-presets .btn,
+.analytics-custom-range .btn {
+    min-height: 40px;
+}
