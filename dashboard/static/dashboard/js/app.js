@@ -2285,3 +2285,125 @@ if (
 
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById("analyticsRevenueChart");
+
+    if (!canvas) {
+        return;
+    }
+
+    const dataElement = document.getElementById("analytics-chart-data");
+
+    if (!dataElement) {
+        return;
+    }
+
+    const chartData = JSON.parse(dataElement.textContent);
+
+    if (!chartData.length) {
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+
+    gradient.addColorStop(0, "rgba(157, 192, 139, 0.25)");
+    gradient.addColorStop(1, "rgba(157, 192, 139, 0)");
+
+    new Chart(ctx, {
+        type: "line",
+
+        data: {
+            labels: chartData.map(item => item.label),
+
+            datasets: [
+                {
+                    label: "Revenue",
+
+                    data: chartData.map(item => item.revenue),
+
+                    borderColor: "#9DC08B",
+                    backgroundColor: gradient,
+
+                    borderWidth: 2,
+
+                    fill: true,
+
+                    tension: 0.4,
+
+                    pointRadius: 0,
+
+                    pointHoverRadius: 5,
+
+                    pointHoverBackgroundColor: "#9DC08B",
+
+                    pointHoverBorderColor: "#0F1510",
+
+                    pointHoverBorderWidth: 2,
+                }
+            ],
+        },
+
+        options: {
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            interaction: {
+                intersect: false,
+                mode: "index",
+            },
+
+            plugins: {
+                legend: {
+                    display: false,
+                },
+
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            return chartData[context[0].dataIndex].label;
+                        },
+
+                        label: function(context) {
+                            const item = chartData[context.dataIndex];
+
+                            return [
+                                `Revenue: ${Number(item.revenue).toFixed(2)}`,
+                                `Transactions: ${item.transactions}`,
+                                `Units sold: ${Number(item.units_sold).toFixed(2)}`,
+                            ];
+                        },
+                    },
+                },
+            },
+
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                    },
+
+                    ticks: {
+                        maxTicksLimit: 10,
+                    },
+                },
+
+                y: {
+                    beginAtZero: true,
+
+                    grid: {
+                        color: "rgba(157, 192, 139, 0.08)",
+                    },
+
+                    ticks: {
+                        callback: function(value) {
+                            return Number(value).toLocaleString();
+                        },
+                    },
+                },
+            },
+        },
+    });
+});
