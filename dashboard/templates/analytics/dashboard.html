@@ -11,67 +11,378 @@
     <div>
         <span class="page-eyebrow">{% trans "Insights" %}</span>
         <h1>{% trans "Analytics" %}</h1>
-        <p>{% trans "Understand your store's performance and trends." %}</p>
+        <p>
+            {% trans "Understand your store's performance, trends, and profitability." %}
+        </p>
+    </div>
+
+    <div class="page-header-actions">
+        <button type="button" class="date-range-button">
+            <span aria-hidden="true">◷</span>
+            {% trans "Last 30 Days" %}
+        </button>
     </div>
 </div>
 
+
+<!-- Executive KPIs -->
 <section class="kpi-grid">
 
     <article class="kpi-card">
         <div class="kpi-card-top">
             <span class="kpi-label">{% trans "Revenue" %}</span>
+            <span class="kpi-icon" aria-hidden="true">↗</span>
         </div>
 
-        <div class="kpi-value">
+        <div
+            class="kpi-value"
+            data-count="{{ kpis.revenue }}"
+            data-decimals="2"
+        >
             {{ kpis.revenue|floatformat:2 }}
         </div>
+
+        <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Total sales revenue" %}
+            </span>
+        </div>
     </article>
+
 
     <article class="kpi-card">
         <div class="kpi-card-top">
             <span class="kpi-label">{% trans "Gross Profit" %}</span>
+            <span class="kpi-icon" aria-hidden="true">◆</span>
         </div>
 
-        <div class="kpi-value">
+        <div
+            class="kpi-value"
+            data-count="{{ kpis.gross_profit }}"
+            data-decimals="2"
+        >
             {{ kpis.gross_profit|floatformat:2 }}
         </div>
+
+        <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Revenue after COGS" %}
+            </span>
+        </div>
     </article>
+
 
     <article class="kpi-card">
         <div class="kpi-card-top">
             <span class="kpi-label">{% trans "Gross Margin" %}</span>
+            <span class="kpi-icon" aria-hidden="true">%</span>
         </div>
 
-        <div class="kpi-value">
-            {{ kpis.gross_margin|default_if_none:"0"|floatformat:2 }}%
+        <div
+            class="kpi-value"
+            data-count="{{ kpis.gross_margin|default_if_none:'0' }}"
+            data-decimals="2"
+            data-suffix="%"
+        >
+            {{ kpis.gross_margin|default_if_none:"0"|floatformat:2 }}
+        </div>
+
+        <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Gross profit margin" %}
+            </span>
         </div>
     </article>
+
 
     <article class="kpi-card">
         <div class="kpi-card-top">
             <span class="kpi-label">{% trans "COGS" %}</span>
+            <span class="kpi-icon" aria-hidden="true">◈</span>
         </div>
 
-        <div class="kpi-value">
+        <div
+            class="kpi-value"
+            data-count="{{ kpis.cogs }}"
+            data-decimals="2"
+        >
             {{ kpis.cogs|floatformat:2 }}
+        </div>
+
+        <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Cost of goods sold" %}
+            </span>
+        </div>
+    </article>
+
+
+    <article class="kpi-card">
+        <div class="kpi-card-top">
+            <span class="kpi-label">{% trans "Transactions" %}</span>
+            <span class="kpi-icon" aria-hidden="true">#</span>
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ kpis.transaction_count }}"
+            data-decimals="0"
+        >
+            {{ kpis.transaction_count }}
+        </div>
+
+        <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Completed sales" %}
+            </span>
+        </div>
+    </article>
+
+
+    <article class="kpi-card">
+        <div class="kpi-card-top">
+            <span class="kpi-label">{% trans "Units Sold" %}</span>
+            <span class="kpi-icon" aria-hidden="true">▦</span>
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ kpis.units_sold }}"
+            data-decimals="2"
+        >
+            {{ kpis.units_sold|floatformat:"-2" }}
+        </div>
+
+        <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Products sold" %}
+            </span>
+        </div>
+    </article>
+
+
+    <article class="kpi-card">
+        <div class="kpi-card-top">
+            <span class="kpi-label">{% trans "Average Order Value" %}</span>
+            <span class="kpi-icon" aria-hidden="true">Ø</span>
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ kpis.average_order_value }}"
+            data-decimals="2"
+        >
+            {{ kpis.average_order_value|floatformat:2 }}
+        </div>
+
+        <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Revenue per transaction" %}
+            </span>
         </div>
     </article>
 
 </section>
 
-<section class="dashboard-card">
+
+<!-- Sales Performance -->
+<section class="dashboard-card analytics-section">
+
     <div class="card-header">
         <div>
-            <span class="card-eyebrow">{% trans "Sales Performance" %}</span>
-            <h2>{% trans "Revenue Trend" %}</h2>
+            <span class="card-eyebrow">
+                {% trans "Sales Performance" %}
+            </span>
+
+            <h2>
+                {% trans "Sales Trend" %}
+            </h2>
+
+            <p class="card-description">
+                {% trans "Track revenue, transactions, and units sold over time." %}
+            </p>
+        </div>
+
+        <div class="analytics-period">
+            <span>
+                {{ start_date|date:"M d, Y" }}
+            </span>
+
+            <span aria-hidden="true">→</span>
+
+            <span>
+                {{ today|date:"M d, Y" }}
+            </span>
         </div>
     </div>
 
+
     {{ chart_data|json_script:"analytics-chart-data" }}
 
-    <div class="chart-container revenue-line">
+    <div class="chart-container analytics-chart">
         <canvas id="analyticsRevenueChart"></canvas>
     </div>
+</section>
+
+<section class="dashboard-grid dashboard-grid-main analytics-product-performance">
+
+    <!-- =====================================================
+         TOP SELLING PRODUCTS
+    ====================================================== -->
+
+    <article class="dashboard-card">
+        <div class="card-header">
+            <div>
+                <span class="card-eyebrow">
+                    {% trans "Product Performance" %}
+                </span>
+
+                <h2>
+                    {% trans "Top Selling Products" %}
+                </h2>
+
+                <p class="card-description">
+                    {% trans "Products with the highest unit sales over the selected period." %}
+                </p>
+            </div>
+        </div>
+
+        {% if top_selling_products %}
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                {% trans "Product" %}
+                            </th>
+
+                            <th>
+                                {% trans "Units Sold" %}
+                            </th>
+
+                            <th>
+                                {% trans "Sales" %}
+                            </th>
+
+                            <th>
+                                {% trans "Revenue" %}
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for product in top_selling_products %}
+                            <tr>
+                                <td>
+                                    <strong>
+                                        {{ product.product__name }}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    {{ product.quantity_sold|floatformat:"-3" }}
+                                </td>
+
+                                <td>
+                                    {{ product.sales_count }}
+                                </td>
+
+                                <td>
+                                    {{ product.gross_sales_value|floatformat:2 }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>
+                    {% trans "No completed product sales in this period." %}
+                </p>
+            </div>
+        {% endif %}
+    </article>
+
+
+    <!-- =====================================================
+         SLOW MOVING PRODUCTS
+    ====================================================== -->
+
+    <article class="dashboard-card">
+        <div class="card-header">
+            <div>
+                <span class="card-eyebrow">
+                    {% trans "Inventory Insight" %}
+                </span>
+
+                <h2>
+                    {% trans "Slow-Moving Products" %}
+                </h2>
+
+                <p class="card-description">
+                    {% trans "Products with the lowest unit sales over the selected period." %}
+                </p>
+            </div>
+        </div>
+
+        {% if slow_moving_products %}
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                {% trans "Product" %}
+                            </th>
+
+                            <th>
+                                {% trans "Units Sold" %}
+                            </th>
+
+                            <th>
+                                {% trans "Sales" %}
+                            </th>
+
+                            <th>
+                                {% trans "Revenue" %}
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for product in slow_moving_products %}
+                            <tr>
+                                <td>
+                                    <strong>
+                                        {{ product.product__name }}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    {{ product.quantity_sold|floatformat:"-3" }}
+                                </td>
+
+                                <td>
+                                    {{ product.sales_count }}
+                                </td>
+
+                                <td>
+                                    {{ product.gross_sales_value|floatformat:2 }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>
+                    {% trans "No completed product sales in this period." %}
+                </p>
+            </div>
+        {% endif %}
+    </article>
+
 </section>
 
 {% endblock %}

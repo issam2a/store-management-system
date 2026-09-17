@@ -6,6 +6,8 @@ from django.utils import timezone
 from .services import (
     get_executive_kpis,
     get_sales_trend,
+    get_top_selling_products,
+    get_slow_moving_products,
 )
 
 
@@ -58,11 +60,25 @@ def analytics_dashboard(request):
             }
         )
 
+    top_selling_products = get_top_selling_products(
+        start_date=start_date,
+        end_date=today,
+        limit=5,
+    )
+
+    slow_moving_products = get_slow_moving_products(
+        start_date=start_date,
+        end_date=today,
+        limit=5,
+    )
+
     context = {
         "today": today,
         "start_date": start_date,
         "kpis": kpis,
         "chart_data": chart_data,
+        "top_selling_products": top_selling_products,
+        "slow_moving_products": slow_moving_products,
     }
 
     return render(
