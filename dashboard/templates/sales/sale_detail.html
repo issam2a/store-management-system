@@ -302,6 +302,7 @@
         <div>
             <h2 class="page-title">
                 {% trans "Current Sale" %}
+                ({{ items|length }})
             </h2>
 
             <p class="page-description">
@@ -320,6 +321,7 @@
 
                 <thead>
                     <tr>
+                        <th>#</th>
 
                         <th>
                             {% trans "Product" %}
@@ -354,6 +356,10 @@
                     {% for item in items %}
 
                         <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
 
                             <td>
                                 {{ item.product.name }}
@@ -967,5 +973,27 @@
 </div>
 
 {% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const quantityInput = document.querySelector("#id_quantity");
+
+    if (!quantityInput) return;
+
+    quantityInput.addEventListener("keydown", (event) => {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            document
+                .querySelector("#add-sale-item-button")
+                .click();
+        }
+    });
+
+});
+</script>
 
 {% endblock %}
