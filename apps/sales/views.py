@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from apps.products.models import Product
-
+from django.views.decorators.http import require_POST
 from .forms import (
     SaleCancellationForm,
     SaleCreateForm,
@@ -252,27 +252,26 @@ def sale_item_create(request, sale_id):
 
 
 @login_required
+@require_POST
 def sale_item_edit(request, item_id):
-    """
-    Update the quantity of an existing cart item.
-
-    This is an auxiliary endpoint for the POS interface.
-    """
-
     item = get_object_or_404(
         SaleItem.objects.select_related(
             "sale",
             "product",
+            "product__unit",
         ),
         pk=item_id,
     )
 
     sale = item.sale
 
-    if request.method != "POST":
-        return redirect(
-            "sale_detail",
-            sale_id=sale.id,
+    if sale.status != Sale.Status.DRAFT:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": _("Only draft sales can be modified."),
+            },
+            status=400,
         )
 
     form = SaleItemUpdateForm(
@@ -280,52 +279,45 @@ def sale_item_edit(request, item_id):
         product=item.product,
     )
 
-    if form.is_valid():
-        try:
-            update_sale_item(
-                item_id=item.id,
-                quantity=form.cleaned_data["quantity"],
-            )
-
-        except ValidationError as exc:
-            form.add_error(
-                None,
-                exc,
-            )
-
-        else:
-            return redirect(
-                "sale_detail",
-                sale_id=sale.id,
-            )
-
-    items = (
-        sale.items
-        .select_related(
-            "product",
-            "product__unit",
+    if not form.is_valid():
+        return JsonResponse(
+            {
+                "success": False,
+                "error": _("Enter a valid quantity."),
+            },
+            status=400,
         )
-        .order_by("id")
-    )
 
-    context = {
-        "sale": sale,
-        "items": items,
-        "item_form": SaleItemForm(),
-        "discount_form": SaleDiscountForm(
-            initial={
-                "discount_amount": sale.discount_amount,
-            }
-        ),
-        "cancellation_form": SaleCancellationForm(),
-        "item_update_form": form,
-        "editing_item": item,
-    }
+    try:
+        item = update_sale_item(
+            item_id=item.id,
+            quantity=form.cleaned_data["quantity"],
+        )
 
-    return render(
-        request,
-        "sales/sale_detail.html",
-        context,
+        sale.refresh_from_db()
+
+    except ValidationError as exc:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": exc.message,
+            },
+            status=400,
+        )
+
+    return JsonResponse(
+        {
+            "success": True,
+            "item": {
+                "id": item.id,
+                "quantity": str(item.quantity),
+                "line_total": str(item.line_total),
+            },
+            "sale": {
+                "subtotal": str(sale.subtotal_amount),
+                "total": str(sale.total_amount),
+            },
+        }
     )
 
 

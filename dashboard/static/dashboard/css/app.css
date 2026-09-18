@@ -2746,3 +2746,16 @@ body.analytics-chart-expanded {
         position: static;
     }
 }
+.sale-item-updated {
+    animation: flashUpdate 0.8s ease;
+}
+
+@keyframes flashUpdate {
+    0% {
+        background-color: rgba(96, 153, 102, 0.35);
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}

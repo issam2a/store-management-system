@@ -139,7 +139,18 @@
                                         </td>
 
                                         <td>
-                                            {{ item.quantity|floatformat:"-3" }}
+                                            <input
+                                                type="number"
+                                                name="quantity"
+                                                value="{{ item.quantity|floatformat:-3}}"
+                                                class="form-input sale-item-quantity"
+                                                min="0.001"
+                                                step="0.001"
+                                                data-item-id="{{ item.id }}"
+                                                data-unit="{{ item.product.unit.symbol }}"
+                                                data-update-url="{% url 'sale_item_edit' item.id %}"
+                                                aria-label="{% trans 'Quantity' %}"
+                                            >
                                         </td>
 
                                         <td>
@@ -147,7 +158,9 @@
                                         </td>
 
                                         <td>
-                                            {{ item.unit_price|floatformat:2 }}
+                                            <td class="sale-item-line-total">
+                                            {{ item.line_total|floatformat:2 }}
+                                        </td>
                                         </td>
 
                                         <td>
@@ -212,7 +225,9 @@
                             {% trans "Subtotal" %}
                         </div>
 
-                        {{ sale.subtotal_amount|floatformat:2 }}
+                        <span id="sale-subtotal">
+                            {{ sale.subtotal_amount|floatformat:2 }}
+                        </span>
                     </div>
 
 
@@ -258,7 +273,9 @@
                             {% trans "Total" %}
                         </div>
 
-                        {{ sale.total_amount|floatformat:2 }}
+                        <span id="sale-total">
+                            {{ sale.total_amount|floatformat:2 }}
+                        </span>
 
                     </div>
 
@@ -594,7 +611,9 @@
 
             <div class="form-group">
                 <div class="form-label">{% trans "Subtotal" %}</div>
-                {{ sale.subtotal_amount|floatformat:2 }}
+                <span id="sale-subtotal">
+                    {{ sale.subtotal_amount|floatformat:2 }}
+                </span>
             </div>
 
             <div class="form-group">
@@ -604,7 +623,9 @@
 
             <div class="form-group">
                 <div class="form-label">{% trans "Total" %}</div>
-                {{ sale.total_amount|floatformat:2 }}
+                <span id="sale-total">
+                    {{ sale.total_amount|floatformat:2 }}
+                </span>
             </div>
 
         </div>
@@ -722,7 +743,9 @@
 
             <div class="form-group">
                 <div class="form-label">{% trans "Subtotal" %}</div>
-                {{ sale.subtotal_amount|floatformat:2 }}
+                <span id="sale-subtotal">
+                    {{ sale.subtotal_amount|floatformat:2 }}
+                </span>
             </div>
 
             <div class="form-group">
@@ -732,7 +755,9 @@
 
             <div class="form-group">
                 <div class="form-label">{% trans "Total" %}</div>
-                {{ sale.total_amount|floatformat:2 }}
+                <span id="sale-total">
+                    {{ sale.total_amount|floatformat:2 }}
+                </span>
             </div>
 
         </div>

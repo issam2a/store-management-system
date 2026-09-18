@@ -1272,7 +1272,7 @@ if (
 
     let selectedProduct = null;
     let searchTimeout = null;
-    
+
     let highlightedIndex = -1;
     let currentSearchResults = [];
     quantityField?.addEventListener(
@@ -2610,7 +2610,190 @@ document.addEventListener("DOMContentLoaded", () => {
         },
     });
 });
+/*
+ * ============================================================
+ * Inline Sale Item Quantity Editing
+ * ============================================================
+ */
 
+const saleQuantityInputs =
+    document.querySelectorAll(
+        ".sale-item-quantity"
+    );
+
+if (saleQuantityInputs.length) {
+
+    const updateSaleItemQuantity =
+        async (input) => {
+
+            const updateUrl =
+                input.dataset.updateUrl;
+
+            const quantity =
+                input.value.trim();
+
+            if (!quantity) {
+                return;
+            }
+
+            const previousValue =
+                input.dataset.previousValue ||
+                input.defaultValue;
+
+            input.disabled = true;
+
+            const csrfToken =
+                document.querySelector(
+                    "[name=csrfmiddlewaretoken]"
+                )?.value;
+
+            try {
+
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "csrfmiddlewaretoken",
+                    csrfToken
+                );
+
+                formData.append(
+                    "quantity",
+                    quantity
+                );
+
+                const response =
+                    await fetch(
+                        updateUrl,
+                        {
+                            method: "POST",
+                            body: formData,
+                            headers: {
+                                "X-Requested-With":
+                                    "XMLHttpRequest",
+                            },
+                        }
+                    );
+
+                const text =
+                    await response.text();
+
+                console.log(text);
+
+                const data =
+                    JSON.parse(text);
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+                    throw new Error(
+                        data.error ||
+                        "Update failed."
+                    );
+                }
+
+                input.value =
+                    data.item.quantity;
+
+                input.dataset.previousValue =
+                    data.item.quantity;
+
+                const row =
+                    input.closest("tr");
+
+                const totalCell =
+                    row.querySelector(
+                        ".sale-item-line-total"
+                    );
+
+                totalCell.textContent =
+                    Number(
+                        data.item.line_total
+                    ).toFixed(2);
+
+                row.classList.add(
+                    "sale-item-updated"
+                );
+
+                setTimeout(() => {
+                    row.classList.remove(
+                        "sale-item-updated"
+                    );
+                }, 800);
+
+                document.getElementById(
+                    "sale-subtotal"
+                ).textContent =
+                    Number(
+                        data.sale.subtotal
+                    ).toFixed(2);
+
+                document.getElementById(
+                    "sale-total"
+                ).textContent =
+                    Number(
+                        data.sale.total
+                    ).toFixed(2);
+
+            } catch (error) {
+
+                console.error(error);
+
+                input.value =
+                    previousValue;
+
+                alert(error.message);
+
+            } finally {
+
+                input.disabled = false;
+            }
+        };
+
+    saleQuantityInputs.forEach(
+        (input) => {
+
+            input.dataset.previousValue =
+                input.value;
+
+            input.addEventListener(
+                "keydown",
+                (event) => {
+
+                    if (
+                        event.key !== "Enter"
+                    ) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    updateSaleItemQuantity(
+                        input
+                    );
+                }
+            );
+
+            input.addEventListener(
+                "blur",
+                () => {
+
+                    if (
+                        input.value ===
+                        input.dataset.previousValue
+                    ) {
+                        return;
+                    }
+
+                    updateSaleItemQuantity(
+                        input
+                    );
+                }
+            );
+        }
+    );
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById("profitabilityTrendChart");
