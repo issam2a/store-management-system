@@ -1898,8 +1898,30 @@ body.sidebar-collapsed .app-main {
 .data-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 700px;
+}
+/* Responsive table container */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
+/* Mobile */
+@media (max-width: 768px) {
+    .data-table {
+        min-width: 650px;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .data-table th,
+    .data-table td {
+        white-space: nowrap;
+    }
+}
 .data-table th,
 .data-table td {
     padding: 14px;
@@ -2673,4 +2695,54 @@ body.analytics-chart-expanded {
 }
 .pos-highlight {
     background: rgba(157, 192, 139, 0.25);
+}
+.sales-pos-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.sales-pos-main,
+.sales-pos-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    padding: 1.25rem;
+
+    background: #141C16;
+    border: 1px solid rgba(157, 192, 139, 0.14);
+    border-radius: 18px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* Keep the individual cards visually clean inside the grouped card */
+.sales-pos-main .content-card,
+.sales-pos-sidebar .content-card {
+    margin: 0;
+}
+
+/* Add Product stays visible while scrolling */
+.sales-pos-entry {
+    position: sticky;
+    top: 90px;
+}
+
+/* Slight visual separation between cards */
+.sales-pos-main .content-card,
+.sales-pos-sidebar .content-card {
+    border-color: rgba(157, 192, 139, 0.10);
+}
+
+@media (max-width: 900px) {
+    .sales-pos-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sales-pos-entry {
+        position: static;
+    }
 }
