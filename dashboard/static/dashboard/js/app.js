@@ -1272,7 +1272,42 @@ if (
 
     let selectedProduct = null;
     let searchTimeout = null;
+    
+    let highlightedIndex = -1;
+    let currentSearchResults = [];
+    quantityField?.addEventListener(
+        "keydown",
+        (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
 
+                if (!addSaleItemButton.disabled) {
+                    saleItemForm.requestSubmit();
+                }
+            }
+        }
+    );
+
+    amountField?.addEventListener(
+        "keydown",
+        (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+
+                if (!addSaleItemButton.disabled) {
+                    saleItemForm.requestSubmit();
+                }
+            }
+        }
+    );
+
+    const focusQuantityInput = () => {
+        if (quantityInput.hidden) {
+            amountField.focus();
+        } else {
+            quantityField.focus();
+        }
+    };
 
     /*
      * ============================================================
@@ -1821,6 +1856,10 @@ if (
     const selectProduct = (product) => {
         selectedProduct = product;
 
+        setTimeout(() => {
+            focusQuantityInput();
+        }, 50);
+
         productField.value =
             product.id;
 
@@ -1869,6 +1908,7 @@ if (
             disableAddButton();
 
             quantityField.focus();
+            quantityField.select();
 
             return;
         }
@@ -1884,6 +1924,7 @@ if (
         quantityField.value = "1";
 
         quantityField.focus();
+        quantityField.select();
 
         validateQuantityAgainstStock();
     };
@@ -1896,91 +1937,102 @@ if (
      */
 
     const renderProductResults = (
-        products
-    ) => {
-        productSearchResultsBody.innerHTML =
-            "";
+            products
+        ) => {
+            currentSearchResults = products;
+            highlightedIndex = -1;
+            productSearchResultsBody.innerHTML = "";
 
-        if (!products.length) {
-            productSearchResultsBody.innerHTML = `
-                <tr>
-                    <td colspan="4">
-                        No products found.
-                    </td>
-                </tr>
-            `;
+            if (!products.length) {
+                productSearchResultsBody.innerHTML = `
+                    <tr>
+                        <td colspan="4">
+                            No products found.
+                        </td>
+                    </tr>
+                `;
+
+                productSearchResults.hidden = false;
+
+                return;
+            }
+
+            products.forEach(
+                (product, index) => {
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+                    row.dataset.index = index;
+                    row.style.cursor = "pointer";
+
+                    row.innerHTML = `
+                        <td>
+                            ${escapeHtml(
+                                product.name
+                            )}
+                        </td>
+
+                        <td>
+                            ${formatNumber(
+                                product.stock
+                            )}
+                            ${escapeHtml(
+                                product.unit
+                            )}
+                        </td>
+
+                        <td>
+                            ${formatPrice(
+                                product.price
+                            )}
+                        </td>
+
+                        <td>
+                            →
+                        </td>
+                    `;
+
+                    row.addEventListener(
+                        "click",
+                        () => {
+                            selectProduct(
+                                product
+                            );
+                        }
+                    );
+
+                    productSearchResultsBody.appendChild(
+                        row
+                    );
+                }
+            );
 
             productSearchResults.hidden =
                 false;
+        };
 
-            return;
+    const highlightRow = (index) => {
+        const rows =
+            productSearchResultsBody.querySelectorAll("tr");
+
+        rows.forEach((row) => {
+            row.classList.remove(
+                "pos-highlight"
+            );
+        });
+
+        if (
+            index >= 0 &&
+            rows[index]
+        ) {
+            rows[index].classList.add(
+                "pos-highlight"
+            );
+
+            highlightedIndex = index;
         }
-
-        products.forEach(
-            (product) => {
-                const row =
-                    document.createElement(
-                        "tr"
-                    );
-
-                row.innerHTML = `
-                    <td>
-                        ${escapeHtml(
-                            product.name
-                        )}
-                    </td>
-
-                    <td>
-                        ${formatNumber(
-                            product.stock
-                        )}
-                        ${escapeHtml(
-                            product.unit
-                        )}
-                    </td>
-
-                    <td>
-                        ${formatPrice(
-                            product.price
-                        )}
-                    </td>
-
-                    <td>
-                        <button
-                            type="button"
-                            class="btn-secondary btn-small"
-                            data-select-product
-                        >
-                            Select
-                        </button>
-                    </td>
-                `;
-
-                const selectButton =
-                    row.querySelector(
-                        "[data-select-product]"
-                    );
-
-                selectButton.addEventListener(
-                    "click",
-                    () => {
-                        selectProduct(
-                            product
-                        );
-                    }
-                );
-
-                productSearchResultsBody.appendChild(
-                    row
-                );
-            }
-        );
-
-        productSearchResults.hidden =
-            false;
     };
-
-
     /*
      * ============================================================
      * Product search
@@ -2041,6 +2093,8 @@ if (
                 data.results || []
             );
 
+           
+
         } catch (error) {
             console.error(
                 "Product search error:",
@@ -2068,6 +2122,7 @@ if (
      */
 
     productSearchInput.addEventListener(
+        
         "input",
         () => {
             const query =
@@ -2129,8 +2184,32 @@ if (
             validateQuantityAgainstStock();
         }
     );
+    
+    quantityField.addEventListener(
+        "keydown",
+        (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
 
+                if (!addSaleItemButton.disabled) {
+                    saleItemForm.requestSubmit();
+                }
+            }
+        }
+    );
 
+    amountField.addEventListener(
+        "keydown",
+        (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+
+                if (!addSaleItemButton.disabled) {
+                    saleItemForm.requestSubmit();
+                }
+            }
+        }
+    );
     /*
      * ============================================================
      * Amount input
@@ -2260,6 +2339,7 @@ if (
      */
 
     productSearchInput.addEventListener(
+        
         "keydown",
         (event) => {
             if (event.key === "Escape") {
@@ -2287,6 +2367,61 @@ if (
         }
     );
 
+    productSearchInput.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                !currentSearchResults.length
+            ) {
+                return;
+            }
+
+            if (
+                event.key === "ArrowDown"
+            ) {
+                event.preventDefault();
+
+                const nextIndex =
+                    Math.min(
+                        highlightedIndex + 1,
+                        currentSearchResults.length - 1
+                    );
+
+                highlightRow(nextIndex);
+            }
+
+            if (
+                event.key === "ArrowUp"
+            ) {
+                event.preventDefault();
+
+                const nextIndex =
+                    Math.max(
+                        highlightedIndex - 1,
+                        0
+                    );
+
+                highlightRow(nextIndex);
+            }
+
+            if (
+                event.key === "Enter"
+            ) {
+                if (
+                    highlightedIndex >= 0
+                ) {
+                    event.preventDefault();
+
+                    selectProduct(
+                        currentSearchResults[
+                            highlightedIndex
+                        ]
+                    );
+                }
+            }
+        }
+    );
 
     quantityField.addEventListener(
         "keydown",
@@ -2302,6 +2437,31 @@ if (
         }
     );
 
+    quantityField.addEventListener(
+        "keydown",
+        (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+
+                if (!addSaleItemButton.disabled) {
+                    saleItemForm.requestSubmit();
+                }
+            }
+        }
+    );
+
+    amountField.addEventListener(
+        "keydown",
+        (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+
+                if (!addSaleItemButton.disabled) {
+                    saleItemForm.requestSubmit();
+                }
+            }
+        }
+    );
 
     amountField.addEventListener(
         "keydown",

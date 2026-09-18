@@ -2671,3 +2671,6 @@ body.analytics-chart-expanded {
 .analytics-custom-range .btn {
     min-height: 40px;
 }
+.pos-highlight {
+    background: rgba(157, 192, 139, 0.25);
+}

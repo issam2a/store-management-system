@@ -237,10 +237,35 @@ def add_sale_item(
         )
 
         if existing_item is not None:
-            raise ValidationError(
-                f"'{product.name}' is already in this sale. "
-                "Update its quantity instead."
+
+            new_quantity = (
+                existing_item.quantity + quantity
             )
+
+            if product.current_stock < new_quantity:
+                raise ValidationError(
+                    f"Insufficient stock for '{product.name}'. "
+                    f"Available: {product.current_stock} {product.unit.symbol}, "
+                    f"requested: {new_quantity} {product.unit.symbol}."
+                )
+
+            existing_item.quantity = new_quantity
+
+            existing_item.line_total = _quantize_money(
+                existing_item.quantity *
+                existing_item.unit_price
+            )
+
+            existing_item.save(
+                update_fields=[
+                    "quantity",
+                    "line_total",
+                ]
+            )
+
+            recalculate_sale_total(sale)
+
+            return existing_item
 
         item = SaleItem.objects.create(
             sale=sale,
