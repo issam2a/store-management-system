@@ -13,4 +13,9 @@ urlpatterns = [
         views.expense_create,
         name="expense_create",
     ),
+     path(
+        "<int:expense_id>/delete/",
+        views.expense_delete,
+        name="expense_delete",
+    ),
 ]

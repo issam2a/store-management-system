@@ -23,8 +23,13 @@
 <div class="content-card">
 
     <form
+        id="expense-form"
         method="post"
         action="{% url 'expense_create' %}"
+        data-remove-label="{% trans 'Remove' %}"
+        data-remove-confirmation="{% trans 'Are you sure you want to remove this expense?' %}"
+        data-record-expense-label="{% trans 'Record Expense' %}"
+        data-invalid-form-message="{% trans 'Please correct the errors below.' %}"
     >
         {% csrf_token %}
 
@@ -37,11 +42,11 @@
 
                 {{ form.reference }}
 
-                {% if form.reference.errors %}
-                    <div class="form-error">
-                        {{ form.reference.errors }}
-                    </div>
-                {% endif %}
+                <div
+                    class="form-error expense-field-error"
+                    data-error-for="reference"
+                    hidden
+                ></div>
             </div>
 
 
@@ -52,11 +57,11 @@
 
                 {{ form.category }}
 
-                {% if form.category.errors %}
-                    <div class="form-error">
-                        {{ form.category.errors }}
-                    </div>
-                {% endif %}
+                <div
+                    class="form-error expense-field-error"
+                    data-error-for="category"
+                    hidden
+                ></div>
             </div>
 
 
@@ -67,11 +72,11 @@
 
                 {{ form.amount }}
 
-                {% if form.amount.errors %}
-                    <div class="form-error">
-                        {{ form.amount.errors }}
-                    </div>
-                {% endif %}
+                <div
+                    class="form-error expense-field-error"
+                    data-error-for="amount"
+                    hidden
+                ></div>
             </div>
 
 
@@ -82,11 +87,11 @@
 
                 {{ form.payment_method }}
 
-                {% if form.payment_method.errors %}
-                    <div class="form-error">
-                        {{ form.payment_method.errors }}
-                    </div>
-                {% endif %}
+                <div
+                    class="form-error expense-field-error"
+                    data-error-for="payment_method"
+                    hidden
+                ></div>
             </div>
 
 
@@ -97,11 +102,11 @@
 
                 {{ form.expense_date }}
 
-                {% if form.expense_date.errors %}
-                    <div class="form-error">
-                        {{ form.expense_date.errors }}
-                    </div>
-                {% endif %}
+                <div
+                    class="form-error expense-field-error"
+                    data-error-for="expense_date"
+                    hidden
+                ></div>
             </div>
 
         </div>
@@ -114,19 +119,19 @@
 
             {{ form.description }}
 
-            {% if form.description.errors %}
-                <div class="form-error">
-                    {{ form.description.errors }}
-                </div>
-            {% endif %}
+            <div
+                class="form-error expense-field-error"
+                data-error-for="description"
+                hidden
+            ></div>
         </div>
 
 
-        {% if form.non_field_errors %}
-            <div class="form-error">
-                {{ form.non_field_errors }}
-            </div>
-        {% endif %}
+        <div
+            class="form-error expense-form-error"
+            id="expense-form-error"
+            hidden
+        ></div>
 
 
         <div class="form-actions">
@@ -155,78 +160,84 @@
         </div>
     </div>
 
+    <div class="table-wrapper">
+
+    <table class="data-table">
+
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>{% trans "Reference" %}</th>
+                <th>{% trans "Category" %}</th>
+                <th>{% trans "Amount" %}</th>
+                <th>{% trans "Payment Method" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+
+        <tbody id="expense-table-body">
+
+            {% for expense in expenses %}
+
+                <tr data-expense-id="{{ expense.id }}">
+
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+
+                    <td>
+                        {{ expense.reference }}
+                    </td>
+
+                    <td>
+                        {{ expense.category }}
+                    </td>
+
+                    <td>
+                        {{ expense.amount|floatformat:2 }}
+                    </td>
+
+                    <td>
+                        {{ expense.payment_method }}
+                    </td>
+
+                    <td>
+                        {{ expense.expense_date }}
+                    </td>
+
+                    <td>
+                        <button
+                            type="button"
+                            class="btn-danger btn-small expense-delete-btn"
+                            data-expense-id="{{ expense.id }}"
+                            data-delete-url="{% url 'expense_delete' expense.id %}"
+                        >
+                            {% trans "Remove" %}
+                        </button>
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<div
+    id="expense-empty-state"
+    class="empty-state"
     {% if expenses %}
-
-        <div class="table-wrapper">
-
-            <table class="data-table">
-
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>{% trans "Reference" %}</th>
-                        <th>{% trans "Category" %}</th>
-                        <th>{% trans "Amount" %}</th>
-                        <th>{% trans "Payment Method" %}</th>
-                        <th>{% trans "Date" %}</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    {% for expense in expenses %}
-
-                        <tr>
-
-                            <td>
-                                {{ forloop.counter }}
-                            </td>
-
-                            <td>
-                                {{ expense.reference }}
-                            </td>
-
-                            <td>
-                                {{ expense.category }}
-                            </td>
-
-                            <td>
-                                {{ expense.amount|floatformat:2 }}
-                            </td>
-
-                            <td>
-                                {{ expense.payment_method }}
-                            </td>
-
-                            <td>
-                                {{ expense.expense_date }}
-                            </td>
-
-                        </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    {% else %}
-
-        <div class="empty-state">
-
-            <h3>
-                {% trans "No expenses recorded yet." %}
-            </h3>
-
-            <p>
-                {% trans "Record your first expense above." %}
-            </p>
-
-        </div>
-
+        hidden
     {% endif %}
+>
+    <p>
+        {% trans "No expenses recorded yet." %}
+    </p>
+</div>
 
 </div>
 

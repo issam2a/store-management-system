@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-23 18:09+0300\n"
+"POT-Creation-Date: 2026-09-23 20:52+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -51,6 +51,70 @@ msgstr "تم تفعيل العميل بنجاح."
 msgid "Customer deactivated successfully."
 msgstr "تم تعطيل العميل بنجاح."
 
+#: .\apps\expenses\forms.py:11
+#: .\dashboard\templates\customers\customer_detail.html:122
+#: .\dashboard\templates\customers\customer_detail.html:213
+#: .\dashboard\templates\dashboard\home.html:551
+#: .\dashboard\templates\expenses\expense_list.html:168
+#: .\dashboard\templates\inventory\inventory_adjustment_history.html:62
+#: .\dashboard\templates\purchases\purchase_cancel.html:38
+#: .\dashboard\templates\purchases\purchase_list.html:153
+#: .\dashboard\templates\sales\sale_detail.html:80
+#: .\dashboard\templates\sales\sale_list.html:149
+#: .\dashboard\templates\suppliers\supplier_detail.html:115
+#: .\dashboard\templates\suppliers\supplier_detail.html:179
+msgid "Reference"
+msgstr "المرجع"
+
+#: .\apps\expenses\forms.py:21 .\apps\purchases\forms.py:236
+#: .\dashboard\templates\expenses\expense_list.html:169
+#: .\dashboard\templates\inventory\inventory_list.html:136
+#: .\dashboard\templates\products\product_form.html:64
+#: .\dashboard\templates\products\product_list.html:144
+msgid "Category"
+msgstr "الفئة"
+
+#: .\apps\expenses\forms.py:31 .\apps\payments\forms.py:7
+#: .\apps\payments\forms.py:76 .\apps\payments\forms.py:131
+#: .\apps\sales\forms.py:97
+#: .\dashboard\templates\customers\customer_detail.html:214
+#: .\dashboard\templates\dashboard\home.html:559
+#: .\dashboard\templates\expenses\expense_list.html:170
+#: .\dashboard\templates\sales\sale_detail.html:444
+#: .\dashboard\templates\suppliers\supplier_detail.html:180
+msgid "Amount"
+msgstr "المبلغ"
+
+#: .\apps\expenses\forms.py:45 .\apps\payments\forms.py:21
+#: .\apps\payments\forms.py:90 .\apps\payments\forms.py:145
+#: .\dashboard\templates\customers\customer_detail.html:215
+#: .\dashboard\templates\expenses\expense_list.html:171
+#: .\dashboard\templates\suppliers\supplier_detail.html:181
+msgid "Payment Method"
+msgstr "طريقة الدفع"
+
+#: .\apps\expenses\forms.py:55
+
+msgid "Expense Date"
+msgstr "تاريخ المصروف"
+
+#: .\apps\expenses\forms.py:65
+msgid "Description"
+msgstr "وصف"
+
+#: .\apps\expenses\forms.py:85
+msgid "An expense with this reference already exists."
+msgstr "توجد بالفعل نفقة تحمل هذا المرجع."
+
+#: .\apps\expenses\forms.py:98
+
+msgid "Category is required."
+msgstr "الفئة مطلوبة."
+
+#: .\apps\expenses\forms.py:111 .\apps\payments\forms.py:61
+msgid "Payment method is required."
+msgstr "طريقة الدفع مطلوبة"
+
 #: .\apps\inventory\forms.py:20 .\apps\sales\forms.py:66
 #: .\dashboard\templates\analytics\dashboard.html:512
 #: .\dashboard\templates\analytics\dashboard.html:593
@@ -80,6 +144,7 @@ msgstr "تعديل"
 #: .\dashboard\templates\sales\sale_detail.html:416
 #: .\dashboard\templates\sales\sale_detail.html:595
 #: .\dashboard\templates\sales\sale_detail.html:727
+#: .\dashboard\templates\sales\sale_detail.html:792
 msgid "Quantity"
 msgstr "كمية"
 
@@ -122,22 +187,6 @@ msgstr "تسوية المخزون"
 msgid "Apply Adjustment"
 msgstr " تطبيق التعديل"
 
-#: .\apps\payments\forms.py:7 .\apps\payments\forms.py:76
-#: .\apps\payments\forms.py:131 .\apps\sales\forms.py:97
-#: .\dashboard\templates\customers\customer_detail.html:214
-#: .\dashboard\templates\dashboard\home.html:559
-#: .\dashboard\templates\sales\sale_detail.html:444
-#: .\dashboard\templates\suppliers\supplier_detail.html:180
-msgid "Amount"
-msgstr "المبلغ"
-
-#: .\apps\payments\forms.py:21 .\apps\payments\forms.py:90
-#: .\apps\payments\forms.py:145
-#: .\dashboard\templates\customers\customer_detail.html:215
-#: .\dashboard\templates\suppliers\supplier_detail.html:181
-msgid "Payment Method"
-msgstr "طريقة الدفع"
-
 #: .\apps\payments\forms.py:23 .\apps\payments\forms.py:92
 #: .\apps\payments\forms.py:147 .\apps\purchases\models.py:8
 #: .\dashboard\templates\sales\sale_detail.html:75
@@ -173,10 +222,6 @@ msgstr "تاريخ الدفع"
 #: .\apps\payments\forms.py:170
 msgid "Note"
 msgstr "ملحوظة"
-
-#: .\apps\payments\forms.py:61
-msgid "Payment method is required."
-msgstr "طريقة الدفع مطلوبة"
 
 #: .\apps\products\quantity.py:45
 #: .\dashboard\templates\sales\sale_detail.html:325
@@ -236,13 +281,6 @@ msgstr "السعر.."
 #: .\dashboard\templates\products\product_form.html:48
 msgid "Product Name"
 msgstr "اسم المنتج"
-
-#: .\apps\purchases\forms.py:236
-#: .\dashboard\templates\inventory\inventory_list.html:136
-#: .\dashboard\templates\products\product_form.html:64
-#: .\dashboard\templates\products\product_list.html:144
-msgid "Category"
-msgstr "الفئة"
 
 #: .\apps\purchases\forms.py:237
 #: .\dashboard\templates\inventory\inventory_list.html:137
@@ -361,6 +399,7 @@ msgstr "إضافة عنصر شراء"
 #: .\apps\purchases\views.py:280
 #: .\dashboard\templates\purchases\purchase_detail.html:238
 #: .\dashboard\templates\sales\sale_detail.html:488
+#: .\dashboard\templates\sales\sale_detail.html:790
 #: .\dashboard\templates\sales\sale_item_create.html:91
 msgid "Add Item"
 msgstr "إضافة عنصر"
@@ -852,6 +891,8 @@ msgid "Purchases"
 msgstr "المشتريات"
 
 #: .\dashboard\templates\components\sidebar.html:92
+#: .\dashboard\templates\expenses\expense_list.html:5
+#: .\dashboard\templates\expenses\expense_list.html:13
 msgid "Expenses"
 msgstr "المصروفات"
 
@@ -1010,19 +1051,6 @@ msgstr "سجل المبيعات"
 msgid "Completed customer sales."
 msgstr "مبيعات العملاء المكتملة"
 
-#: .\dashboard\templates\customers\customer_detail.html:122
-#: .\dashboard\templates\customers\customer_detail.html:213
-#: .\dashboard\templates\dashboard\home.html:551
-#: .\dashboard\templates\inventory\inventory_adjustment_history.html:62
-#: .\dashboard\templates\purchases\purchase_cancel.html:38
-#: .\dashboard\templates\purchases\purchase_list.html:153
-#: .\dashboard\templates\sales\sale_detail.html:80
-#: .\dashboard\templates\sales\sale_list.html:149
-#: .\dashboard\templates\suppliers\supplier_detail.html:115
-#: .\dashboard\templates\suppliers\supplier_detail.html:179
-msgid "Reference"
-msgstr "المرجع"
-
 #: .\dashboard\templates\customers\customer_detail.html:124
 #: .\dashboard\templates\purchases\purchase_cancel.html:58
 #: .\dashboard\templates\purchases\purchase_list.html:165
@@ -1038,6 +1066,7 @@ msgid "Total"
 msgstr "إجمالي"
 
 #: .\dashboard\templates\customers\customer_detail.html:125
+#: .\dashboard\templates\expenses\expense_list.html:172
 #: .\dashboard\templates\sales\sale_list.html:173
 msgid "Date"
 msgstr "التاريخ"
@@ -1139,6 +1168,7 @@ msgid "Name"
 msgstr "الاسم"
 
 #: .\dashboard\templates\customers\customer_list.html:144
+#: .\dashboard\templates\expenses\expense_list.html:173
 #: .\dashboard\templates\products\category_list.html:43
 #: .\dashboard\templates\products\product_list.html:154
 #: .\dashboard\templates\products\unit_list.html:44
@@ -1329,6 +1359,36 @@ msgstr "تم البيع"
 #: .\dashboard\templates\dashboard\home.html:704
 msgid "Sales data will appear here."
 msgstr "ستظهر بيانات المبيعات هنا."
+
+#: .\dashboard\templates\expenses\expense_list.html:17
+msgid "Record and track business expenses."
+msgstr "تسجيل نفقات العمل وتتبعها."
+
+#: .\dashboard\templates\expenses\expense_list.html:139
+#, fuzzy
+#| msgid "Record Payment"
+msgid "Record Expense"
+msgstr "تسجيل الدفعة"
+
+#: .\dashboard\templates\expenses\expense_list.html:154
+
+msgid "Expense History"
+msgstr "سجل النفقات"
+
+#: .\dashboard\templates\expenses\expense_list.html:214
+#: .\dashboard\templates\sales\sale_detail.html:189
+#: .\dashboard\templates\sales\sale_detail.html:789
+msgid "Remove"
+msgstr "إزالة"
+
+#: .\dashboard\templates\expenses\expense_list.html:235
+
+msgid "No expenses recorded yet."
+msgstr "لم يتم تسجيل أي نفقات بعد."
+
+#: .\dashboard\templates\expenses\expense_list.html:239
+msgid "Record your first expense above."
+msgstr "سجّل مصروفك الأول أعلاه."
 
 #: .\dashboard\templates\inventory\inventory_adjustment_form.html:22
 msgid ""
@@ -1865,10 +1925,6 @@ msgstr "السعر"
 msgid "Are you sure you want to remove this item?"
 msgstr "هل أنت متأكد من أنك تريد إزالة هذا العنصر؟"
 
-#: .\dashboard\templates\sales\sale_detail.html:189
-msgid "Remove"
-msgstr "إزالة"
-
 #: .\dashboard\templates\sales\sale_detail.html:213
 msgid "No products added yet."
 msgstr "لم تتم إضافة أي منتجات بعد"
@@ -1989,6 +2045,10 @@ msgstr "هل أنت متأكد من أنك تريد إلغاء عملية الب
 #: .\dashboard\templates\sales\sale_detail.html:718
 msgid "Products included in this cancelled sale."
 msgstr "المنتجات المشمولة في هذا البيع المُلغى."
+
+#: .\dashboard\templates\sales\sale_detail.html:791
+msgid "Adding..."
+msgstr ""
 
 #: .\dashboard\templates\sales\sale_item_create.html:4
 #: .\dashboard\templates\sales\sale_item_create.html:14

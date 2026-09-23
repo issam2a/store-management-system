@@ -1,5 +1,35 @@
 
+    /*
+ * ============================================================
+ * Global Helpers
+ * ============================================================
+ */
+
+    function getCsrfToken() {
+        const csrfInput =
+            document.querySelector(
+                "[name=csrfmiddlewaretoken]"
+            );
+
+        return csrfInput
+            ? csrfInput.value
+            : "";
+    }
+
+       const escapeHtml = (value) => {
+        const element =
+            document.createElement("div");
+
+        element.textContent =
+            value ?? "";
+
+        return element.innerHTML;
+    };
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
+
 
     /*
  * ============================================================
@@ -1465,16 +1495,7 @@ if (
     };
 
 
-    const escapeHtml = (value) => {
-        const element =
-            document.createElement("div");
-
-        element.textContent =
-            value ?? "";
-
-        return element.innerHTML;
-    };
-
+ 
 
     const getSelectedUnit = () => {
         if (!selectedProduct) {
@@ -2088,7 +2109,7 @@ if (
 
             const data =
                 await response.json();
-
+            
             renderProductResults(
                 data.results || []
             );
@@ -2278,6 +2299,8 @@ if (
 
                 const data =
                     await response.json();
+
+                
 
                 if (!response.ok || !data.success) {
                     alert(
@@ -2525,17 +2548,7 @@ if (
         );
     }
 
-    function getCsrfToken() {
-
-        const csrfInput =
-            document.querySelector(
-                "[name=csrfmiddlewaretoken]"
-            );
-
-        return csrfInput
-            ? csrfInput.value
-            : "";
-    }
+ 
     /*
      * ============================================================
      * Keyboard support
@@ -3055,6 +3068,559 @@ if (saleItemsBody) {
         true
     );
 }
+
+/* ============================================================
+ * Expense AJAX
+ * ============================================================
+ */
+
+const expenseForm =
+    document.getElementById(
+        "expense-form"
+    );
+
+const expenseTableBody =
+    document.getElementById(
+        "expense-table-body"
+    );
+
+const expenseEmptyState =
+    document.getElementById(
+        "expense-empty-state"
+    );
+
+
+/* ============================================================
+ * Expense Translations
+ * ============================================================
+ */
+
+const expenseRemoveLabel =
+    expenseForm?.dataset.removeLabel ||
+    "Remove";
+
+const expenseRemoveConfirmation =
+    expenseForm?.dataset.removeConfirmation ||
+    "Are you sure you want to remove this expense?";
+
+const expenseInvalidFormMessage =
+    expenseForm?.dataset.invalidFormMessage ||
+    "Please correct the errors below.";
+
+
+/* ============================================================
+ * Expense Table
+ * ============================================================
+ */
+
+function updateExpenseRowNumbers() {
+
+    if (!expenseTableBody) {
+        return;
+    }
+
+    const rows =
+        expenseTableBody.querySelectorAll(
+            "tr"
+        );
+
+    rows.forEach(
+        (row, index) => {
+
+            const numberCell =
+                row.querySelector(
+                    "td:first-child"
+                );
+
+            if (numberCell) {
+                numberCell.textContent =
+                    index + 1;
+            }
+        }
+    );
+
+    if (expenseEmptyState) {
+        expenseEmptyState.hidden =
+            rows.length > 0;
+    }
+}
+
+function clearExpenseErrors() {
+
+    if (!expenseForm) {
+        return;
+    }
+
+    const errorElements =
+        expenseForm.querySelectorAll(
+            ".expense-field-error"
+        );
+
+    errorElements.forEach(
+        (element) => {
+
+            element.textContent = "";
+            element.hidden = true;
+        }
+    );
+
+    const fields =
+        expenseForm.querySelectorAll(
+            ".form-input"
+        );
+
+    fields.forEach(
+        (field) => {
+
+            field.classList.remove(
+                "form-input-error"
+            );
+        }
+    );
+
+    const formError =
+        document.getElementById(
+            "expense-form-error"
+        );
+
+    if (formError) {
+        formError.textContent = "";
+        formError.hidden = true;
+    }
+}
+
+
+function showExpenseErrors(
+    errors
+) {
+
+    clearExpenseErrors();
+
+    if (!expenseForm) {
+        return;
+    }
+
+    let firstErrorField = null;
+
+    Object.entries(
+        errors || {}
+    ).forEach(
+        ([fieldName, messages]) => {
+
+            const errorElement =
+                expenseForm.querySelector(
+                    `[data-error-for="${fieldName}"]`
+                );
+
+            const field =
+                expenseForm.querySelector(
+                    `[name="${fieldName}"]`
+                );
+
+            if (field) {
+
+                field.classList.add(
+                    "form-input-error"
+                );
+
+                if (!firstErrorField) {
+                    firstErrorField =
+                        field;
+                }
+            }
+
+            if (!errorElement) {
+                return;
+            }
+
+            const messageList =
+                Array.isArray(messages)
+                    ? messages
+                    : [messages];
+
+            errorElement.textContent =
+                messageList.join(" ");
+
+            errorElement.hidden =
+                false;
+        }
+    );
+
+    const nonFieldErrors =
+        errors?.__all__;
+
+    if (
+        nonFieldErrors &&
+        nonFieldErrors.length
+    ) {
+
+        const formError =
+            document.getElementById(
+                "expense-form-error"
+            );
+
+        if (formError) {
+
+            formError.textContent =
+                nonFieldErrors.join(" ");
+
+            formError.hidden =
+                false;
+        }
+    }
+
+    if (firstErrorField) {
+        firstErrorField.focus();
+    } else {
+
+        const formError =
+            document.getElementById(
+                "expense-form-error"
+            );
+
+        if (formError) {
+
+            formError.textContent =
+                expenseInvalidFormMessage;
+
+            formError.hidden =
+                false;
+        }
+    }
+}
+
+function addExpenseRow(expense) {
+
+    if (!expenseTableBody) {
+        return;
+    }
+
+    const row =
+        document.createElement(
+            "tr"
+        );
+
+    row.dataset.expenseId =
+        expense.id;
+
+    row.innerHTML = `
+        <td></td>
+
+        <td>
+            ${escapeHtml(expense.reference)}
+        </td>
+
+        <td>
+            ${escapeHtml(expense.category)}
+        </td>
+
+        <td>
+            ${Number(
+                expense.amount
+            ).toFixed(2)}
+        </td>
+
+        <td>
+            ${escapeHtml(expense.payment_method)}
+        </td>
+
+        <td>
+            ${escapeHtml(expense.expense_date)}
+        </td>
+
+        <td>
+            <div class="table-actions">
+                <button
+                    type="button"
+                    class="btn-danger btn-small expense-delete-btn"
+                    data-expense-id="${expense.id}"
+                    data-delete-url="${escapeHtml(
+                        expense.delete_url
+                    )}"
+                >
+                    ${escapeHtml(
+                        expenseRemoveLabel
+                    )}
+                </button>
+            </div>
+        </td>
+    `;
+
+    expenseTableBody.prepend(
+        row
+    );
+
+    updateExpenseRowNumbers();
+}
+
+
+/* ============================================================
+ * Create Expense
+ * ============================================================
+ */
+
+if (expenseForm) {
+
+    let expenseSubmitting = false;
+
+    expenseForm.addEventListener(
+        "submit",
+        async (event) => {
+
+            event.preventDefault();
+
+            if (expenseSubmitting) {
+                return;
+            }
+
+            expenseSubmitting = true;
+
+            const submitButton =
+                expenseForm.querySelector(
+                    'button[type="submit"]'
+                );
+
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+
+            clearExpenseErrors();
+
+            try {
+
+                const response =
+                    await fetch(
+                        expenseForm.action,
+                        {
+                            method: "POST",
+
+                            body:
+                                new FormData(
+                                    expenseForm
+                                ),
+
+                            headers: {
+                                "X-Requested-With":
+                                    "XMLHttpRequest",
+                            },
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                console.log(
+                    "Expense AJAX response:",
+                    data
+                );
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    if (data.errors) {
+
+                        showExpenseErrors(
+                            data.errors
+                        );
+
+                    } else {
+
+                        const formError =
+                            document.getElementById(
+                                "expense-form-error"
+                            );
+
+                        if (formError) {
+
+                            formError.textContent =
+                                data.error ||
+                                "Failed to record expense.";
+
+                            formError.hidden =
+                                false;
+                        }
+                    }
+
+                    return;
+                }
+
+                addExpenseRow(
+                    data.expense
+                );
+
+                expenseForm.reset();
+
+                clearExpenseErrors();
+
+                const referenceField =
+                    expenseForm.querySelector(
+                        '[name="reference"]'
+                    );
+
+                if (referenceField) {
+                    referenceField.focus();
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Expense creation failed:",
+                    error
+                );
+
+                const formError =
+                    document.getElementById(
+                        "expense-form-error"
+                    );
+
+                if (formError) {
+
+                    formError.textContent =
+                        "Unexpected error.";
+
+                    formError.hidden =
+                        false;
+                }
+
+            } finally {
+
+                expenseSubmitting = false;
+
+                if (submitButton) {
+                    submitButton.disabled = false;
+                }
+            }
+        }
+    );
+}
+
+
+/* ============================================================
+ * Delete Expense
+ * ============================================================
+ */
+
+async function deleteExpense(button) {
+
+    const deleteUrl =
+        button.dataset.deleteUrl;
+
+    if (!deleteUrl) {
+
+        console.error(
+            "Expense delete URL is missing.",
+            button
+        );
+
+        alert(
+            "Unable to delete this expense."
+        );
+
+        return;
+    }
+
+    if (
+        !confirm(
+            expenseRemoveConfirmation
+        )
+    ) {
+        return;
+    }
+
+    button.disabled = true;
+
+    try {
+
+        const response =
+            await fetch(
+                deleteUrl,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "X-Requested-With":
+                            "XMLHttpRequest",
+
+                        "X-CSRFToken":
+                            window.getCsrfToken(),
+                    },
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.error ||
+                "Delete failed."
+            );
+        }
+
+        const row =
+            button.closest("tr");
+
+        if (row) {
+            row.remove();
+        }
+
+        updateExpenseRowNumbers();
+
+    } catch (error) {
+
+        console.error(
+            "Expense deletion failed:",
+            error
+        );
+
+        alert(
+            error.message
+        );
+
+        button.disabled = false;
+    }
+}
+
+
+/* ============================================================
+ * Expense Delete Event Delegation
+ * ============================================================
+ */
+
+document.addEventListener(
+    "click",
+    (event) => {
+
+        const button =
+            event.target.closest(
+                ".expense-delete-btn"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        deleteExpense(
+            button
+        );
+    }
+);
+
+
+/* ============================================================
+ * Expense Initial State
+ * ============================================================
+ */
+
+updateExpenseRowNumbers();
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById("profitabilityTrendChart");
 

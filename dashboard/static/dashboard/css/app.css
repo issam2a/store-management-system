@@ -2761,3 +2761,6 @@ body.analytics-chart-expanded {
         background-color: transparent;
     }
 }
+.form-input-error {
+    border-color: #d96c6c;
+}
