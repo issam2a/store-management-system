@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Expenses" %} — StoreFlow
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            {% trans "Expenses" %}
+        </h1>
+
+        <p class="page-description">
+            {% trans "Record and track business expenses." %}
+        </p>
+    </div>
+</div>
+
+
+<div class="content-card">
+
+    <form
+        method="post"
+        action="{% url 'expense_create' %}"
+    >
+        {% csrf_token %}
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label class="form-label">
+                    {{ form.reference.label }}
+                </label>
+
+                {{ form.reference }}
+
+                {% if form.reference.errors %}
+                    <div class="form-error">
+                        {{ form.reference.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+
+            <div class="form-group">
+                <label class="form-label">
+                    {{ form.category.label }}
+                </label>
+
+                {{ form.category }}
+
+                {% if form.category.errors %}
+                    <div class="form-error">
+                        {{ form.category.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+
+            <div class="form-group">
+                <label class="form-label">
+                    {{ form.amount.label }}
+                </label>
+
+                {{ form.amount }}
+
+                {% if form.amount.errors %}
+                    <div class="form-error">
+                        {{ form.amount.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+
+            <div class="form-group">
+                <label class="form-label">
+                    {{ form.payment_method.label }}
+                </label>
+
+                {{ form.payment_method }}
+
+                {% if form.payment_method.errors %}
+                    <div class="form-error">
+                        {{ form.payment_method.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+
+            <div class="form-group">
+                <label class="form-label">
+                    {{ form.expense_date.label }}
+                </label>
+
+                {{ form.expense_date }}
+
+                {% if form.expense_date.errors %}
+                    <div class="form-error">
+                        {{ form.expense_date.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+            <label class="form-label">
+                {{ form.description.label }}
+            </label>
+
+            {{ form.description }}
+
+            {% if form.description.errors %}
+                <div class="form-error">
+                    {{ form.description.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+
+        {% if form.non_field_errors %}
+            <div class="form-error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
+                {% trans "Record Expense" %}
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<div class="content-card">
+
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">
+                {% trans "Expense History" %}
+            </h2>
+        </div>
+    </div>
+
+    {% if expenses %}
+
+        <div class="table-wrapper">
+
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans "Reference" %}</th>
+                        <th>{% trans "Category" %}</th>
+                        <th>{% trans "Amount" %}</th>
+                        <th>{% trans "Payment Method" %}</th>
+                        <th>{% trans "Date" %}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for expense in expenses %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td>
+                                {{ expense.reference }}
+                            </td>
+
+                            <td>
+                                {{ expense.category }}
+                            </td>
+
+                            <td>
+                                {{ expense.amount|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                {{ expense.payment_method }}
+                            </td>
+
+                            <td>
+                                {{ expense.expense_date }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <h3>
+                {% trans "No expenses recorded yet." %}
+            </h3>
+
+            <p>
+                {% trans "Record your first expense above." %}
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
