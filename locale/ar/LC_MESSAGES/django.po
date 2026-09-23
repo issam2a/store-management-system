@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-18 01:21+0300\n"
+"POT-Creation-Date: 2026-09-23 18:09+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -59,10 +59,10 @@ msgstr "تم تعطيل العميل بنجاح."
 #: .\dashboard\templates\inventory\inventory_list.html:135
 #: .\dashboard\templates\purchases\purchase_detail.html:251
 #: .\dashboard\templates\purchases\purchase_item_form.html:68
-#: .\dashboard\templates\sales\sale_detail.html:178
-#: .\dashboard\templates\sales\sale_detail.html:325
-#: .\dashboard\templates\sales\sale_detail.html:619
-#: .\dashboard\templates\sales\sale_detail.html:867
+#: .\dashboard\templates\sales\sale_detail.html:123
+#: .\dashboard\templates\sales\sale_detail.html:374
+#: .\dashboard\templates\sales\sale_detail.html:594
+#: .\dashboard\templates\sales\sale_detail.html:726
 msgid "Product"
 msgstr "المنتج"
 
@@ -75,10 +75,11 @@ msgstr "تعديل"
 #: .\apps\sales\forms.py:149
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:65
 #: .\dashboard\templates\purchases\purchase_detail.html:252
-#: .\dashboard\templates\sales\sale_detail.html:226
-#: .\dashboard\templates\sales\sale_detail.html:329
-#: .\dashboard\templates\sales\sale_detail.html:623
-#: .\dashboard\templates\sales\sale_detail.html:871
+#: .\dashboard\templates\sales\sale_detail.html:124
+#: .\dashboard\templates\sales\sale_detail.html:157
+#: .\dashboard\templates\sales\sale_detail.html:416
+#: .\dashboard\templates\sales\sale_detail.html:595
+#: .\dashboard\templates\sales\sale_detail.html:727
 msgid "Quantity"
 msgstr "كمية"
 
@@ -125,7 +126,7 @@ msgstr " تطبيق التعديل"
 #: .\apps\payments\forms.py:131 .\apps\sales\forms.py:97
 #: .\dashboard\templates\customers\customer_detail.html:214
 #: .\dashboard\templates\dashboard\home.html:559
-#: .\dashboard\templates\sales\sale_detail.html:251
+#: .\dashboard\templates\sales\sale_detail.html:444
 #: .\dashboard\templates\suppliers\supplier_detail.html:180
 msgid "Amount"
 msgstr "المبلغ"
@@ -139,9 +140,9 @@ msgstr "طريقة الدفع"
 
 #: .\apps\payments\forms.py:23 .\apps\payments\forms.py:92
 #: .\apps\payments\forms.py:147 .\apps\purchases\models.py:8
-#: .\dashboard\templates\sales\sale_detail.html:92
-#: .\dashboard\templates\sales\sale_detail.html:573
-#: .\dashboard\templates\sales\sale_detail.html:821
+#: .\dashboard\templates\sales\sale_detail.html:75
+#: .\dashboard\templates\sales\sale_detail.html:570
+#: .\dashboard\templates\sales\sale_detail.html:702
 #: .\dashboard\templates\sales\sale_list.html:212
 msgid "Cash"
 msgstr "نقدي"
@@ -178,12 +179,12 @@ msgid "Payment method is required."
 msgstr "طريقة الدفع مطلوبة"
 
 #: .\apps\products\quantity.py:45
-#: .\dashboard\templates\sales\sale_detail.html:131
+#: .\dashboard\templates\sales\sale_detail.html:325
 msgid "Quantity must be greater than zero."
 msgstr "يجب أن تكون الكمية أكبر من صفر."
 
 #: .\apps\products\quantity.py:52
-#: .\dashboard\templates\sales\sale_detail.html:132
+#: .\dashboard\templates\sales\sale_detail.html:326
 msgid "Quantity must be a whole number for this unit."
 msgstr "يجب أن تكون الكمية عدداً صحيحاً لهذه الوحدة.."
 
@@ -248,9 +249,9 @@ msgstr "الفئة"
 #: .\dashboard\templates\products\product_form.html:81
 #: .\dashboard\templates\products\product_list.html:146
 #: .\dashboard\templates\purchases\purchase_detail.html:253
-#: .\dashboard\templates\sales\sale_detail.html:333
-#: .\dashboard\templates\sales\sale_detail.html:627
-#: .\dashboard\templates\sales\sale_detail.html:875
+#: .\dashboard\templates\sales\sale_detail.html:125
+#: .\dashboard\templates\sales\sale_detail.html:596
+#: .\dashboard\templates\sales\sale_detail.html:728
 msgid "Unit"
 msgstr "الوحدة"
 
@@ -282,7 +283,7 @@ msgstr "لا يمكن أن تكون قيمة الحد الأدنى للمخزو�
 #: .\apps\purchases\forms.py:322 .\apps\sales\forms.py:221
 #: .\dashboard\templates\purchases\purchase_cancel.html:88
 #: .\dashboard\templates\purchases\purchase_detail.html:175
-#: .\dashboard\templates\sales\sale_detail.html:758
+#: .\dashboard\templates\sales\sale_detail.html:658
 msgid "Cancellation Reason"
 msgstr "سبب الإلغاء"
 
@@ -290,16 +291,16 @@ msgstr "سبب الإلغاء"
 msgid "Cancellation reason is required."
 msgstr "سبب الإلغاء مطلوب."
 
-#: .\apps\purchases\models.py:9 .\dashboard\templates\sales\sale_detail.html:90
-#: .\dashboard\templates\sales\sale_detail.html:571
-#: .\dashboard\templates\sales\sale_detail.html:819
+#: .\apps\purchases\models.py:9 .\dashboard\templates\sales\sale_detail.html:73
+#: .\dashboard\templates\sales\sale_detail.html:568
+#: .\dashboard\templates\sales\sale_detail.html:700
 #: .\dashboard\templates\sales\sale_list.html:210
 msgid "Credit"
 msgstr "دين"
 
 #: .\apps\purchases\models.py:12
 #: .\dashboard\templates\purchases\purchase_list.html:77
-#: .\dashboard\templates\sales\sale_detail.html:36
+#: .\dashboard\templates\sales\sale_detail.html:34
 #: .\dashboard\templates\sales\sale_list.html:75
 #: .\dashboard\templates\sales\sale_list.html:240
 msgid "Draft"
@@ -307,7 +308,7 @@ msgstr "مسودة"
 
 #: .\apps\purchases\models.py:13 .\dashboard\templates\dashboard\home.html:600
 #: .\dashboard\templates\purchases\purchase_list.html:84
-#: .\dashboard\templates\sales\sale_detail.html:40
+#: .\dashboard\templates\sales\sale_detail.html:36
 #: .\dashboard\templates\sales\sale_list.html:82
 #: .\dashboard\templates\sales\sale_list.html:228
 msgid "Completed"
@@ -315,7 +316,7 @@ msgstr "مكتمل"
 
 #: .\apps\purchases\models.py:14
 #: .\dashboard\templates\purchases\purchase_list.html:91
-#: .\dashboard\templates\sales\sale_detail.html:44
+#: .\dashboard\templates\sales\sale_detail.html:38
 #: .\dashboard\templates\sales\sale_list.html:89
 #: .\dashboard\templates\sales\sale_list.html:234
 msgid "Cancelled"
@@ -359,6 +360,7 @@ msgstr "إضافة عنصر شراء"
 
 #: .\apps\purchases\views.py:280
 #: .\dashboard\templates\purchases\purchase_detail.html:238
+#: .\dashboard\templates\sales\sale_detail.html:488
 #: .\dashboard\templates\sales\sale_item_create.html:91
 msgid "Add Item"
 msgstr "إضافة عنصر"
@@ -397,16 +399,16 @@ msgstr "تم إلغاء عملية الشراء بنجاح."
 #: .\dashboard\templates\customers\customer_payment_create.html:33
 #: .\dashboard\templates\dashboard\home.html:555
 #: .\dashboard\templates\sales\sale_create.html:50
-#: .\dashboard\templates\sales\sale_detail.html:73
-#: .\dashboard\templates\sales\sale_detail.html:552
-#: .\dashboard\templates\sales\sale_detail.html:800
+#: .\dashboard\templates\sales\sale_detail.html:62
+#: .\dashboard\templates\sales\sale_detail.html:557
+#: .\dashboard\templates\sales\sale_detail.html:689
 #: .\dashboard\templates\sales\sale_list.html:153
 msgid "Customer"
 msgstr "العميل"
 
-#: .\apps\sales\forms.py:28 .\dashboard\templates\sales\sale_detail.html:79
-#: .\dashboard\templates\sales\sale_detail.html:558
-#: .\dashboard\templates\sales\sale_detail.html:806
+#: .\apps\sales\forms.py:28 .\dashboard\templates\sales\sale_detail.html:66
+#: .\dashboard\templates\sales\sale_detail.html:561
+#: .\dashboard\templates\sales\sale_detail.html:693
 #: .\dashboard\templates\sales\sale_list.html:201
 msgid "Walk-in Customer"
 msgstr "عميل مباشر"
@@ -417,9 +419,9 @@ msgstr "عميل مباشر"
 #: .\dashboard\templates\purchases\purchase_form.html:88
 #: .\dashboard\templates\purchases\purchase_list.html:161
 #: .\dashboard\templates\sales\sale_create.html:70
-#: .\dashboard\templates\sales\sale_detail.html:86
-#: .\dashboard\templates\sales\sale_detail.html:567
-#: .\dashboard\templates\sales\sale_detail.html:815
+#: .\dashboard\templates\sales\sale_detail.html:71
+#: .\dashboard\templates\sales\sale_detail.html:566
+#: .\dashboard\templates\sales\sale_detail.html:698
 #: .\dashboard\templates\sales\sale_list.html:157
 #: .\dashboard\templates\suppliers\supplier_detail.html:116
 msgid "Payment Type"
@@ -429,7 +431,7 @@ msgstr "نوع الدفع"
 msgid "A credit sale requires a customer."
 msgstr "يتطلب البيع الآجل وجود عميل."
 
-#: .\apps\sales\forms.py:120 .\dashboard\templates\sales\sale_detail.html:135
+#: .\apps\sales\forms.py:120 .\dashboard\templates\sales\sale_detail.html:329
 msgid "Enter a quantity or an amount."
 msgstr "أدخل الكمية أو المبلغ"
 
@@ -437,13 +439,13 @@ msgstr "أدخل الكمية أو المبلغ"
 msgid "Select a product before entering a quantity."
 msgstr "اختر منتجاً قبل إدخال الكمية."
 
-#: .\apps\sales\forms.py:136 .\dashboard\templates\sales\sale_detail.html:134
+#: .\apps\sales\forms.py:136 .\dashboard\templates\sales\sale_detail.html:328
 msgid "Amount must be greater than zero."
 msgstr "يجب أن تكون القيمة أكبر من صفر."
 
-#: .\apps\sales\forms.py:186 .\dashboard\templates\sales\sale_detail.html:451
-#: .\dashboard\templates\sales\sale_detail.html:699
-#: .\dashboard\templates\sales\sale_detail.html:947
+#: .\apps\sales\forms.py:186 .\dashboard\templates\sales\sale_detail.html:243
+#: .\dashboard\templates\sales\sale_detail.html:627
+#: .\dashboard\templates\sales\sale_detail.html:759
 msgid "Discount"
 msgstr "تخفيض"
 
@@ -454,6 +456,14 @@ msgstr "لا يمكن أن تكون قيمة الخصم سالبة."
 #: .\apps\sales\forms.py:237
 msgid "A cancellation reason is required."
 msgstr "سبب الإلغاء مطلوب."
+
+#: .\apps\sales\views.py:344
+msgid "Only draft sales can be modified."
+msgstr ""
+
+#: .\apps\sales\views.py:358 .\dashboard\templates\sales\sale_detail.html:324
+msgid "Enter a valid quantity."
+msgstr "أدخل كمية صالحة"
 
 #: .\apps\suppliers\views.py:90
 msgid "Supplier created successfully."
@@ -500,12 +510,10 @@ msgid "Insights"
 msgstr "الرؤى"
 
 #: .\dashboard\templates\analytics\dashboard.html:17
-
 msgid "Understand your store's performance, trends, and profitability."
 msgstr "افهم أداء متجرك والاتجاهات ومعدلات الربحية."
 
 #: .\dashboard\templates\analytics\dashboard.html:26
-
 msgid "Analytics Period"
 msgstr "فترة التحليلات"
 
@@ -529,7 +537,6 @@ msgid "30 Days"
 msgstr "30 يوماً"
 
 #: .\dashboard\templates\analytics\dashboard.html:72
-
 msgid "Start date"
 msgstr "تاريخ البدء"
 
@@ -538,12 +545,10 @@ msgid "End date"
 msgstr "تاريخ الانتهاء"
 
 #: .\dashboard\templates\analytics\dashboard.html:90
-
 msgid "Apply"
 msgstr "تم"
 
 #: .\dashboard\templates\analytics\dashboard.html:107
-
 msgid "Executive Performance"
 msgstr "الأداء التنفيذي"
 
@@ -574,21 +579,18 @@ msgid "Gross Profit"
 msgstr "إجمالي الربح"
 
 #: .\dashboard\templates\analytics\dashboard.html:161
-
 msgid "Revenue after COGS"
 msgstr "الإيرادات بعد تكلفة البضاعة المباعة"
 
 #: .\dashboard\templates\analytics\dashboard.html:169
 #: .\dashboard\templates\dashboard\home.html:167
-
 msgid "Gross Margin"
 msgstr "هامش الربح الإجمالي"
 
 #: .\dashboard\templates\analytics\dashboard.html:184
 #: .\dashboard\templates\dashboard\home.html:187
-
 msgid "Gross profit margin"
-msgstr " هامش إجمالي الربح"  
+msgstr " هامش إجمالي الربح"
 
 #: .\dashboard\templates\analytics\dashboard.html:192
 #: .\dashboard\templates\analytics\dashboard.html:700
@@ -602,7 +604,6 @@ msgid "Cost of goods sold"
 msgstr "تكلفة البضاعة المباعة."
 
 #: .\dashboard\templates\analytics\dashboard.html:214
-
 msgid "Transactions"
 msgstr "المعاملات"
 
@@ -619,12 +620,10 @@ msgstr "المبيعات المكتملة"
 #: .\dashboard\templates\analytics\dashboard.html:594
 #: .\dashboard\templates\analytics\dashboard.html:698
 #: .\dashboard\templates\dashboard\home.html:235
-
 msgid "Units Sold"
 msgstr "الوحدات المباعة"
 
 #: .\dashboard\templates\analytics\dashboard.html:250
-
 msgid "Products sold"
 msgstr "المنتجات المباعة"
 
@@ -638,7 +637,6 @@ msgid "Revenue per transaction"
 msgstr "الإيرادات لكل معاملة"
 
 #: .\dashboard\templates\analytics\dashboard.html:289
-
 msgid "Sales Performance"
 msgstr "أداء المبيعات"
 
@@ -686,7 +684,6 @@ msgid "Compare sales revenue against product costs over time."
 msgstr "قارن إيرادات المبيعات بتكاليف المنتج بمرور الوقت."
 
 #: .\dashboard\templates\analytics\dashboard.html:426
-
 msgid "Sales Mix"
 msgstr "مزيج المبيعات"
 
@@ -695,7 +692,6 @@ msgid "Which categories generate the most revenue?"
 msgstr "ما هي الفئات التي تحقق أكبر قدر من الإيرادات؟"
 
 #: .\dashboard\templates\analytics\dashboard.html:434
-
 msgid "Compare revenue generated by each product category."
 msgstr "قارن بين الإيرادات الناتجة عن كل فئة من فئات المنتجات."
 
@@ -708,7 +704,6 @@ msgid "Compare the gross profit generated by each category."
 msgstr "قارن بين إجمالي الربح الذي تحققه كل فئة."
 
 #: .\dashboard\templates\analytics\dashboard.html:491
-
 msgid "Product Performance"
 msgstr "أداء المنتج"
 
@@ -717,7 +712,8 @@ msgid "What products are driving sales?"
 msgstr "ما هي المنتجات التي تدفع عجلة المبيعات؟"
 
 #: .\dashboard\templates\analytics\dashboard.html:499
-msgid "Identify the products with the highest unit sales over the selected period."
+msgid ""
+"Identify the products with the highest unit sales over the selected period."
 msgstr "حدد المنتجات التي حققت أعلى مبيعات من حيث الوحدات خلال الفترة المحددة."
 
 #: .\dashboard\templates\analytics\dashboard.html:514
@@ -734,12 +730,10 @@ msgstr "المبيعات"
 
 #: .\dashboard\templates\analytics\dashboard.html:557
 #: .\dashboard\templates\analytics\dashboard.html:638
-
 msgid "No completed product sales in this period."
 msgstr "لم تكن هناك مبيعات لمنتجات تامة الصنع خلال هذه الفترة."
 
 #: .\dashboard\templates\analytics\dashboard.html:572
-
 msgid "Inventory Insight"
 msgstr "رؤى حول المخزون"
 
@@ -1022,7 +1016,7 @@ msgstr "مبيعات العملاء المكتملة"
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:62
 #: .\dashboard\templates\purchases\purchase_cancel.html:38
 #: .\dashboard\templates\purchases\purchase_list.html:153
-#: .\dashboard\templates\sales\sale_detail.html:99
+#: .\dashboard\templates\sales\sale_detail.html:80
 #: .\dashboard\templates\sales\sale_list.html:149
 #: .\dashboard\templates\suppliers\supplier_detail.html:115
 #: .\dashboard\templates\suppliers\supplier_detail.html:179
@@ -1032,12 +1026,12 @@ msgstr "المرجع"
 #: .\dashboard\templates\customers\customer_detail.html:124
 #: .\dashboard\templates\purchases\purchase_cancel.html:58
 #: .\dashboard\templates\purchases\purchase_list.html:165
-#: .\dashboard\templates\sales\sale_detail.html:341
-#: .\dashboard\templates\sales\sale_detail.html:488
-#: .\dashboard\templates\sales\sale_detail.html:635
-#: .\dashboard\templates\sales\sale_detail.html:710
-#: .\dashboard\templates\sales\sale_detail.html:883
-#: .\dashboard\templates\sales\sale_detail.html:958
+#: .\dashboard\templates\sales\sale_detail.html:127
+#: .\dashboard\templates\sales\sale_detail.html:279
+#: .\dashboard\templates\sales\sale_detail.html:598
+#: .\dashboard\templates\sales\sale_detail.html:632
+#: .\dashboard\templates\sales\sale_detail.html:730
+#: .\dashboard\templates\sales\sale_detail.html:764
 #: .\dashboard\templates\sales\sale_list.html:161
 #: .\dashboard\templates\suppliers\supplier_detail.html:117
 msgid "Total"
@@ -1150,7 +1144,7 @@ msgstr "الاسم"
 #: .\dashboard\templates\products\unit_list.html:44
 #: .\dashboard\templates\purchases\purchase_detail.html:258
 #: .\dashboard\templates\purchases\purchase_list.html:177
-#: .\dashboard\templates\sales\sale_detail.html:345
+#: .\dashboard\templates\sales\sale_detail.html:128
 #: .\dashboard\templates\sales\sale_list.html:177
 #: .\dashboard\templates\suppliers\supplier_list.html:109
 msgid "Actions"
@@ -1705,7 +1699,7 @@ msgid "Cancellation Details"
 msgstr "تفاصيل الإلغاء"
 
 #: .\dashboard\templates\purchases\purchase_detail.html:187
-#: .\dashboard\templates\sales\sale_detail.html:830
+#: .\dashboard\templates\sales\sale_detail.html:707
 msgid "Cancelled By"
 msgstr "أُلغِيَ بواسطة"
 
@@ -1828,8 +1822,8 @@ msgstr "أنشئ منتجاً جديداً لعملية الشراء هذه."
 
 #: .\dashboard\templates\sales\sale_create.html:5
 #: .\dashboard\templates\sales\sale_create.html:18
-#: .\dashboard\templates\sales\sale_detail.html:5
-#: .\dashboard\templates\sales\sale_detail.html:18
+#: .\dashboard\templates\sales\sale_detail.html:6
+#: .\dashboard\templates\sales\sale_detail.html:17
 #: .\dashboard\templates\sales\sale_list.html:35
 #: .\dashboard\templates\sales\sale_list.html:299
 #, fuzzy
@@ -1844,122 +1838,115 @@ msgstr "اختر العميل ونوع الدفع لبدء عملية البيع
 msgid "Start Sale"
 msgstr "بيع"
 
-#: .\dashboard\templates\sales\sale_detail.html:26
+#: .\dashboard\templates\sales\sale_detail.html:25
 msgid "Create and complete a customer sale."
 msgstr "إنشاء وإتمام عملية بيع للعميل."
 
-#: .\dashboard\templates\sales\sale_detail.html:28
+#: .\dashboard\templates\sales\sale_detail.html:27
 msgid "Sale details and transaction history."
 msgstr "تفاصيل البيع وسجل المعاملات."
 
-#: .\dashboard\templates\sales\sale_detail.html:115
-msgid "Add Product"
-msgstr "إضافة منتج"
+#: .\dashboard\templates\sales\sale_detail.html:106
+msgid "Current Sale"
+msgstr "المبيع الحالي"
 
-#: .\dashboard\templates\sales\sale_detail.html:119
-msgid "Search for a product and add it to the current sale."
-msgstr "ابحث عن منتج وأضفه إلى عملية البيع الحالية."
+#: .\dashboard\templates\sales\sale_detail.html:111
+msgid "Products currently included in this sale."
+msgstr "المنتجات المشمولة حالياً في عملية البيع."
 
-#: .\dashboard\templates\sales\sale_detail.html:129
-msgid "Select"
-msgstr "تحديد"
-
-#: .\dashboard\templates\sales\sale_detail.html:130
-msgid "Enter a valid quantity."
-msgstr "أدخل كمية صالحة"
-
-#: .\dashboard\templates\sales\sale_detail.html:133
-msgid "Enter a valid amount."
-msgstr "أدخل مبلغاً صالحاً."
-
-#: .\dashboard\templates\sales\sale_detail.html:136
-msgid "Enter a quantity."
-msgstr " أدخل الكمية "
-
-#: .\dashboard\templates\sales\sale_detail.html:153
-msgid "Search Products"
-msgstr "البحث عن المنتجات."
-
-#: .\dashboard\templates\sales\sale_detail.html:160
-msgid "Search by product name..."
-msgstr "ابحث باسم المنتج..."
-
-#: .\dashboard\templates\sales\sale_detail.html:182
-msgid "Available"
-msgstr "متاح"
-
-#: .\dashboard\templates\sales\sale_detail.html:186
-#: .\dashboard\templates\sales\sale_detail.html:337
-#: .\dashboard\templates\sales\sale_detail.html:631
-#: .\dashboard\templates\sales\sale_detail.html:879
+#: .\dashboard\templates\sales\sale_detail.html:126
+#: .\dashboard\templates\sales\sale_detail.html:376
+#: .\dashboard\templates\sales\sale_detail.html:597
+#: .\dashboard\templates\sales\sale_detail.html:729
 msgid "Price"
 msgstr "السعر"
 
-#: .\dashboard\templates\sales\sale_detail.html:190
+#: .\dashboard\templates\sales\sale_detail.html:187
+msgid "Are you sure you want to remove this item?"
+msgstr "هل أنت متأكد من أنك تريد إزالة هذا العنصر؟"
+
+#: .\dashboard\templates\sales\sale_detail.html:189
+msgid "Remove"
+msgstr "إزالة"
+
+#: .\dashboard\templates\sales\sale_detail.html:213
+msgid "No products added yet."
+msgstr "لم تتم إضافة أي منتجات بعد"
+
+#: .\dashboard\templates\sales\sale_detail.html:217
+msgid "Search for a product above to start the sale."
+msgstr "ابحث عن منتج في الأعلى لبدء عملية البيع."
+
+#: .\dashboard\templates\sales\sale_detail.html:231
+#: .\dashboard\templates\sales\sale_detail.html:620
+#: .\dashboard\templates\sales\sale_detail.html:752
+msgid "Subtotal"
+msgstr "المجموع الفرعي"
+
+#: .\dashboard\templates\sales\sale_detail.html:266
+msgid "Apply Discount"
+msgstr "تطبيق الخصم"
+
+#: .\dashboard\templates\sales\sale_detail.html:308
+msgid "Add Product"
+msgstr "إضافة منتج"
+
+#: .\dashboard\templates\sales\sale_detail.html:312
+msgid "Search for a product and add it to the current sale."
+msgstr "ابحث عن منتج وأضفه إلى عملية البيع الحالية."
+
+#: .\dashboard\templates\sales\sale_detail.html:323
+msgid "Select"
+msgstr "تحديد"
+
+#: .\dashboard\templates\sales\sale_detail.html:327
+msgid "Enter a valid amount."
+msgstr "أدخل مبلغاً صالحاً."
+
+#: .\dashboard\templates\sales\sale_detail.html:330
+msgid "Enter a quantity."
+msgstr " أدخل الكمية "
+
+#: .\dashboard\templates\sales\sale_detail.html:331
+#: .\dashboard\templates\sales\sale_detail.html:402
+msgid "No product selected."
+msgstr "لم يتم اختيار أي منتج."
+
+#: .\dashboard\templates\sales\sale_detail.html:349
+msgid "Search Products"
+msgstr "البحث عن المنتجات."
+
+#: .\dashboard\templates\sales\sale_detail.html:356
+msgid "Search by product name..."
+msgstr "ابحث باسم المنتج..."
+
+#: .\dashboard\templates\sales\sale_detail.html:375
+msgid "Available"
+msgstr "متاح"
+
+#: .\dashboard\templates\sales\sale_detail.html:377
 msgid "Action"
 msgstr "الإجراء"
 
 # ============================================================
 # Products
 # ============================================================
-#: .\dashboard\templates\sales\sale_detail.html:209
+#: .\dashboard\templates\sales\sale_detail.html:396
 msgid "Selected Product"
 msgstr "المنتج المختار"
 
-#: .\dashboard\templates\sales\sale_detail.html:215
-msgid "No product selected."
-msgstr "لم يتم اختيار أي منتج."
-
-#: .\dashboard\templates\sales\sale_detail.html:257
+#: .\dashboard\templates\sales\sale_detail.html:450
 msgid "Selling amount"
 msgstr "كمية البيع"
 
-#: .\dashboard\templates\sales\sale_detail.html:275
+#: .\dashboard\templates\sales\sale_detail.html:471
 #, fuzzy
 #| msgid "Sell Price"
 msgid "Calculated Price"
 msgstr "سعر البيع"
 
-#: .\dashboard\templates\sales\sale_detail.html:288
-msgid "Add to Sale"
-msgstr "أضف لعملية البيع"
-
-#: .\dashboard\templates\sales\sale_detail.html:304
-msgid "Current Sale"
-msgstr "المبيع الحالي"
-
-#: .\dashboard\templates\sales\sale_detail.html:308
-msgid "Products currently included in this sale."
-msgstr "المنتجات المشمولة حالياً في عملية البيع."
-
-#: .\dashboard\templates\sales\sale_detail.html:393
-msgid "Are you sure you want to remove this item?"
-msgstr "هل أنت متأكد من أنك تريد إزالة هذا العنصر؟"
-
-#: .\dashboard\templates\sales\sale_detail.html:395
-msgid "Remove"
-msgstr "إزالة"
-
-#: .\dashboard\templates\sales\sale_detail.html:419
-msgid "No products added yet."
-msgstr "لم تتم إضافة أي منتجات بعد"
-
-#: .\dashboard\templates\sales\sale_detail.html:423
-msgid "Search for a product above to start the sale."
-msgstr "ابحث عن منتج في الأعلى لبدء عملية البيع."
-
-#: .\dashboard\templates\sales\sale_detail.html:440
-#: .\dashboard\templates\sales\sale_detail.html:688
-#: .\dashboard\templates\sales\sale_detail.html:936
-msgid "Subtotal"
-msgstr "المجموع الفرعي"
-
-#: .\dashboard\templates\sales\sale_detail.html:475
-msgid "Apply Discount"
-msgstr "تطبيق الخصم"
-
 #: .\dashboard\templates\sales\sale_detail.html:506
-#: .\dashboard\templates\sales\sale_detail.html:533
+#: .\dashboard\templates\sales\sale_detail.html:534
 msgid "Complete Sale"
 msgstr "إتمام البيع"
 
@@ -1967,39 +1954,39 @@ msgstr "إتمام البيع"
 msgid "Review the sale and complete the transaction."
 msgstr "راجع عملية البيع وأتمم المعاملة."
 
-#: .\dashboard\templates\sales\sale_detail.html:531
+#: .\dashboard\templates\sales\sale_detail.html:532
 msgid "Are you sure you want to complete this sale?"
 msgstr "هل أنت متأكد من رغبتك في إتمام عملية البيع هذه؟"
 
-#: .\dashboard\templates\sales\sale_detail.html:582
+#: .\dashboard\templates\sales\sale_detail.html:575
 msgid "Completed By"
 msgstr "تم الإنجاز بواسطة"
 
-#: .\dashboard\templates\sales\sale_detail.html:600
-#: .\dashboard\templates\sales\sale_detail.html:848
+#: .\dashboard\templates\sales\sale_detail.html:585
+#: .\dashboard\templates\sales\sale_detail.html:717
 msgid "Sale Items"
 msgstr "منتجات عملية البيع"
 
-#: .\dashboard\templates\sales\sale_detail.html:604
+#: .\dashboard\templates\sales\sale_detail.html:586
 msgid "Products included in this completed sale."
 msgstr "المنتجات المشمولة في عملية البيع المكتملة هذه."
 
-#: .\dashboard\templates\sales\sale_detail.html:728
-#: .\dashboard\templates\sales\sale_detail.html:780
+#: .\dashboard\templates\sales\sale_detail.html:644
+#: .\dashboard\templates\sales\sale_detail.html:673
 msgid "Cancel Sale"
 msgstr "الغاء عمليةالبيع"
 
-#: .\dashboard\templates\sales\sale_detail.html:732
+#: .\dashboard\templates\sales\sale_detail.html:645
 msgid "Cancellation reverses the inventory effect of this sale."
 msgstr "يؤدي الإلغاء إلى عكس أثر عملية البيع هذه على المخزون."
 
-#: .\dashboard\templates\sales\sale_detail.html:778
+#: .\dashboard\templates\sales\sale_detail.html:671
 #, fuzzy
 #| msgid "Are you sure you want to delete this draft purchase?"
 msgid "Are you sure you want to cancel this sale?"
 msgstr "هل أنت متأكد من أنك تريد إلغاء عملية البيع هذه؟"
 
-#: .\dashboard\templates\sales\sale_detail.html:852
+#: .\dashboard\templates\sales\sale_detail.html:718
 msgid "Products included in this cancelled sale."
 msgstr "المنتجات المشمولة في هذا البيع المُلغى."
 
@@ -3506,6 +3493,9 @@ msgstr ""
 #: .\venv\Lib\site-packages\django\views\templates\default_urlconf.html:239
 msgid "Connect, get help, or contribute"
 msgstr ""
+
+#~ msgid "Add to Sale"
+#~ msgstr "أضف لعملية البيع"
 
 # ============================================================
 # Dashboard

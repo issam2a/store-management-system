@@ -2234,104 +2234,308 @@ if (
             syncQuantityFromAmount();
         }
     );
-
-
+    
+   
     /*
      * ============================================================
      * Form submission
      * ============================================================
      */
+    console.count("SALE FORM LISTENER");
+
+    let isSubmitting = false;
 
     saleItemForm.addEventListener(
         "submit",
-        (event) => {
-            /*
-            * Product must be selected.
-            */
-            if (!selectedProduct) {
-                event.preventDefault();
+        async (event) => {
 
-                productSearchInput.focus();
-
-                return;
-            }
-
-            const valueBasedProduct =
-                isValueBasedUnit(
-                    getSelectedUnit()
-                );
-
-
-            /*
-            * Value-based product
-            */
-            if (valueBasedProduct) {
-                const valid =
-                    validateAmountBasedSale();
-
-                if (!valid) {
-                    event.preventDefault();
-
-                    if (!amountField.checkValidity()) {
-                        amountField.reportValidity();
-                    } else {
-                        quantityField.reportValidity();
-                    }
-
-                    return;
-                }
-            }
-
-
-            /*
-            * Count-based product
-            */
-            else {
-                const valid =
-                    validateQuantityAgainstStock();
-
-                if (!valid) {
-                    event.preventDefault();
-
-                    /*
-                    * The validation function has already
-                    * assigned the translated error message
-                    * with setCustomValidity().
-                    */
-                    quantityField.reportValidity();
-
-                    return;
-                }
-            }
-
-
-            /*
-            * Final browser validation.
-            */
-            if (!saleItemForm.checkValidity()) {
-                event.preventDefault();
-
-                if (valueBasedProduct) {
-                    amountField.reportValidity();
-                } else {
-                    quantityField.reportValidity();
-                }
-
-                return;
-            }
-
+            event.preventDefault();
 
             /*
             * Prevent duplicate submissions.
             */
+            if (isSubmitting) {
+                return;
+            }
+
+            isSubmitting = true;
             addSaleItemButton.disabled = true;
 
-            addSaleItemButton.textContent =
-                "Adding...";
+            try {
+
+                const response =
+                    await fetch(
+                        saleItemForm.action,
+                        {
+                            method: "POST",
+                            body: new FormData(saleItemForm),
+                            headers: {
+                                "X-Requested-With":
+                                    "XMLHttpRequest",
+                            },
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok || !data.success) {
+                    alert(
+                        data.error ||
+                        "Failed to add item."
+                    );
+
+                    return;
+                }
+
+                /*
+                * Add/update the product in the table.
+                */
+                addSaleItemToTable(
+                    data.item
+                );
+                console.log(
+                    document.getElementById(
+                        "sale-empty-state"
+                    ).hidden
+                );
+                /*
+                * Update subtotal and total.
+                */
+               const subtotalElement =
+                    document.getElementById(
+                        "sale-subtotal"
+                    );
+
+                const totalElement =
+                    document.getElementById(
+                        "sale-total"
+                    );
+
+                if (subtotalElement) {
+                    subtotalElement.textContent =
+                        Number(
+                            data.sale.subtotal
+                        ).toFixed(2);
+                }
+
+                if (totalElement) {
+                    totalElement.textContent =
+                        Number(
+                            data.sale.total
+                        ).toFixed(2);
+                }
+
+                /*
+                * Reset product-entry form.
+                */
+                productSearchInput.value = "";
+
+                selectedProductName.textContent =
+                    saleItemForm.dataset.noProductSelected ||
+                    "";
+
+                quantityField.value = "";
+                amountField.value = "";
+
+                selectedProduct = null;
+                productSearchInput.focus();
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Unexpected error."
+                );
+
+            } finally {
+
+                isSubmitting = false;
+
+                addSaleItemButton.disabled = false;
+
+                addSaleItemButton.textContent =
+                    window.saleTranslations.addItem;
+            }
+            
         }
     );
+    
+    function addSaleItemToTable(item) {
 
+        const tbody =
+            document.getElementById(
+                "sale-items-body"
+            );
 
+        if (!tbody) {
+            console.error(
+                "Sale items table body was not found."
+            );
+
+            return;
+        }
+
+        /*
+        * Check whether this product is already
+        * present in the current sale.
+        */
+        let existingRow =
+            tbody.querySelector(
+                `[data-product-id="${item.product_id}"]`
+            );
+
+        if (existingRow) {
+
+            const quantityInput =
+                existingRow.querySelector(
+                    ".sale-item-quantity"
+                );
+
+            const lineTotalCell =
+                existingRow.querySelector(
+                    ".sale-item-line-total"
+                );
+
+            if (quantityInput) {
+                quantityInput.value =
+                    item.quantity;
+            }
+
+            if (lineTotalCell) {
+                lineTotalCell.textContent =
+                    Number(
+                        item.line_total
+                    ).toFixed(2);
+            }
+
+            return;
+        }
+
+        /*
+        * Product is new — create a new row.
+        */
+        const row =
+            document.createElement("tr");
+
+        row.dataset.productId =
+            item.product_id;
+
+        row.innerHTML = `
+            <td></td>
+
+            <td>
+                ${escapeHtml(item.product_name)}
+            </td>
+
+            <td>
+                <input
+                    type="number"
+                    name="quantity"
+                    value="${escapeHtml(item.quantity)}"
+                    class="form-input sale-item-quantity"
+                    min="0.001"
+                    step="0.001"
+                    data-item-id="${item.id}"
+                    data-unit="${escapeHtml(item.unit)}"
+                    data-update-url="${escapeHtml(item.update_url)}"
+                    aria-label="Quantity"
+                >
+            </td>
+
+            <td>
+                ${escapeHtml(item.unit)}
+            </td>
+
+            <td>
+                ${Number(item.unit_price).toFixed(2)}
+            </td>
+
+            <td class="sale-item-line-total">
+                ${Number(item.line_total).toFixed(2)}
+            </td>
+
+            <td>
+                <div class="table-actions">
+                    <form
+                        method="post"
+                        action="${escapeHtml(item.remove_url)}"
+                        class="inline-form"
+                    >
+                        <input
+                            type="hidden"
+                            name="csrfmiddlewaretoken"
+                            value="${getCsrfToken()}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn-danger btn-small"
+                        >
+                            ${window.saleTranslations.remove}
+                        </button>
+                    </form>
+                </div>
+            </td>
+        `;
+        const emptyState =
+            document.getElementById(
+                "sale-empty-state"
+            );
+
+        if (emptyState) {
+            emptyState.hidden = true;
+        }
+        tbody.appendChild(row);
+
+        /*
+        * Recalculate row numbers.
+        */
+        updateSaleItemRowNumbers();
+    }
+
+    function updateSaleItemRowNumbers() {
+
+        const tbody =
+            document.getElementById(
+                "sale-items-body"
+            );
+
+        if (!tbody) {
+            return;
+        }
+
+        const rows =
+            tbody.querySelectorAll("tr");
+
+        rows.forEach(
+            (row, index) => {
+
+                const numberCell =
+                    row.querySelector(
+                        "td:first-child"
+                    );
+
+                if (numberCell) {
+                    numberCell.textContent =
+                        index + 1;
+                }
+            }
+        );
+    }
+
+    function getCsrfToken() {
+
+        const csrfInput =
+            document.querySelector(
+                "[name=csrfmiddlewaretoken]"
+            );
+
+        return csrfInput
+            ? csrfInput.value
+            : "";
+    }
     /*
      * ============================================================
      * Keyboard support
@@ -2611,17 +2815,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 /*
- * ============================================================
+ /* ============================================================
  * Inline Sale Item Quantity Editing
  * ============================================================
  */
 
-const saleQuantityInputs =
-    document.querySelectorAll(
-        ".sale-item-quantity"
+const saleItemsBody =
+    document.getElementById(
+        "sale-items-body"
     );
 
-if (saleQuantityInputs.length) {
+if (saleItemsBody) {
 
     const updateSaleItemQuantity =
         async (input) => {
@@ -2699,42 +2903,37 @@ if (saleQuantityInputs.length) {
                 input.dataset.previousValue =
                     data.item.quantity;
 
+             
+
                 const row =
                     input.closest("tr");
 
-                const totalCell =
-                    row.querySelector(
-                        ".sale-item-line-total"
-                    );
+                if (row) {
 
-                totalCell.textContent =
-                    Number(
-                        data.item.line_total
-                    ).toFixed(2);
+                    const totalCell =
+                        row.querySelector(
+                            ".sale-item-line-total"
+                        );
 
-                row.classList.add(
-                    "sale-item-updated"
-                );
+                    if (totalCell) {
+                        totalCell.textContent =
+                            Number(
+                                data.item.line_total
+                            ).toFixed(2);
+                    }
 
-                setTimeout(() => {
-                    row.classList.remove(
+                    row.classList.add(
                         "sale-item-updated"
                     );
-                }, 800);
 
-                document.getElementById(
-                    "sale-subtotal"
-                ).textContent =
-                    Number(
-                        data.sale.subtotal
-                    ).toFixed(2);
+                    setTimeout(() => {
+                        row.classList.remove(
+                            "sale-item-updated"
+                        );
+                    }, 800);
+                }
 
-                document.getElementById(
-                    "sale-total"
-                ).textContent =
-                    Number(
-                        data.sale.total
-                    ).toFixed(2);
+                
 
             } catch (error) {
 
@@ -2751,50 +2950,111 @@ if (saleQuantityInputs.length) {
             }
         };
 
-    saleQuantityInputs.forEach(
-        (input) => {
+
+    /*
+     * Initialize previous value for existing inputs.
+     *
+     * Dynamically-created inputs are initialized
+     * automatically when their first event occurs.
+     */
+    saleItemsBody
+        .querySelectorAll(
+            ".sale-item-quantity"
+        )
+        .forEach((input) => {
 
             input.dataset.previousValue =
                 input.value;
+        });
 
-            input.addEventListener(
-                "keydown",
-                (event) => {
 
-                    if (
-                        event.key !== "Enter"
-                    ) {
-                        return;
-                    }
+    /*
+     * Event delegation.
+     *
+     * This works for both:
+     *
+     * 1. Items rendered by Django
+     * 2. Items added later through AJAX
+     */
+    saleItemsBody.addEventListener(
+        "keydown",
+        (event) => {
 
-                    event.preventDefault();
+            const input =
+                event.target.closest(
+                    ".sale-item-quantity"
+                );
 
-                    updateSaleItemQuantity(
-                        input
-                    );
-                }
-            );
+            if (!input) {
+                return;
+            }
 
-            input.addEventListener(
-                "blur",
-                () => {
+            if (
+                event.key !== "Enter"
+            ) {
+                return;
+            }
 
-                    if (
-                        input.value ===
-                        input.dataset.previousValue
-                    ) {
-                        return;
-                    }
+            event.preventDefault();
 
-                    updateSaleItemQuantity(
-                        input
-                    );
-                }
+            updateSaleItemQuantity(
+                input
             );
         }
     );
-}
 
+
+    saleItemsBody.addEventListener(
+        "focusin",
+        (event) => {
+
+            const input =
+                event.target.closest(
+                    ".sale-item-quantity"
+                );
+
+            if (!input) {
+                return;
+            }
+
+            /*
+             * Capture the current value when
+             * the user starts editing.
+             */
+            input.dataset.previousValue =
+                input.value;
+        }
+    );
+
+
+    saleItemsBody.addEventListener(
+        "blur",
+        (event) => {
+
+            const input =
+                event.target.closest(
+                    ".sale-item-quantity"
+                );
+
+            if (!input) {
+                return;
+            }
+
+            if (
+                input.value ===
+                input.dataset.previousValue
+            ) {
+                return;
+            }
+
+            updateSaleItemQuantity(
+                input
+            );
+
+        },
+        true
+    );
+}
 document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById("profitabilityTrendChart");
 

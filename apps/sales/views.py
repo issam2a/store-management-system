@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from apps.products.models import Product
 from django.views.decorators.http import require_POST
+from django.urls import reverse
 from .forms import (
     SaleCancellationForm,
     SaleCreateForm,
@@ -85,7 +86,7 @@ def sale_create(request):
 
     if request.method == "POST":
         form = SaleCreateForm(request.POST)
-
+        print(request.headers.get("X-Requested-With"))
         if form.is_valid():
             try:
                 sale = create_sale(
@@ -179,22 +180,30 @@ def sale_detail(request, sale_id):
         context,
     )
 
-
 @login_required
 def sale_item_create(request, sale_id):
-    """
-    Add a product to the POS cart.
-
-    The product selling price is determined by the service
-    from Product.current_sell_price.
-    """
-
     sale = get_object_or_404(
         Sale,
         pk=sale_id,
     )
 
+    is_ajax = (
+        request.headers.get(
+            "X-Requested-With"
+        ) == "XMLHttpRequest"
+    )
+
     if request.method != "POST":
+
+        if is_ajax:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": "POST request required.",
+                },
+                status=400,
+            )
+
         return redirect(
             "sale_detail",
             sale_id=sale.id,
@@ -203,25 +212,88 @@ def sale_item_create(request, sale_id):
     form = SaleItemForm(request.POST)
 
     if form.is_valid():
+
         try:
-            add_sale_item(
+
+            item = add_sale_item(
                 sale_id=sale.id,
                 product=form.cleaned_data["product"],
-                quantity=form.cleaned_data.get("quantity"),
-                amount=form.cleaned_data.get("amount"),
+                quantity=form.cleaned_data.get(
+                    "quantity"
+                ),
+                amount=form.cleaned_data.get(
+                    "amount"
+                ),
             )
 
         except ValidationError as exc:
+
+            if is_ajax:
+                return JsonResponse(
+                    {
+                        "success": False,
+                        "error": str(exc),
+                    },
+                    status=400,
+                )
+
             form.add_error(
                 None,
                 exc,
             )
 
         else:
+
+            if is_ajax:
+
+                sale.refresh_from_db()
+
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "item": {
+                            "id": item.id,
+                            "product_id": item.product.id,
+                            "product_name": item.product.name,
+                            "quantity": str(item.quantity),
+                            "unit": item.product.unit.symbol,
+                            "unit_price": str(item.unit_price),
+                            "line_total": str(item.line_total),
+                            "update_url": reverse(
+                            "sale_item_edit",
+                            args=[item.id],
+                        ),
+
+                        "remove_url": reverse(
+                            "sale_item_remove",
+                            args=[item.id],
+                        ),
+                        },
+                        "sale": {
+                            "subtotal": str(
+                                sale.subtotal_amount
+                            ),
+                            "total": str(
+                                sale.total_amount
+                            ),
+                        },
+                    }
+                )
+
             return redirect(
                 "sale_detail",
                 sale_id=sale.id,
             )
+
+    if is_ajax:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "error": form.errors.as_text(),
+            },
+            status=400,
+        )
 
     items = (
         sale.items

@@ -1649,7 +1649,9 @@ a {
     justify-content: center;
     text-align: center;
 }
-
+[hidden] {
+    display: none !important;
+}
 .empty-state-icon {
     display: grid;
     width: 46px;
