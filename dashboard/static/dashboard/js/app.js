@@ -2317,6 +2317,8 @@ if (
                 addSaleItemToTable(
                     data.item
                 );
+
+                
                 console.log(
                     document.getElementById(
                         "sale-empty-state"
@@ -2511,6 +2513,15 @@ if (
             emptyState.hidden = true;
         }
         tbody.appendChild(row);
+
+        const completeSaleButton =
+            document.getElementById(
+                "complete-sale-button"
+            );
+
+        if (completeSaleButton) {
+            completeSaleButton.disabled = false;
+        }
 
         /*
         * Recalculate row numbers.
