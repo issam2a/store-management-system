@@ -2729,7 +2729,7 @@ body.analytics-chart-expanded {
 
 /* Add Product stays visible while scrolling */
 .sales-pos-entry {
-    position: sticky;
+    
     top: 90px;
 }
 
