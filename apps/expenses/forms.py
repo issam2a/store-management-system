@@ -6,6 +6,26 @@ from django.utils.translation import gettext_lazy as _
 from .models import Expense
 
 
+
+EXPENSE_CATEGORY_CHOICES = [
+    ("rent", _("Rent")),
+    ("electricity", _("Electricity")),
+    ("water", _("Water")),
+    ("internet", _("Internet")),
+    ("transport", _("Transport")),
+    ("maintenance", _("Maintenance")),
+    ("salary", _("Salary")),
+    ("tax", _("Tax")),
+    ("supplies", _("Supplies")),
+    ("other", _("Other")),
+]
+
+
+PAYMENT_METHOD_CHOICES = [
+    ("cash", _("Cash")),
+    ("card", _("Card")),
+    ("bank", _("Bank Transfer")),
+]
 class ExpenseForm(forms.Form):
     reference = forms.CharField(
         label=_("Reference"),
@@ -17,10 +37,10 @@ class ExpenseForm(forms.Form):
         ),
     )
 
-    category = forms.CharField(
+    category = forms.ChoiceField(
         label=_("Category"),
-        max_length=100,
-        widget=forms.TextInput(
+        choices=EXPENSE_CATEGORY_CHOICES,
+        widget=forms.Select(
             attrs={
                 "class": "form-input",
             }
@@ -41,10 +61,10 @@ class ExpenseForm(forms.Form):
         ),
     )
 
-    payment_method = forms.CharField(
+    payment_method = forms.ChoiceField(
         label=_("Payment Method"),
-        max_length=50,
-        widget=forms.TextInput(
+        choices=PAYMENT_METHOD_CHOICES,
+        widget=forms.Select(
             attrs={
                 "class": "form-input",
             }
@@ -88,27 +108,9 @@ class ExpenseForm(forms.Form):
         return reference
 
     def clean_category(self):
-        category = (
-            self.cleaned_data["category"]
-            .strip()
-        )
+        return self.cleaned_data["category"]
 
-        if not category:
-            raise forms.ValidationError(
-                _("Category is required.")
-            )
 
-        return category
-
+      
     def clean_payment_method(self):
-        payment_method = (
-            self.cleaned_data["payment_method"]
-            .strip()
-        )
-
-        if not payment_method:
-            raise forms.ValidationError(
-                _("Payment method is required.")
-            )
-
-        return payment_method
+        return self.cleaned_data["payment_method"]

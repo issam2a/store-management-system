@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StoreFlow\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-23 20:52+0300\n"
+"POT-Creation-Date: 2026-09-24 19:15+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -52,10 +52,71 @@ msgid "Customer deactivated successfully."
 msgstr "تم تعطيل العميل بنجاح."
 
 #: .\apps\expenses\forms.py:11
+msgid "Rent"
+msgstr "إيجار"
+
+#: .\apps\expenses\forms.py:12
+msgid "Electricity"
+msgstr "كهرباء"
+
+#: .\apps\expenses\forms.py:13
+msgid "Water"
+msgstr "ماء"
+
+#: .\apps\expenses\forms.py:14
+msgid "Internet"
+msgstr "إنترنت"
+
+#: .\apps\expenses\forms.py:15
+msgid "Transport"
+msgstr "نقل"
+
+#: .\apps\expenses\forms.py:16
+msgid "Maintenance"
+msgstr "صيانة"
+
+#: .\apps\expenses\forms.py:17
+msgid "Salary"
+msgstr "مرتب"
+
+#: .\apps\expenses\forms.py:18
+msgid "Tax"
+msgstr "ضريبة"
+
+#: .\apps\expenses\forms.py:19
+
+msgid "Supplies"
+msgstr "الموردون"
+
+#: .\apps\expenses\forms.py:20 .\apps\payments\forms.py:26
+#: .\apps\payments\forms.py:95 .\apps\payments\forms.py:150
+msgid "Other"
+msgstr "اخرى"
+
+#: .\apps\expenses\forms.py:25 .\apps\payments\forms.py:23
+#: .\apps\payments\forms.py:92 .\apps\payments\forms.py:147
+#: .\apps\purchases\models.py:8 .\dashboard\templates\sales\sale_detail.html:75
+#: .\dashboard\templates\sales\sale_detail.html:570
+#: .\dashboard\templates\sales\sale_detail.html:702
+#: .\dashboard\templates\sales\sale_list.html:212
+msgid "Cash"
+msgstr "نقدي"
+
+#: .\apps\expenses\forms.py:26 .\apps\payments\forms.py:25
+#: .\apps\payments\forms.py:94 .\apps\payments\forms.py:149
+msgid "Card"
+msgstr "بطاقة"
+
+#: .\apps\expenses\forms.py:27 .\apps\payments\forms.py:24
+#: .\apps\payments\forms.py:93 .\apps\payments\forms.py:148
+msgid "Bank Transfer"
+msgstr "تحويل مصرفي"
+
+#: .\apps\expenses\forms.py:31
 #: .\dashboard\templates\customers\customer_detail.html:122
 #: .\dashboard\templates\customers\customer_detail.html:213
 #: .\dashboard\templates\dashboard\home.html:551
-#: .\dashboard\templates\expenses\expense_list.html:168
+#: .\dashboard\templates\expenses\expense_list.html:170
 #: .\dashboard\templates\inventory\inventory_adjustment_history.html:62
 #: .\dashboard\templates\purchases\purchase_cancel.html:38
 #: .\dashboard\templates\purchases\purchase_list.html:153
@@ -66,54 +127,49 @@ msgstr "تم تعطيل العميل بنجاح."
 msgid "Reference"
 msgstr "المرجع"
 
-#: .\apps\expenses\forms.py:21 .\apps\purchases\forms.py:236
-#: .\dashboard\templates\expenses\expense_list.html:169
+#: .\apps\expenses\forms.py:41 .\apps\purchases\forms.py:236
+#: .\dashboard\templates\expenses\expense_list.html:171
 #: .\dashboard\templates\inventory\inventory_list.html:136
 #: .\dashboard\templates\products\product_form.html:64
 #: .\dashboard\templates\products\product_list.html:144
 msgid "Category"
 msgstr "الفئة"
 
-#: .\apps\expenses\forms.py:31 .\apps\payments\forms.py:7
+#: .\apps\expenses\forms.py:51 .\apps\payments\forms.py:7
 #: .\apps\payments\forms.py:76 .\apps\payments\forms.py:131
 #: .\apps\sales\forms.py:97
 #: .\dashboard\templates\customers\customer_detail.html:214
 #: .\dashboard\templates\dashboard\home.html:559
-#: .\dashboard\templates\expenses\expense_list.html:170
+#: .\dashboard\templates\expenses\expense_list.html:172
 #: .\dashboard\templates\sales\sale_detail.html:444
 #: .\dashboard\templates\suppliers\supplier_detail.html:180
 msgid "Amount"
 msgstr "المبلغ"
 
-#: .\apps\expenses\forms.py:45 .\apps\payments\forms.py:21
+#: .\apps\expenses\forms.py:65 .\apps\payments\forms.py:21
 #: .\apps\payments\forms.py:90 .\apps\payments\forms.py:145
 #: .\dashboard\templates\customers\customer_detail.html:215
-#: .\dashboard\templates\expenses\expense_list.html:171
+#: .\dashboard\templates\expenses\expense_list.html:173
 #: .\dashboard\templates\suppliers\supplier_detail.html:181
 msgid "Payment Method"
 msgstr "طريقة الدفع"
 
-#: .\apps\expenses\forms.py:55
-
+#: .\apps\expenses\forms.py:75
 msgid "Expense Date"
 msgstr "تاريخ المصروف"
 
-#: .\apps\expenses\forms.py:65
+#: .\apps\expenses\forms.py:85
 msgid "Description"
 msgstr "وصف"
 
-#: .\apps\expenses\forms.py:85
+#: .\apps\expenses\forms.py:105
 msgid "An expense with this reference already exists."
 msgstr "توجد بالفعل نفقة تحمل هذا المرجع."
 
-#: .\apps\expenses\forms.py:98
-
-msgid "Category is required."
-msgstr "الفئة مطلوبة."
-
-#: .\apps\expenses\forms.py:111 .\apps\payments\forms.py:61
-msgid "Payment method is required."
-msgstr "طريقة الدفع مطلوبة"
+#: .\apps\expenses\views.py:76
+#: .\dashboard\templates\expenses\expense_list.html:32
+msgid "Please correct the errors below."
+msgstr "يرجى تصحيح الأخطاء أدناه."
 
 #: .\apps\inventory\forms.py:20 .\apps\sales\forms.py:66
 #: .\dashboard\templates\analytics\dashboard.html:512
@@ -187,30 +243,6 @@ msgstr "تسوية المخزون"
 msgid "Apply Adjustment"
 msgstr " تطبيق التعديل"
 
-#: .\apps\payments\forms.py:23 .\apps\payments\forms.py:92
-#: .\apps\payments\forms.py:147 .\apps\purchases\models.py:8
-#: .\dashboard\templates\sales\sale_detail.html:75
-#: .\dashboard\templates\sales\sale_detail.html:570
-#: .\dashboard\templates\sales\sale_detail.html:702
-#: .\dashboard\templates\sales\sale_list.html:212
-msgid "Cash"
-msgstr "نقدي"
-
-#: .\apps\payments\forms.py:24 .\apps\payments\forms.py:93
-#: .\apps\payments\forms.py:148
-msgid "Bank Transfer"
-msgstr "تحويل مصرفي"
-
-#: .\apps\payments\forms.py:25 .\apps\payments\forms.py:94
-#: .\apps\payments\forms.py:149
-msgid "Card"
-msgstr "بطاقة"
-
-#: .\apps\payments\forms.py:26 .\apps\payments\forms.py:95
-#: .\apps\payments\forms.py:150
-msgid "Other"
-msgstr "اخرى"
-
 #: .\apps\payments\forms.py:36 .\apps\payments\forms.py:105
 #: .\apps\payments\forms.py:160
 #: .\dashboard\templates\customers\customer_detail.html:216
@@ -222,6 +254,10 @@ msgstr "تاريخ الدفع"
 #: .\apps\payments\forms.py:170
 msgid "Note"
 msgstr "ملحوظة"
+
+#: .\apps\payments\forms.py:61
+msgid "Payment method is required."
+msgstr "طريقة الدفع مطلوبة"
 
 #: .\apps\products\quantity.py:45
 #: .\dashboard\templates\sales\sale_detail.html:325
@@ -1066,7 +1102,7 @@ msgid "Total"
 msgstr "إجمالي"
 
 #: .\dashboard\templates\customers\customer_detail.html:125
-#: .\dashboard\templates\expenses\expense_list.html:172
+#: .\dashboard\templates\expenses\expense_list.html:174
 #: .\dashboard\templates\sales\sale_list.html:173
 msgid "Date"
 msgstr "التاريخ"
@@ -1168,7 +1204,7 @@ msgid "Name"
 msgstr "الاسم"
 
 #: .\dashboard\templates\customers\customer_list.html:144
-#: .\dashboard\templates\expenses\expense_list.html:173
+#: .\dashboard\templates\expenses\expense_list.html:175
 #: .\dashboard\templates\products\category_list.html:43
 #: .\dashboard\templates\products\product_list.html:154
 #: .\dashboard\templates\products\unit_list.html:44
@@ -1364,31 +1400,29 @@ msgstr "ستظهر بيانات المبيعات هنا."
 msgid "Record and track business expenses."
 msgstr "تسجيل نفقات العمل وتتبعها."
 
-#: .\dashboard\templates\expenses\expense_list.html:139
-#, fuzzy
-#| msgid "Record Payment"
-msgid "Record Expense"
-msgstr "تسجيل الدفعة"
-
-#: .\dashboard\templates\expenses\expense_list.html:154
-
-msgid "Expense History"
-msgstr "سجل النفقات"
-
-#: .\dashboard\templates\expenses\expense_list.html:214
+#: .\dashboard\templates\expenses\expense_list.html:29
+#: .\dashboard\templates\expenses\expense_list.html:216
 #: .\dashboard\templates\sales\sale_detail.html:189
 #: .\dashboard\templates\sales\sale_detail.html:789
 msgid "Remove"
 msgstr "إزالة"
 
-#: .\dashboard\templates\expenses\expense_list.html:235
+#: .\dashboard\templates\expenses\expense_list.html:30
+msgid "Are you sure you want to remove this expense?"
+msgstr "هل أنت متأكد من أنك تريد إزالة هذه النفقات؟"
 
+#: .\dashboard\templates\expenses\expense_list.html:31
+#: .\dashboard\templates\expenses\expense_list.html:143
+msgid "Record Expense"
+msgstr "تسجيل مصروف"
+
+#: .\dashboard\templates\expenses\expense_list.html:158
+msgid "Expense History"
+msgstr "سجل النفقات"
+
+#: .\dashboard\templates\expenses\expense_list.html:238
 msgid "No expenses recorded yet."
 msgstr "لم يتم تسجيل أي نفقات بعد."
-
-#: .\dashboard\templates\expenses\expense_list.html:239
-msgid "Record your first expense above."
-msgstr "سجّل مصروفك الأول أعلاه."
 
 #: .\dashboard\templates\inventory\inventory_adjustment_form.html:22
 msgid ""
@@ -3553,6 +3587,12 @@ msgstr ""
 #: .\venv\Lib\site-packages\django\views\templates\default_urlconf.html:239
 msgid "Connect, get help, or contribute"
 msgstr ""
+
+#~ msgid "Category is required."
+#~ msgstr "الفئة مطلوبة."
+
+#~ msgid "Record your first expense above."
+#~ msgstr "سجّل مصروفك الأول أعلاه."
 
 #~ msgid "Add to Sale"
 #~ msgstr "أضف لعملية البيع"
