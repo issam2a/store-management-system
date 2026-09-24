@@ -122,7 +122,7 @@
 
         <div class="table-count">
 
-            {% blocktrans count counter=sales|length %}
+            {% blocktrans count counter=paginator.count %}
                 {{ counter }} sale
             {% plural %}
                 {{ counter }} sales
@@ -303,6 +303,62 @@
 
     {% endif %}
 
+    {% if page_obj.paginator.num_pages > 1 %}
+    
+        <div class="pagination">
+    
+            {% if page_obj.has_previous %}
+    
+                <a
+                    href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                    class="btn-secondary btn-small"
+                >
+                    {% trans "Previous" %}
+                </a>
+    
+            {% endif %}
+    
+    
+            <div class="pagination-pages">
+    
+                {% for page_number in page_obj.paginator.page_range %}
+    
+                    {% if page_number == page_obj.number %}
+    
+                        <span class="pagination-page active">
+                            {{ page_number }}
+                        </span>
+    
+                    {% else %}
+    
+                        <a
+                            href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_number }}"
+                            class="pagination-page"
+                        >
+                            {{ page_number }}
+                        </a>
+    
+                    {% endif %}
+    
+                {% endfor %}
+    
+            </div>
+    
+    
+            {% if page_obj.has_next %}
+    
+                <a
+                    href="?{% if query %}q={{ query|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}"
+                    class="btn-secondary btn-small"
+                >
+                    {% trans "Next" %}
+                </a>
+    
+            {% endif %}
+    
+        </div>
+    
+    {% endif %}
 </div>
 
 {% endblock %}

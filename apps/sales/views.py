@@ -7,6 +7,8 @@ from django.db.models import Q
 from apps.products.models import Product
 from django.views.decorators.http import require_POST
 from django.urls import reverse
+from django.core.paginator import Paginator
+
 from .forms import (
     SaleCancellationForm,
     SaleCreateForm,
@@ -25,22 +27,8 @@ from .services import (
     update_sale_item,
 )
 
-
 @login_required
 def sale_list(request):
-    """
-    Display sales history with search and status filtering.
-
-    Search:
-    - Sale reference
-    - Customer name
-
-    Filters:
-    - Draft
-    - Completed
-    - Cancelled
-    """
-
     query = request.GET.get("q", "").strip()
     selected_status = request.GET.get("status", "").strip()
 
@@ -65,8 +53,16 @@ def sale_list(request):
             status=selected_status
         )
 
+    paginator = Paginator(sales, 20)
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "sales": sales,
+        "sales": page_obj,
+        "page_obj": page_obj,
+        "paginator": paginator,
         "query": query,
         "selected_status": selected_status,
     }
@@ -76,7 +72,6 @@ def sale_list(request):
         "sales/sale_list.html",
         context,
     )
-
 
 @login_required
 def sale_create(request):
