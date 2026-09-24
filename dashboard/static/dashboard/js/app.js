@@ -3454,15 +3454,14 @@ if (expenseForm) {
 
                 clearExpenseErrors();
 
-                const referenceField =
+                const categoryField =
                     expenseForm.querySelector(
-                        '[name="reference"]'
+                        '[name="category"]'
                     );
 
-                if (referenceField) {
-                    referenceField.focus();
+                if (categoryField) {
+                    categoryField.focus();
                 }
-
             } catch (error) {
 
                 console.error(

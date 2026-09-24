@@ -5,6 +5,29 @@ from django.db import transaction
 
 from .models import Expense
 
+def generate_expense_reference():
+    """
+    Generate the next expense reference.
+
+    Example:
+    EXP-000001
+    EXP-000002
+    """
+
+    last_expense = (
+        Expense.objects
+        .order_by("-id")
+        .first()
+    )
+
+    if not last_expense:
+        next_number = 1
+
+    else:
+        next_number = last_expense.id + 1
+
+    return f"EXP-{next_number:06d}"
+
 
 def record_expense(
     category,
@@ -12,9 +35,9 @@ def record_expense(
     payment_method,
     expense_date,
     created_by,
-    reference,
     description="",
 ):
+    
     """
     Record a business expense.
     """
@@ -43,13 +66,10 @@ def record_expense(
                 "Expense date is required."
             )
 
-        if not reference or not reference.strip():
-            raise ValidationError(
-                "Expense reference is required."
-            )
+       
 
         expense = Expense.objects.create(
-            reference=reference.strip(),
+            reference=generate_expense_reference(),
             category=category.strip(),
             amount=amount,
             payment_method=payment_method.strip(),

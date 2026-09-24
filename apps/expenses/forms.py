@@ -27,15 +27,7 @@ PAYMENT_METHOD_CHOICES = [
     ("bank", _("Bank Transfer")),
 ]
 class ExpenseForm(forms.Form):
-    reference = forms.CharField(
-        label=_("Reference"),
-        max_length=50,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-input",
-            }
-        ),
-    )
+    
 
     category = forms.ChoiceField(
         label=_("Category"),
@@ -92,20 +84,7 @@ class ExpenseForm(forms.Form):
         ),
     )
 
-    def clean_reference(self):
-        reference = (
-            self.cleaned_data["reference"]
-            .strip()
-        )
-
-        if Expense.objects.filter(
-            reference=reference
-        ).exists():
-            raise forms.ValidationError(
-                _("An expense with this reference already exists.")
-            )
-
-        return reference
+    
 
     def clean_category(self):
         return self.cleaned_data["category"]

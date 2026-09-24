@@ -63,10 +63,9 @@ def expense_create(request):
                 payment_method=form.cleaned_data["payment_method"],
                 expense_date=form.cleaned_data["expense_date"],
                 created_by=request.user,
-                reference=form.cleaned_data["reference"],
                 description=form.cleaned_data["description"],
             )
-
+            
         except ValidationError as exc:
 
             if is_ajax:
