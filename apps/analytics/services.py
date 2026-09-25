@@ -23,6 +23,7 @@ from apps.products.models import Product
 from apps.sales.models import Sale, SaleItem
 from apps.payments.models import SupplierPayment
 from apps.purchases.models import Purchase, PurchaseItem
+from apps.expenses.models import Expense
 TWO_PLACES = Decimal("0.01")
 
 
@@ -232,6 +233,199 @@ def get_profitability_summary(start_date=None, end_date=None):
         "gross_margin": gross_margin,
     }
 
+
+def get_expense_analysis(start_date=None, end_date=None):
+    """
+    Return expense analytics for the selected date range.
+
+    Metrics:
+        total_expenses:
+            Sum of all recorded expenses.
+
+        average_expense:
+            Average individual expense amount.
+
+        expense_to_revenue_ratio:
+            Expenses as a percentage of completed-sales revenue.
+            None when revenue is zero.
+
+        by_category:
+            Expense totals grouped by category, including percentage
+            of total expenses.
+
+        monthly_trend:
+            Expense totals grouped by expense month.
+
+    Expenses are filtered using Expense.expense_date.
+
+    Revenue is based on completed Sale.total_amount and uses the
+    same store-timezone date boundaries as the other analytics
+    functions.
+    """
+    store_timezone = django_timezone.get_default_timezone()
+    start_dt, end_dt = _date_range_bounds(
+        start_date,
+        end_date,
+        store_timezone,
+    )
+
+    expenses = Expense.objects.all()
+
+    if start_date is not None:
+        expenses = expenses.filter(
+            expense_date__gte=start_date,
+        )
+
+    if end_date is not None:
+        expenses = expenses.filter(
+            expense_date__lte=end_date,
+        )
+
+    expense_summary = expenses.aggregate(
+        total_expenses=Coalesce(
+            Sum("amount"),
+            Decimal("0.00"),
+        ),
+        average_expense=Coalesce(
+            Avg("amount"),
+            Decimal("0.00"),
+        ),
+    )
+
+    total_expenses = (
+        expense_summary["total_expenses"]
+        or Decimal("0.00")
+    ).quantize(
+        TWO_PLACES,
+        rounding=ROUND_HALF_UP,
+    )
+
+    average_expense = (
+        expense_summary["average_expense"]
+        or Decimal("0.00")
+    ).quantize(
+        TWO_PLACES,
+        rounding=ROUND_HALF_UP,
+    )
+
+    completed_sales = Sale.objects.filter(
+        status=Sale.Status.COMPLETED,
+    )
+
+    if start_dt is not None:
+        completed_sales = completed_sales.filter(
+            completed_at__gte=start_dt,
+        )
+
+    if end_dt is not None:
+        completed_sales = completed_sales.filter(
+            completed_at__lt=end_dt,
+        )
+
+    revenue = (
+        completed_sales.aggregate(
+            total=Coalesce(
+                Sum("total_amount"),
+                Decimal("0.00"),
+            )
+        )["total"]
+        or Decimal("0.00")
+    ).quantize(
+        TWO_PLACES,
+        rounding=ROUND_HALF_UP,
+    )
+
+    if revenue > Decimal("0.00"):
+        expense_to_revenue_ratio = (
+            total_expenses / revenue * Decimal("100")
+        ).quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+    else:
+        expense_to_revenue_ratio = None
+
+    category_rows = (
+        expenses
+        .values("category")
+        .annotate(
+            total=Coalesce(
+                Sum("amount"),
+                Decimal("0.00"),
+            ),
+        )
+        .order_by("-total", "category")
+    )
+
+    by_category = []
+
+    for row in category_rows:
+        category_total = (
+            row["total"]
+            or Decimal("0.00")
+        ).quantize(
+            TWO_PLACES,
+            rounding=ROUND_HALF_UP,
+        )
+
+        if total_expenses > Decimal("0.00"):
+            percentage = (
+                category_total
+                / total_expenses
+                * Decimal("100")
+            ).quantize(
+                TWO_PLACES,
+                rounding=ROUND_HALF_UP,
+            )
+        else:
+            percentage = Decimal("0.00")
+
+        by_category.append(
+            {
+                "category": row["category"],
+                "total": category_total,
+                "percentage": percentage,
+            }
+        )
+
+    monthly_rows = (
+        expenses
+        .annotate(
+            period=TruncMonth("expense_date"),
+        )
+        .values("period")
+        .annotate(
+            total=Coalesce(
+                Sum("amount"),
+                Decimal("0.00"),
+            ),
+        )
+        .order_by("period")
+    )
+
+    monthly_trend = []
+
+    for row in monthly_rows:
+        monthly_trend.append(
+            {
+                "date": row["period"],
+                "total": (
+                    row["total"]
+                    or Decimal("0.00")
+                ).quantize(
+                    TWO_PLACES,
+                    rounding=ROUND_HALF_UP,
+                ),
+            }
+        )
+
+    return {
+        "total_expenses": total_expenses,
+        "average_expense": average_expense,
+        "expense_to_revenue_ratio": expense_to_revenue_ratio,
+        "by_category": by_category,
+        "monthly_trend": monthly_trend,
+    }
 
 def get_executive_kpis(start_date=None, end_date=None):
     """

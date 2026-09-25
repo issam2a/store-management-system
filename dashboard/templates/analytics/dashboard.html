@@ -95,6 +95,202 @@
     </form>
 </section>
 
+</section>
+
+
+<!-- =========================================================
+     EXPENSE ANALYSIS
+========================================================== -->
+
+<section class="dashboard-card analytics-section">
+
+    <div class="card-header">
+        <div>
+            <span class="card-eyebrow">
+                {% trans "Expense Analysis" %}
+            </span>
+
+            <h2>
+                {% trans "Where is the money going?" %}
+            </h2>
+
+            <p class="card-description">
+                {% trans "Understand operating expenses and how they compare with sales revenue." %}
+            </p>
+        </div>
+
+        <div class="analytics-period">
+            <span>
+                {{ start_date|date:"M d, Y" }}
+            </span>
+
+            <span aria-hidden="true">→</span>
+
+            <span>
+                {{ end_date|date:"M d, Y" }}
+            </span>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- Expense KPIs -->
+
+<section class="kpi-grid">
+
+    <article class="kpi-card">
+
+        <div class="kpi-card-top">
+            <span class="kpi-label">
+                {% trans "Total Expenses" %}
+            </span>
+
+            <span class="kpi-icon" aria-hidden="true">
+                ↓
+            </span>
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ expense_analysis.total_expenses }}"
+            data-decimals="2"
+        >
+            {{ expense_analysis.total_expenses|floatformat:2 }}
+        </div>
+
+        <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Recorded expenses" %}
+            </span>
+        </div>
+
+    </article>
+
+
+    <article class="kpi-card">
+
+        <div class="kpi-card-top">
+            <span class="kpi-label">
+                {% trans "Average Expense" %}
+            </span>
+
+            <span class="kpi-icon" aria-hidden="true">
+                Ø
+            </span>
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ expense_analysis.average_expense }}"
+            data-decimals="2"
+        >
+            {{ expense_analysis.average_expense|floatformat:2 }}
+        </div>
+
+        <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Average expense amount" %}
+            </span>
+        </div>
+
+    </article>
+
+
+    <article class="kpi-card">
+
+        <div class="kpi-card-top">
+            <span class="kpi-label">
+                {% trans "Expense / Revenue" %}
+            </span>
+
+            <span class="kpi-icon" aria-hidden="true">
+                %
+            </span>
+        </div>
+
+        <div
+            class="kpi-value"
+            data-count="{{ expense_analysis.expense_to_revenue_ratio|default_if_none:'0' }}"
+            data-decimals="2"
+            data-suffix="%"
+        >
+            {{ expense_analysis.expense_to_revenue_ratio|default_if_none:"0"|floatformat:2 }}%
+        </div>
+
+        <div class="kpi-footer">
+            <span class="kpi-status">
+                {% trans "Expenses as a share of revenue" %}
+            </span>
+        </div>
+
+    </article>
+
+</section>
+
+
+<!-- Expense Charts -->
+
+<section class="dashboard-grid dashboard-grid-main analytics-chart-grid">
+
+    <!-- Expenses by Category -->
+
+    <div class="dashboard-card analytics-chart-card">
+
+        <div class="card-header">
+            <div>
+                <span class="card-eyebrow">
+                    {% trans "Expense Breakdown" %}
+                </span>
+
+                <h2>
+                    {% trans "Where are we spending the most?" %}
+                </h2>
+
+                <p class="card-description">
+                    {% trans "Compare expenses across categories for the selected period." %}
+                </p>
+            </div>
+        </div>
+
+        {{ expense_category_chart_data|json_script:"expense-category-chart-data" }}
+
+        <div class="chart-container analytics-chart">
+            <canvas id="expenseCategoryChart"></canvas>
+        </div>
+
+    </div>
+
+
+    <!-- Monthly Expense Trend -->
+
+    <div class="dashboard-card analytics-chart-card">
+
+        <div class="card-header">
+            <div>
+                <span class="card-eyebrow">
+                    {% trans "Expense Trend" %}
+                </span>
+
+                <h2>
+                    {% trans "How are expenses changing?" %}
+                </h2>
+
+                <p class="card-description">
+                    {% trans "Track monthly expense movement over the selected period." %}
+                </p>
+            </div>
+        </div>
+
+        {{ expense_monthly_chart_data|json_script:"expense-monthly-chart-data" }}
+
+        <div class="chart-container analytics-chart">
+            <canvas id="expenseMonthlyChart"></canvas>
+        </div>
+
+    </div>
+
+</section>
 
 <!-- =========================================================
      EXECUTIVE KPIs
@@ -317,7 +513,7 @@
         <canvas id="analyticsRevenueChart"></canvas>
     </div>
 
-</section>
+
 
 
 <!-- =========================================================

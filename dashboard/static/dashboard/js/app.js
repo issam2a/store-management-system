@@ -665,6 +665,176 @@ if (
 
 
     /*
+ * ============================================================
+ * Expense Category Chart
+ * ============================================================
+ */
+
+    const expenseCategoryChartCanvas =
+        document.getElementById(
+            "expenseCategoryChart"
+        );
+
+    if (expenseCategoryChartCanvas) {
+
+        const expenseCategoryData =
+            JSON.parse(
+                document.getElementById(
+                    "expense-category-chart-data"
+                ).textContent
+            );
+
+        new Chart(
+            expenseCategoryChartCanvas,
+            {
+                type: "bar",
+
+                data: {
+                    labels: expenseCategoryData.map(
+                        item => item.category
+                    ),
+
+                    datasets: [
+                            {
+                                label: "Expenses",
+
+                                data: expenseCategoryData.map(
+                                    item => item.amount
+                                ),
+
+                                backgroundColor:
+                                    "rgba(96, 153, 102, 0.65)",
+
+                                borderColor:
+                                    "#609966",
+
+                                borderWidth: 1,
+
+                                borderRadius: 6,
+                            }
+                        ]
+                    },
+
+                options: {
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                    },
+
+                    scales: {
+
+                        y: {
+                            beginAtZero: true,
+                        },
+
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 0,
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /*
+    * ============================================================
+    * Monthly Expense Trend
+    * ============================================================
+    */
+
+    const expenseMonthlyChartCanvas =
+        document.getElementById("expenseMonthlyChart");
+
+    const expenseMonthlyDataElement =
+        document.getElementById("expense-monthly-chart-data");
+
+    if (
+        expenseMonthlyChartCanvas &&
+        expenseMonthlyDataElement
+    ) {
+        const data = JSON.parse(
+            expenseMonthlyDataElement.textContent
+        );
+
+        new Chart(expenseMonthlyChartCanvas, {
+            type: "line",
+
+            data: {
+                labels: data.map(item => item.label),
+
+                datasets: [
+                    {
+                        label: "Expenses",
+
+                        data: data.map(item => item.total),
+
+                        backgroundColor:
+                            "rgba(96, 153, 102, 0.18)",
+
+                        borderColor:
+                            "#609966",
+
+                        borderWidth: 2,
+
+                        pointBackgroundColor:
+                            "#609966",
+
+                        pointBorderColor:
+                            "#609966",
+
+                        pointRadius: 4,
+
+                        pointHoverRadius: 6,
+
+                        tension: 0.35,
+
+                        fill: true,
+                    },
+                ],
+            },
+
+            options: {
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                interaction: {
+                    intersect: false,
+                    mode: "index",
+                },
+
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    }
+
+
+
+    /*
      * ============================================================
      * Revenue chart
      * ============================================================

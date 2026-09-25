@@ -13,6 +13,7 @@ from .services import (
     get_profitability_trend,
     get_sales_by_day_of_week,
     get_sales_by_hour,
+    get_expense_analysis,
 )
 
 
@@ -216,6 +217,35 @@ def analytics_dashboard(request):
         }
         for item in sales_by_hour
     ]
+
+    # ------------------------------------------------------------
+        # Expense Analysis
+        # ------------------------------------------------------------
+    
+    expense_analysis = get_expense_analysis(
+            start_date=start_date,
+            end_date=end_date,
+        )
+    
+    expense_category_chart_data = [
+        {
+            "category": item["category"],
+            "amount": float(item["total"]),
+            "percentage": float(item["percentage"]),
+        }
+        for item in expense_analysis["by_category"]
+    ]
+    
+    expense_monthly_chart_data = [
+            {
+                "date": item["date"].isoformat(),
+                "label": item["date"].strftime("%b %Y"),
+                "total": float(item["total"]),
+            }
+            for item in expense_analysis["monthly_trend"]
+        ]
+
+
     context = {
         "today": today,
         "start_date": start_date,
@@ -238,6 +268,11 @@ def analytics_dashboard(request):
 
         "day_of_week_chart_data": day_of_week_chart_data,
         "hourly_sales_chart_data": hourly_sales_chart_data,
+
+        # Expense Analysis
+        "expense_analysis": expense_analysis,
+        "expense_category_chart_data": expense_category_chart_data,
+        "expense_monthly_chart_data": expense_monthly_chart_data,
     }
 
     return render(
@@ -245,3 +280,4 @@ def analytics_dashboard(request):
         "analytics/dashboard.html",
         context,
     )
+
